@@ -1,5 +1,5 @@
-django-rest-authemail/example_project
-=====================================
+Example Project
+===============
 
 An example project demonstrating the power of `django-rest-authemail`.
 ----------------------------------------------------------------------
@@ -33,3 +33,5 @@ Usage
 .. code-block:: python
 
     python manage.py test authemail
+
+3. In browser, type 127.0.0.1:8000/signup.

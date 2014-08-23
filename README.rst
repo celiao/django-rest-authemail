@@ -17,7 +17,7 @@ Features
 - User models in the admin interface include inlines for signup and password reset codes.
 - An example project extends the authentication user model and includes simple UI templates.
 - Uses the Django REST Framework.
-- Supports and tested under Python 2.7.6, 3.3.5, and 3.4.0
+- Supports and tested under Python 2.7.6
 
 
 Installation
@@ -119,7 +119,7 @@ API Endpoints
 -------------
 For the endpoints that follow, the base path is shown as `/api/accounts`.  This path is for example purposes.  It can be customized in your project's `urls.py` file.
 
-*POST /api/accounts/signup*
+**POST /api/accounts/signup**
 
 Call this endpoint to sign up a new user and send a verification email.  Sample email templates are found in `authemail/templates/authemail`.  To override the email templates, copy and modify the sample templates, or create your own, in `your_app/templates/authemail`.
 
@@ -167,7 +167,7 @@ Unverified users can sign up multiple times, but only the latest signup code wil
         "detail": "User with this Email address already exists."
     }
 
-*GET /api/accounts/signup/verify/?code=<code>*
+**GET /api/accounts/signup/verify/?code=<code>**
 
 When the user clicks the link in the verification email, the front end should call this endpoint to verify the user.
 
@@ -191,7 +191,7 @@ When the user clicks the link in the verification email, the front end should ca
         "detail": "Unable to verify user."
     }
 
-*POST /api/accounts/login*
+**POST /api/accounts/login**
 
 Call this endpoint to log in a user.  Use the authentication token in future calls to identify the user.
 
@@ -240,7 +240,7 @@ Call this endpoint to log in a user.  Use the authentication token in future cal
         "detail": "User account not active."
     }
 
-*GET /api/accounts/logout*
+**GET /api/accounts/logout**
 
 Call this endpoint to log out an authenticated user.
 
@@ -270,7 +270,7 @@ Call this endpoint to log out an authenticated user.
         "detail": "Invalid token"
     }
 
-*POST /api/accounts/password/reset*
+**POST /api/accounts/password/reset**
 
 Call this endpoint to send an email to a user so they can reset their password.   Similar to signup verification, the password reset email templates are found in `authemail/templates/authemail`.  Override the default templates by placing your similarly-named templates in `your_app/templates/authemail`.
 
@@ -306,7 +306,7 @@ Call this endpoint to send an email to a user so they can reset their password. 
         "detail": "Password reset not allowed."
     }
 
-*GET /api/accounts/password/reset/verify/?code=<code>*
+**GET /api/accounts/password/reset/verify/?code=<code>**
 
 When the user clicks the link in the password reset email, call this endpoint to verify the password reset code.
 
@@ -338,7 +338,7 @@ When the user clicks the link in the password reset email, call this endpoint to
         "detail": "Unable to verify user."
     }
 
-*POST /api/accounts/password/reset/verified*
+**POST /api/accounts/password/reset/verified**
 
 Call this endpoint with the password reset code and the new password, to reset the user's password.  The front end should prompt the user for a confirmation password and give feedback if the passwords don't match.
 
@@ -371,7 +371,7 @@ Call this endpoint with the password reset code and the new password, to reset t
         "detail": "Unable to verify user."
     }
 
-*POST /api/accounts/password/change*
+**POST /api/accounts/password/change**
 
 Call this endpoint to change a user's password.
 
@@ -413,7 +413,7 @@ Call this endpoint to change a user's password.
         "detail": "Invalid token"
     }
 
-*GET /api/accounts/users/me*
+**GET /api/accounts/users/me**
 
 Call this endpoint after logging in and obtaining an authorization token to learn more about the user.
 
