@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+<meta charset="UTF-8">
+</head>
+<body>
+<h1>Login</h1>
+<form method="post" action="{% url 'login_page' %}">
+{% csrf_token %}
+{% if form.non_field_errors %}
+    Non-Field Errors:<br>
+    {{ form.non_field_errors }}
+{% endif %}
+{% if form.errors %}
+    Field Errors:<br>
+    <font color="red">{{ form.errors }}</font>
+{% endif %}
+<p>
+<font style="font-size:24px;">
+Email: <input type="text" name="email" size="40" style="font-size:24px;"><br>
+Password: <input type="text" name="password" style="font-size:24px;"><br>
+<br>
+<button type="submit" value="Submit" style="font-size:24px;">Submit</button><br><br>
+<a href="{% url 'password_reset_page' %}">Forgot Password</a><br>
+</font>
+</p>
+</form>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome</title>
+<meta charset="UTF-8">
+</head>
+<body>
+<h1>Home for {{ email }}</h1>
+<form method="get" action="{% url 'logout_page' %}">
+{% csrf_token %}
+<p>
+<font style="font-size:24px">
+<a href="{% url 'password_change_page' %}">Change Password</a><br><br>
+<button type="submit" value="Logout">Logout<br>
+</font>
+</p>
+</form>
+</body>
+</html>
+
