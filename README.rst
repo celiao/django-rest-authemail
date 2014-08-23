@@ -425,6 +425,8 @@ Call this endpoint after logging in and obtaining an authorization token to lear
 
 - Possible responses
 
+.. code-block:: python
+
     200 (OK)
     Content-Type: application/json
     {
