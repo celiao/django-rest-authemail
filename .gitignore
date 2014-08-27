@@ -4,3 +4,4 @@ django_rest_authemail.egg-info
 db.sqlite3
 settings_email.py
 Makefile
+dist

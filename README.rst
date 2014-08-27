@@ -1,31 +1,28 @@
 django-rest-authemail
 =====================
 
-A RESTful API for user signup and authentication using email addresses. 
------------------------------------------------------------------------
-
-*django-rest-authemail* is a Django application that provides a RESTful interface for user signup and authentication.  Email addresses are used for authentication, rather than usernames.  Because the authentication user model is based on Django's `AbstractBaseUser` and is itself abstract, the model can be extended without the need for additional database tables.  Token authentication allows the API to be accessed from a variety of front ends, including Django, AngularJS clients, and iOS/Android mobile apps.
+`django-rest-authemail` is a Django application that provides a RESTful interface for user signup and authentication.  Email addresses are used for authentication, rather than usernames.  Because the authentication user model is based on Django's `AbstractBaseUser` and is itself abstract, the model can be extended without the need for additional database tables.  Token authentication allows the API to be accessed from a variety of front ends, including Django, AngularJS clients, and iOS and Android mobile apps.
 
 
 Features
 --------
 
 - API endpoints for signup, email verification, login, logout, password reset, password reset verification, password change, and user detail.
-- Requires the front end to perform password confirmation for a better user experience.
+- Perform password confirmation on the front end for a better user experience.
 - Extensible abstract user model.
 - Token authentication.
 - User models in the admin interface include inlines for signup and password reset codes.
-- An example project extends the authentication user model and includes simple UI templates.
 - Uses the Django REST Framework.
+- An example project is included and contains example UI templates.
 - Supports and tested under Python 2.7.6
 
 
 Installation
 ------------
 
-*django-rest-authemail* is available on the Python Package Index (PyPI) at https://pypi.python.org/pypi/django-rest-authemail.
+`django-rest-authemail` is available on the Python Package Index (PyPI) at https://pypi.python.org/pypi/django-rest-authemail.
 
-You can install *django-rest-authemail* using one of the following techniques.
+You can install `django-rest-authemail` using one of the following techniques.
 
 - Use pip:
 
@@ -33,19 +30,21 @@ You can install *django-rest-authemail* using one of the following techniques.
 
     pip install django-rest-authemail
 
-- Download the .zip or .tar.gz file from PyPI and install it yourself
+- Download the .tar.gz file from PyPI and install it yourself
 - Download the `source from Github`_ and install it yourself
 
-If you install it yourself, also install the `Django REST Framework`.
+If you install it yourself, also install the `Django`_, `Django REST Framework`_, `South`_, and `requests`_.
 
 .. _source from Github: http://github.com/celiao/django-rest-authemail
+.. _Django: https://www.djangoproject.com/
 .. _Django REST Framework: http://www.django-rest-framework.org
-
+.. _South: http://south.readthedocs.org/en/latest/index.html
+.. _requests: http://www.python-requests.org/en/latest
 
 Usage
 -----
 
-1. In the `settings.py` file of your project, include `authemail` in `INSTALLED_APPS'. Set the authentication scheme for the Django REST Framework to `TokenAuthentication`.
+1. In the `settings.py` file of your project, include `rest_framework`, `rest_framework.authtoken`, and `authemail` in `INSTALLED_APPS`. Set the authentication scheme for the Django REST Framework to `TokenAuthentication`.
 
 .. code-block:: python
 
@@ -69,39 +68,66 @@ Usage
 
     python manage.py startapp accounts
 
-Also include your application in your `INSTALLED_APPS` setting.
-
-3. In the `models.py` file of your application, extend `EmailAbstractUser`, add custom fields, and assign `objects` to `EmailUser Manager()`.  For example,
+3. In the `models.py` file of your application, extend `EmailAbstractUser`, add custom fields, and assign `objects` to `EmailUserManager()`.  For example,
 
 .. code-block:: python
 
+    from django.db import models
+    from authemail.models import EmailUserManager, EmailAbstractUser
+
     class MyUser(EmailAbstractUser):
         # Custom fields
-        date_of_birth = models.DateField(_('Date of birth'), null=True, 
+        date_of_birth = models.DateField('Date of birth', null=True, 
             blank=True)
 
         # Required
         objects = EmailUserManager()
 
-4. In the `admin.py` file of your application, extend `EmailUserAdmin` to add your custom fields.  For example,
+4. In the `settings.py` file of your project, include your application in `INSTALLED_APPS`. Set `AUTH_USER_MODEL` to the class of your user model.  For example,
 
 .. code-block:: python
+
+    AUTH_USER_MODEL = 'accounts.MyUser'
+
+    INSTALLED_APPS = (
+        ...
+        'rest_framework',
+        'rest_framework.authtoken',
+        'authemail',
+        'accounts',
+        ...
+    )
+
+5. In the `admin.py` file of your application, extend `EmailUserAdmin` to add your custom fields.  For example,
+
+.. code-block:: python
+
+    from django.contrib import admin
+    from django.contrib.auth import get_user_model
+    from authemail.admin import EmailUserAdmin
 
     class MyUserAdmin(EmailUserAdmin):
         fieldsets = (
             (None, {'fields': ('email', 'password')}),
-            (_('Personal Info'), {'fields': ('first_name', 'last_name')}),
-            (_('Permissions'), {'fields': ('is_active', 'is_staff', 
+            ('Personal Info', {'fields': ('first_name', 'last_name')}),
+            ('Permissions', {'fields': ('is_active', 'is_staff', 
                                            'is_superuser', 'is_verified', 
                                            'groups', 'user_permissions')}),
-            (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-            (_('Custom info'), {'fields': ('date_of_birth',)}),
+            ('Important dates', {'fields': ('last_login', 'date_joined')}),
+            ('Custom info', {'fields': ('date_of_birth',)}),
         )
 
     admin.site.unregister(get_user_model())
     admin.site.register(get_user_model(), MyUserAdmin)
 
-5. Make API calls from your front end code.  For the endpoints requiring authentication (logout, password change, and user detail), include the auth token key in the HTTP header.  For example,
+6. Create the database tables with `syncdb` and South's `schemamigration` and `migrate`.  For example,
+
+.. code-block:: python
+
+    python manage.py syncdb
+
+
+7. Make API calls from your front end code.  For the endpoints requiring authentication (logout, password change, and user detail), include the auth token key in the HTTP header.  For example,
 
 .. code-block:: python
 
