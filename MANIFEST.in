@@ -1,4 +1,4 @@
 include LICENSE
 include README.rst
 recursive-include authemail/migrations *
-resursive-include authemail/templates/authemail *
+recursive-include authemail/templates/authemail *
