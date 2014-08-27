@@ -9,9 +9,9 @@ django-rest-authemail
 Features
 --------
 
-- API endpoints for signup, email verification, login, logout, password reset, password reset verification, password change, and user detail.
-- Perform password confirmation on the front end for a better user experience.
+- API endpoints for signup, signup email verification, login, logout, password reset, password reset verification, password change, and user detail.
 - Extensible abstract user model.
+- Perform password confirmation on the front end for a better user experience.
 - Token authentication.
 - User models in the admin interface include inlines for signup and password reset codes.
 - Uses the Django REST Framework.
@@ -94,6 +94,7 @@ Usage
 
     INSTALLED_APPS = (
         ...
+        'south',
         'rest_framework',
         'rest_framework.authtoken',
         'authemail',
@@ -200,7 +201,7 @@ In the Django admin, you should see a new user (not verified) and a new signup c
     >>> code = '7f31e7a515df266532df4e00e0cf1967a7de7d17'
     >>> response = account.signup_verify(code=code)
 
-In the Django admin, the new user is now verified and the signup code is absent.The new user can now login and inspect associated login token:
+In the Django admin, the new user is now verified and the signup code is absent.The new user can now login and inspect the associated login token:
 
 .. code-block:: python
 
