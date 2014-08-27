@@ -1,6 +1,8 @@
 django-rest-authemail
 =====================
 
+8/27/14 - DOCUMENTATION UPDATED SIGNIFICANTLY!
+
 `django-rest-authemail` is a Django application that provides a RESTful interface for user signup and authentication.  Email addresses are used for authentication, rather than usernames.  Because the authentication user model is based on Django's `AbstractBaseUser` and is itself abstract, the model can be extended without the need for additional database tables.  Token authentication allows the API to be accessed from a variety of front ends, including Django, AngularJS clients, and iOS and Android mobile apps.
 
 
@@ -22,7 +24,7 @@ Installation
 
 `django-rest-authemail` is available on the Python Package Index (PyPI) at https://pypi.python.org/pypi/django-rest-authemail.
 
-You can install `django-rest-authemail` using one of the following techniques.
+Install `django-rest-authemail` using one of the following techniques.
 
 - Use pip:
 
@@ -44,12 +46,13 @@ If you install it yourself, also install the `Django`_, `Django REST Framework`_
 Usage
 -----
 
-1. In the `settings.py` file of your project, include `rest_framework`, `rest_framework.authtoken`, and `authemail` in `INSTALLED_APPS`. Set the authentication scheme for the Django REST Framework to `TokenAuthentication`.
+1. In the `settings.py` file of your project, include `south`, `rest_framework`, `rest_framework.authtoken`, and `authemail` in `INSTALLED_APPS`. Set the authentication scheme for the Django REST Framework to `TokenAuthentication`.
 
 .. code-block:: python
 
     INSTALLED_APPS = (
         ...
+        'south',
         'rest_framework',
         'rest_framework.authtoken',
         'authemail',
@@ -120,14 +123,142 @@ Usage
     admin.site.unregister(get_user_model())
     admin.site.register(get_user_model(), MyUserAdmin)
 
-6. Create the database tables with `syncdb` and South's `schemamigration` and `migrate`.  For example,
+6. Create the database tables with `syncdb` and South's `migrate`.  Set up a superuser when prompted by `syncdb`.
 
 .. code-block:: python
 
     python manage.py syncdb
+    python manage.py migrate
 
+7. Convert your `accounts` application to South.  You will receive an error message from South, so fake the initial migration as a workaround (see http://south.aeracode.org/ticket/1179).
 
-7. Make API calls from your front end code.  For the endpoints requiring authentication (logout, password change, and user detail), include the auth token key in the HTTP header.  For example,
+.. code-block:: python
+
+    python manage.py convert_to_south accounts
+    python manage.py migrate accounts 0001 --fake
+
+8. Check your setup by starting a Web server on your local machine:
+
+.. code-block:: python
+
+    python manage.py runserver
+
+Direct your browser to:
+
+.. code-block:: python
+
+    127.0.0.1:8000/admin
+
+and log in.  You should see `Users`, `Groups`, `Password reset codes`, `Signup codes`, and `Tokens`.  If you click on `Users`, you should see your superuser account.
+
+9. Add the API urls to your projects `urls.py` file.  For example,
+
+.. code-block:: python
+
+    from accounts import views
+
+    urlpatterns = patterns('',
+        url(r'^admin/', include(admin.site.urls)),
+
+        url(r'^api/accounts/', include('authemail.urls')),
+    )
+
+10. When users signup or reset their password, they will be sent an email with a link and verification code.  Include email settings in your project's `settings.py` file.  See https://docs.djangoproject.com/en/dev/ref/settings/#email-host for more information.  For example,
+
+.. code-block:: python
+
+    # Email settings
+    DEFAULT_EMAIL_FROM = 'your_email_address@gmail.com'
+    DEFAULT_EMAIL_BCC = ''
+
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = 'your_email_address@gmail.com'
+    EMAIL_HOST_PASSWORD = 'xxxx xxxx xxxx xxxx'
+    EMAIL_USE_TLS = True
+    EMAIL_USE_SSL = False
+    SERVER_EMAIL = 'your_email_address@gmail.com'
+
+11. Try out API calls by firing up Python and using authemail wrapper (see below) methods.  For example,
+
+.. code-block:: python
+
+    python
+    >>> from authemail import wrapper
+    >>> account = wrapper.Authemail()
+    >>> first_name = 'Your first name'
+    >>> last_name = 'Your last name'
+    >>> email = 'your_email@gmail.com'
+    >>> password = 'Your password'
+    >>> response = account.signup(first_name=first_name, last_name=last_name,
+    ... email=email, password=password)
+
+In the Django admin, you should see a new user (not verified) and a new signup code.  You should receive an email at `your_email@gmail.com`.  Use the code in the email to verify your email address using the wrapper:
+
+.. code-block:: python
+
+    >>> code = '7f31e7a515df266532df4e00e0cf1967a7de7d17'
+    >>> response = account.signup_verify(code=code)
+
+In the Django admin, the new user is now verified and the signup code is absent.The new user can now login and inspect associated login token:
+
+.. code-block:: python
+
+    >>> response = account.login(email=email, password=password)
+    >>> account.token
+    u'a84d062c1b60a36e6740eb60c6f9da8d1f709322'
+
+You will find the same token for the user in the Django admin.  Find out more information about the user:
+
+.. code-block:: python
+
+    >>> token = 'a84d062c1b60a36e6740eb60c6f9da8d1f709322'
+    >>> response = account.users_me(token=token)
+    >>> response
+    {u'first_name': u'Your first name', u'last_name': u'Your last name', u'email': u'your_email@gmail.com'}
+
+Use the authentication token to logout:
+
+.. code-block:: python
+
+    >>> response = account.logout(token=token)
+    >>> response
+    {u'success': u'User logged out.'}
+
+Play with password reset and change!
+
+12. If you are having trouble getting your code to execute, or are just curious, try out the Django REST Framework Browsable API.  If you type an Authemail endpoint into your browser, the Browsable API should appear (`runserver` should still be executing from Step 8).  For example,
+
+.. code-block:: python
+
+    127.0.0.1/api/accounts/signup
+
+In the `Content:` field of the Browsable API, type:
+
+.. code-block:: python
+
+    {
+        "first_name": "Your first name",
+        "last_name": "Your last name",
+        "email": "your_email@gmail.com",
+        "password": "Your password"
+    }
+
+Then click on `POST`.  You will either receive an error message to help in your debugging, or, if your signup was successful:
+
+.. code-block:: python
+
+    {
+        "first_name": "Your first name",
+        "last_name": "Your last name",
+        "email": "your_email@gmail.com",
+    }
+
+Try out the other endpoints with the Django REST Framework Browsable API.
+
+13. Make API calls with front end code.  To get started, follow the steps in the `README.rst` for the `example_project`.  Extend the concepts to AngularJS, iOS, and Android front ends.
+
+14. When calling endpoints from the front end that require authentication (logout, password change, and user detail), include the auth token key in the HTTP header.  For example,
 
 .. code-block:: python
 
@@ -475,13 +606,13 @@ Call this endpoint after logging in and obtaining an authorization token to lear
 
 Wrapper
 -------
-A wrapper is available to access the API with Python code.  First create an instance of the AuthEmail class, then call methods to access the API.  There is a one-to-one mapping between the endpoints and instance methods.
+A wrapper is available to access the API with Python code.  First create an instance of the Authemail class, then call methods to access the API.  There is a one-to-one mapping between the endpoints and instance methods.
 
 .. code-block:: python
 
     from authemail import wrapper
 
-    account = wrapper.AuthEmail()
+    account = wrapper.Authemail()
     response = account.signup(first_name=first_name, last_name=last_name,
         email=email, password=password)
 
