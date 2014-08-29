@@ -32,7 +32,7 @@ Install ``django-rest-authemail`` using one of the following techniques.
 
     pip install django-rest-authemail
 
-- Download the .tar.gz file from PyPI and install it yourself
+- Download the ``.tar.gz`` file from PyPI and install it yourself
 - Download the `source from Github`_ and install it yourself
 
 If you install it yourself, also install the `Django`_, `Django REST Framework`_, `South`_, and `requests`_.
