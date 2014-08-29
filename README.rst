@@ -3,7 +3,7 @@ django-rest-authemail
 
 8/27/14 - DOCUMENTATION UPDATED SUBSTANTIALLY!
 
-`django-rest-authemail` is a Django application that provides a RESTful interface for user signup and authentication.  Email addresses are used for authentication, rather than usernames.  Because the authentication user model is based on Django's `AbstractBaseUser` and is itself abstract, the model can be extended without the need for additional database tables.  Token authentication allows the API to be accessed from a variety of front ends, including Django, AngularJS clients, and iOS and Android mobile apps.
+``django-rest-authemail`` is a Django application that provides a RESTful API interface for user signup and authentication.  Email addresses are used for authentication, rather than usernames.  Because the authentication user model is based on Django's ``AbstractBaseUser`` and is itself abstract, the model can be extended without the need for additional database tables.  Token authentication allows the API to be accessed from a variety of front ends, including Django, AngularJS clients, and iOS and Android mobile apps.
 
 
 Features
@@ -16,17 +16,17 @@ Features
 - User models in the admin interface include inlines for signup and password reset codes.
 - Uses the Django REST Framework.
 - An example project is included and contains example UI templates.
-- Supports and tested under Python 2.7.6
+- Supports and tested under Python 2.7.6.
 
 
 Installation
 ------------
 
-`django-rest-authemail` is available on the Python Package Index (PyPI) at https://pypi.python.org/pypi/django-rest-authemail.
+``django-rest-authemail`` is available on the Python Package Index (PyPI) at https://pypi.python.org/pypi/django-rest-authemail.
 
-Install `django-rest-authemail` using one of the following techniques.
+Install ``django-rest-authemail`` using one of the following techniques.
 
-- Use pip:
+- Use ``pip``:
 
 ::
 
@@ -46,7 +46,7 @@ If you install it yourself, also install the `Django`_, `Django REST Framework`_
 Usage
 -----
 
-1. In the `settings.py` file of your project, include `south`, `rest_framework`, `rest_framework.authtoken`, and `authemail` in `INSTALLED_APPS`. Set the authentication scheme for the Django REST Framework to `TokenAuthentication`.
+In the ``settings.py`` file of your project, include ``south``, ``rest_framework``, ``rest_framework.authtoken``, and ``authemail`` in ``INSTALLED_APPS``. Set the authentication scheme for the Django REST Framework to ``TokenAuthentication``.
 
 .. code-block:: python
 
@@ -65,13 +65,13 @@ Usage
         )
     }
 
-2. Create a Django application for your user data.  For example,
+Create a Django application for your user data.  For example,
 
 .. code-block:: python
 
     python manage.py startapp accounts
 
-3. In the `models.py` file of your application, extend `EmailAbstractUser`, add custom fields, and assign `objects` to `EmailUserManager()`.  For example,
+In the ``models.py`` file of your application, extend ``EmailAbstractUser``, add custom fields, and assign ``objects`` to ``EmailUserManager()``.  For example,
 
 .. code-block:: python
 
@@ -86,7 +86,7 @@ Usage
         # Required
         objects = EmailUserManager()
 
-4. In the `settings.py` file of your project, include your application in `INSTALLED_APPS`. Set `AUTH_USER_MODEL` to the class of your user model.  For example,
+In the ``settings.py`` file of your project, include your application in ``INSTALLED_APPS``. Set ``AUTH_USER_MODEL`` to the class of your user model.  For example,
 
 .. code-block:: python
 
@@ -102,7 +102,7 @@ Usage
         ...
     )
 
-5. In the `admin.py` file of your application, extend `EmailUserAdmin` to add your custom fields.  For example,
+In the ``admin.py`` file of your application, extend ``EmailUserAdmin`` to add your custom fields.  For example,
 
 .. code-block:: python
 
@@ -124,21 +124,21 @@ Usage
     admin.site.unregister(get_user_model())
     admin.site.register(get_user_model(), MyUserAdmin)
 
-6. Create the database tables with `syncdb` and South's `migrate`.  Set up a superuser when prompted by `syncdb`.
+Create the database tables with ``syncdb`` and South's ``migrate``.  Set up a superuser when prompted by ``syncdb``.
 
 .. code-block:: python
 
     python manage.py syncdb
     python manage.py migrate
 
-7. Convert your `accounts` application to South.  You will receive an error message from South, so fake the initial migration as a workaround (see http://south.aeracode.org/ticket/1179).
+Convert your ``accounts`` application to South.  You will receive an error message from South, so fake the initial migration as a workaround (see http://south.aeracode.org/ticket/1179).
 
 .. code-block:: python
 
     python manage.py convert_to_south accounts
     python manage.py migrate accounts 0001 --fake
 
-8. Check your setup by starting a Web server on your local machine:
+Check your setup by starting a Web server on your local machine:
 
 .. code-block:: python
 
@@ -150,9 +150,9 @@ Direct your browser to:
 
     127.0.0.1:8000/admin
 
-and log in.  You should see `Users`, `Groups`, `Password reset codes`, `Signup codes`, and `Tokens`.  If you click on `Users`, you should see your superuser account.
+and log in.  You should see ``Users``, ``Groups``, ``Password reset codes``, ``Signup codes``, and ``Tokens``.  If you click on ``Users``, you should see your superuser account.
 
-9. Add the API urls to your projects `urls.py` file.  For example,
+Add the Authemail API endpoints to your project's ``urls.py`` file.  For example,
 
 .. code-block:: python
 
@@ -164,7 +164,7 @@ and log in.  You should see `Users`, `Groups`, `Password reset codes`, `Signup c
         url(r'^api/accounts/', include('authemail.urls')),
     )
 
-10. When users signup or reset their password, they will be sent an email with a link and verification code.  Include email settings in your project's `settings.py` file.  See https://docs.djangoproject.com/en/dev/ref/settings/#email-host for more information.  For example,
+When users signup or reset their password, they will be sent an email with a link and verification code.  Include email settings in your project's ``settings.py`` file.  See https://docs.djangoproject.com/en/dev/ref/settings/#email-host for more information.  For example,
 
 .. code-block:: python
 
@@ -180,7 +180,7 @@ and log in.  You should see `Users`, `Groups`, `Password reset codes`, `Signup c
     EMAIL_USE_SSL = False
     SERVER_EMAIL = 'your_email_address@gmail.com'
 
-11. Try out API calls by firing up Python and using authemail wrapper (see below) methods.  For example,
+Try out Authemail API calls by firing up Python and using the authemail wrapper methods.  For example,
 
 .. code-block:: python
 
@@ -194,14 +194,14 @@ and log in.  You should see `Users`, `Groups`, `Password reset codes`, `Signup c
     >>> response = account.signup(first_name=first_name, last_name=last_name,
     ... email=email, password=password)
 
-In the Django admin, you should see a new user (not verified) and a new signup code.  You should receive an email at `your_email@gmail.com`.  Use the code in the email to verify your email address using the wrapper:
+In the Django admin, you should see a new user (not verified) and a new signup code.  You should receive an email at ``your_email@gmail.com``.  Use the code in the email to verify your email address using the wrapper (normally, the link in the email would point to the front end, which would issue the signup verify request to the API):
 
 .. code-block:: python
 
     >>> code = '7f31e7a515df266532df4e00e0cf1967a7de7d17'
     >>> response = account.signup_verify(code=code)
 
-In the Django admin, the new user is now verified and the signup code is absent.The new user can now login and inspect the associated login token:
+In the Django admin, the new user is now verified and the signup code is absent.The new user can now login and you can inspect the associated login token:
 
 .. code-block:: python
 
@@ -209,7 +209,7 @@ In the Django admin, the new user is now verified and the signup code is absent.
     >>> account.token
     u'a84d062c1b60a36e6740eb60c6f9da8d1f709322'
 
-You will find the same token for the user in the Django admin.  Find out more information about the user:
+You will find the same token for the user in the Token table in the Django admin.  Find out more information about the user:
 
 .. code-block:: python
 
@@ -228,13 +228,13 @@ Use the authentication token to logout:
 
 Play with password reset and change!
 
-12. If you are having trouble getting your code to execute, or are just curious, try out the Django REST Framework Browsable API.  If you type an Authemail endpoint into your browser, the Browsable API should appear (`runserver` should still be executing from Step 8).  For example,
+If you are having trouble getting your code to execute, or are just curious, try out the Django REST Framework Browsable API.  If you type an Authemail endpoint into your browser, the Browsable API should appear (``runserver`` should still be executing from Step 8).  For example,
 
 .. code-block:: python
 
     127.0.0.1/api/accounts/signup
 
-In the `Content:` field of the Browsable API, type:
+In the ``Content:`` field of the Browsable API, type:
 
 .. code-block:: python
 
@@ -245,7 +245,7 @@ In the `Content:` field of the Browsable API, type:
         "password": "Your password"
     }
 
-Then click on `POST`.  You will either receive an error message to help in your debugging, or, if your signup was successful:
+Then click on ``POST``.  You will either receive an error message to help in your debugging, or, if your signup was successful:
 
 .. code-block:: python
 
@@ -257,29 +257,29 @@ Then click on `POST`.  You will either receive an error message to help in your 
 
 Try out the other endpoints with the Django REST Framework Browsable API.
 
-13. Make API calls with front end code.  To get started, follow the steps in the `README.rst` for the `example_project`.  Extend the concepts to AngularJS, iOS, and Android front ends.
+Make Authemail API calls with front end code.  To get started, follow the steps in the ``README.rst`` for the ``example_project``.  Enhance the Django code in the ``example_project`` or extend the concepts to AngularJS, iOS, and Android front ends.
 
-14. When calling endpoints from the front end that require authentication (logout, password change, and user detail), include the auth token key in the HTTP header.  For example,
+When calling endpoints from the front end that require authentication (``logout``, ``password/change``, and ``users/me``), include the auth token key in the HTTP header.  For example,
 
 .. code-block:: python
 
     Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
 
-Here's an example using `curl`,
+Here's an example using ``curl``,
 
 .. code-block:: python
 
     curl -X GET 'http://127.0.0.1:8000/accounts/logout' \
-         -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b' \
+         -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'
 
 
-API Endpoints
--------------
-For the endpoints that follow, the base path is shown as `/api/accounts`.  This path is for example purposes.  It can be customized in your project's `urls.py` file.
+Authemail API Endpoints
+-----------------------
+For the endpoints that follow, the base path is shown as ``/api/accounts``.  This path is for example purposes.  It can be customized in your project's ``urls.py`` file.
 
 **POST /api/accounts/signup**
 
-Call this endpoint to sign up a new user and send a verification email.  Sample email templates are found in `authemail/templates/authemail`.  To override the email templates, copy and modify the sample templates, or create your own, in `your_app/templates/authemail`.
+Call this endpoint to sign up a new user and send a verification email.  Sample email templates are found in ``authemail/templates/authemail``.  To override the email templates, copy and modify the sample templates, or create your own, in ``your_app/templates/authemail``.
 
 Your front end should handle password confirmation, and if desired, require the visitor to input their first and last names.
 
@@ -430,7 +430,7 @@ Call this endpoint to log out an authenticated user.
 
 **POST /api/accounts/password/reset**
 
-Call this endpoint to send an email to a user so they can reset their password.   Similar to signup verification, the password reset email templates are found in `authemail/templates/authemail`.  Override the default templates by placing your similarly-named templates in `your_app/templates/authemail`.
+Call this endpoint to send an email to a user so they can reset their password.   Similar to signup verification, the password reset email templates are found in ``authemail/templates/authemail``.  Override the default templates by placing your similarly-named templates in ``your_app/templates/authemail``.
 
 - Payload
 
@@ -607,7 +607,7 @@ Call this endpoint after logging in and obtaining an authorization token to lear
 
 Wrapper
 -------
-A wrapper is available to access the API with Python code.  First create an instance of the Authemail class, then call methods to access the API.  There is a one-to-one mapping between the endpoints and instance methods.
+A wrapper is available to access the Authemail API with Python code.  First create an instance of the Authemail class, then call methods to access the API.  There is a one-to-one mapping between the endpoints and instance methods.  For example,
 
 .. code-block:: python
 
@@ -622,12 +622,12 @@ A wrapper is available to access the API with Python code.  First create an inst
     else:
         # Handle good response
 
-See `example_project/views.py` for more sample usage.
+See ``example_project/views.py`` for more sample usage.
 
 
 Inspiration and Ideas
 ---------------------
-Inspiration and ideas for `django-rest-authemail` were derived from:
+Inspiration and ideas for ``django-rest-authemail`` were derived from:
 
 - `django-rest-framework`_
 - `django-email-as-username`_
