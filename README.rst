@@ -228,7 +228,7 @@ Use the authentication token to logout:
 
 Play with password reset and change!
 
-If you are having trouble getting your code to execute, or are just curious, try out the Django REST Framework Browsable API.  If you type an Authemail endpoint into your browser, the Browsable API should appear (``runserver`` should still be executing from Step 8).  For example,
+If you are having trouble getting your code to execute, or are just curious, try out the Django REST Framework Browsable API.  If you type an Authemail endpoint into your browser, the Browsable API should appear (``runserver`` should still be executing).  For example,
 
 .. code-block:: python
 
