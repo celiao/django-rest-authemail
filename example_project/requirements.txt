@@ -1,0 +1,6 @@
+Django>=1.6.5
+South>=0.8.4
+django-rest-authemail>=0.0.5
+djangorestframework>=2.3.14
+requests>=2.3.0
+wsgiref>=0.1.2
