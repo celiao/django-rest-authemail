@@ -1,8 +1,6 @@
 django-rest-authemail
 =====================
 
-8/27/14 - DOCUMENTATION UPDATED SUBSTANTIALLY!
-
 ``django-rest-authemail`` is a Django/Python application that provides a RESTful API interface for user signup and authentication.  Email addresses are used for authentication, rather than usernames.  Because the authentication user model is based on Django's ``AbstractBaseUser`` and is itself abstract, the model can be extended without the need for additional database tables.  Token authentication allows the API to be accessed from a variety of front ends, including Django, AngularJS clients, and iOS and Android mobile apps.
 
 
