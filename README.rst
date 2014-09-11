@@ -142,15 +142,15 @@ Check your setup by starting a Web server on your local machine:
 
     python manage.py runserver
 
-Direct your browser to:
+Direct your browser to the ``Django`` ``/admin`` and log in.
 
 .. code-block:: python
 
     127.0.0.1:8000/admin
 
-and log in.  You should see ``Users``, ``Groups``, ``Password reset codes``, ``Signup codes``, and ``Tokens``.  If you click on ``Users``, you should see your superuser account.
+You should see ``Users``, ``Groups``, ``Password reset codes``, ``Signup codes``, and ``Tokens``.  If you click on ``Users``, you should see your superuser account.
 
-Add the Authemail API endpoints to your project's ``urls.py`` file.  For example,
+Add the ``authemail`` API endpoints to your project's ``urls.py`` file.  For example,
 
 .. code-block:: python
 
@@ -178,7 +178,7 @@ When users signup or reset their password, they will be sent an email with a lin
     EMAIL_USE_SSL = False
     SERVER_EMAIL = 'your_email_address@gmail.com'
 
-Try out Authemail API calls by firing up Python and using the authemail wrapper methods.  For example,
+Try out ``authemail`` API calls by firing up ``python`` and using the ``authemail`` wrapper methods (``runserver`` should still be executing).  For example,
 
 .. code-block:: python
 
@@ -192,14 +192,14 @@ Try out Authemail API calls by firing up Python and using the authemail wrapper 
     >>> response = account.signup(first_name=first_name, last_name=last_name,
     ... email=email, password=password)
 
-In the Django admin, you should see a new user (not verified) and a new signup code.  You should receive an email at ``your_email@gmail.com``.  Use the code in the email to verify your email address using the wrapper (normally, the link in the email would point to the front end, which would issue the signup verify request to the API):
+In the ``Django`` ``/admin``, you should see a new user (not verified) and a new signup code.  You should receive an email at ``your_email@gmail.com``.  Use the code in the email to verify your email address using the wrapper (normally, the link in the email would point to the front end, which would issue the signup verify request to the API):
 
 .. code-block:: python
 
     >>> code = '7f31e7a515df266532df4e00e0cf1967a7de7d17'
     >>> response = account.signup_verify(code=code)
 
-In the Django admin, the new user is now verified and the signup code is absent.The new user can now login and you can inspect the associated login token:
+In the ``Django`` ``/admin``, the new user is now verified and the signup code is absent.  The new user can now login and you can inspect the associated login token:
 
 .. code-block:: python
 
@@ -207,7 +207,7 @@ In the Django admin, the new user is now verified and the signup code is absent.
     >>> account.token
     u'a84d062c1b60a36e6740eb60c6f9da8d1f709322'
 
-You will find the same token for the user in the Token table in the Django admin.  Find out more information about the user:
+You will find the same token for the user in the ``Token`` table in the ``Django`` ``/admin``.  Find out more information about the user (insert your token):
 
 .. code-block:: python
 
@@ -226,7 +226,7 @@ Use the authentication token to logout:
 
 Play with password reset and change!
 
-If you are having trouble getting your code to execute, or are just curious, try out the Django REST Framework Browsable API.  If you type an Authemail endpoint into your browser, the Browsable API should appear (``runserver`` should still be executing).  For example,
+If you are having trouble getting your code to execute, or are just curious, try out the Django REST Framework Browsable API.  If you type an ``authemail`` API endpoint into your browser, the Browsable API should appear (``runserver`` should still be executing).  For example,
 
 .. code-block:: python
 
@@ -253,11 +253,11 @@ Then click on ``POST``.  You will either receive an error message to help in you
         "email": "your_email@gmail.com",
     }
 
-Try out the other endpoints with the Django REST Framework Browsable API.
+Try out the other ``authemail`` API endpoints with the Django REST Framework Browsable API.
 
-Make Authemail API calls with front end code.  To get started, follow the steps in the ``README.rst`` for the ``example_project``.  Enhance the Django code in the ``example_project`` or extend the concepts to AngularJS, iOS, and Android front ends.
+Make ``authemail`` API calls with front end code.  To get started, follow the steps in the ``README.rst`` for the ``example_project``.  Enhance the Django code in the ``example_project`` or extend the concepts to AngularJS, iOS, and Android front ends.
 
-When calling endpoints from the front end that require authentication (``logout``, ``password/change``, and ``users/me``), include the auth token key in the HTTP header.  For example,
+When calling endpoints from the front end that require authentication (``logout``, ``password/change``, and ``users/me``), include the authorization token key in the HTTP header.  For example,
 
 .. code-block:: python
 

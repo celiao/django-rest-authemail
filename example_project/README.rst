@@ -91,7 +91,7 @@ Once you have entered your signup information and submitted the form, open up a 
 
 Go to the inbox for your email address and click on the link in the verification email.  The ``code`` in the email should match that in the database.
 
-Go back to the ``Django`` ``/admin`` and check that the ``Signup code`` has been removed and that your email address appears in the ``Verified users`` list.
+Go back to the ``Django`` ``/admin`` and check that the ``Signup code`` has been removed and that your email address appears on the ``Verified users`` list.
 
 Now, go back to the ``Email Verified`` page and click on the ``Login`` link, or go to the ``/login`` page directly.
 
