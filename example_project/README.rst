@@ -55,7 +55,7 @@ Create the database tables with ``syncdb`` and South's ``migrate``.  Create a su
 Usage
 -----
 
-Test ``django-rest-authemail``.  There shouldn't be any failures, but if there are, try to address them.  Go onto the next step for more clues, if you get stuck.
+Test ``django-rest-authemail``.  There shouldn't be any failures, but if there are, try to address them (most likely in your email settings).  Go onto the next step for more clues, if you get stuck.
 
 .. code-block:: python
 
@@ -67,38 +67,44 @@ Check your setup by starting a Web server on your local machine.
 
     python manage.py runserver
 
-Direct your browser to the ``Django`` ``admin`` interface, and log in.  You should see ``Users``, ``Groups``, ``Password reset codes``, ``Signup codes``, and ``Tokens``. If you click on ``Users``, you should see your superuser account.
+Direct your browser to the ``Django`` ``/admin`` interface, and log in.  You should see ``Users``, ``Verified users``, ``Groups``, ``Password reset codes``, ``Signup codes``, and ``Tokens``. If you click on ``Users``, you should see your superuser account.
 
 .. code-block:: python
 
     http://127.0.0.1:8000/admin
 
-Begin the playing with ``django-rest-authemail`` by going to the landing page.
+Begin the playing with ``django-rest-authemail`` by going to the ``/landing`` page.
 
 .. code-block:: python
 
     http://127.0.0.1:8000/landing
 
-Click on the signup link, or go to the signup page directly.
+Click on the ``Signup`` link, or go to the ``/signup`` page directly.
 
 .. code-block:: python
 
     http://127.0.0.1:8000/signup
 
-Enter your signup details.  A verification email will be sent to the email address you enter, so include an email address to which you have access.
+Enter your signup details.  A verification email will be sent to the email address you enter, so include an email address to which you have access (but not the superuser email you entered earlier).
 
-Once you have entered your signup information and submitted the form, go to the ``Django`` ``admin`` and click on ``Signup codes`` to see the newly issued code. A new ``User`` will have been created with your email address, but will not yet appear under ``Verified users``.
+Once you have entered your signup information and submitted the form, open up a new tab in your browser and go to the ``Django`` ``/admin``.  Click on ``Signup codes`` to see the newly issued code. A new ``User`` will have been created with your email address, but will not yet appear under ``Verified users``.
 
-Go to the inbox for your email address and click on the link in the verification email.  The code in the email should match that in the database.
+Go to the inbox for your email address and click on the link in the verification email.  The ``code`` in the email should match that in the database.
 
-Go back to the ``Django`` ``admin`` and check that the signup code has been removed and that your email address appears in the ``Verified users`` list.
+Go back to the ``Django`` ``/admin`` and check that the ``Signup code`` has been removed and that your email address appears in the ``Verified users`` list.
 
-Now, go back to the ``Email Verified`` page and click on the ``Login`` link, or go to the login page directly.
+Now, go back to the ``Email Verified`` page and click on the ``Login`` link, or go to the ``/login`` page directly.
 
 .. code-block:: python
 
     http://127.0.0.1:8000/login
 
-Login with your credentials.  Keep clicking on buttons and links.
+Login with your credentials.  Go back to the ``Django`` ``/admin`` and click on ``Tokens`` to see your newly issued authorization token.
 
+Go back to your ``Home`` page and click on the ``Logout`` button.  You will be returned to the ``/landing`` page.
 
+Click on the ``Login`` link and check out the ``Forgot Password`` functionality.
+
+Login and check out the ``Change Password`` functionality.  Logout and log in again to confirm that your password has been changed.
+
+Enter incorrect email addresses and passwords to exercise the error messages.
