@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='django-rest-authemail',
-    version='0.1.0',
+    version='0.1.1',
     author='Celia Oakley',
     author_email='celia.oakley@alumni.stanford.edu',
     description='A RESTful API for user signup and authentication using email addresses',
@@ -15,14 +15,14 @@ setup(
         'django-email-as-username'
     ],
     url='http://github.com/celiao/django-rest-authemail',
-    download_url='https://github.com/celiao/django-rest-authemail/tarball/0.1.0',
+    download_url='https://github.com/celiao/django-rest-authemail/tarball/0.1.1',
     license='GPLv3 licence, see LICENSE file',
     packages=['authemail'],
     include_package_data=True,
     long_description=open('README.rst').read(),
     install_requires=[
-        'Django>=1.6.5',
-        'djangorestframework>=2.3.14',
+        'Django==1.7',
+        'djangorestframework==2.4.3',
         'requests>=2.3.0',
     ],
     classifiers=[
