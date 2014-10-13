@@ -111,5 +111,5 @@ from example_project.settings_email import *
 SOUTH_MIGRATION_MODULES = {
     'accounts': 'accounts.south_migrations',
     'authemail': 'authemail.south_migrations',
-    'authtoken': 'authtoken.south_migrations',
+    'rest_framework.authtoken': 'authtoken.south_migrations',
 }
