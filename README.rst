@@ -7,8 +7,8 @@ django-rest-authemail
 Features
 --------
 
-- UPDATED for Django 1.7
-- Supports and tested with Django 1.6.5, 1.6.7, and 1.7
+- UPDATED for Django 1.7.
+- Supports and tested with Django 1.6.5, 1.6.7, and 1.7.
 - API endpoints for signup, signup email verification, login, logout, password reset, password reset verification, password change, and user detail.
 - Extensible abstract user model.
 - Perform password confirmation and other client-side validation on the front end for a better user experience.
@@ -46,7 +46,7 @@ If you install it yourself, also install the `Django`_, `Django REST Framework`_
 Usage
 -----
 
-In the ``settings.py`` file of your project, include ``south``, ``rest_framework``, ``rest_framework.authtoken``, and ``authemail`` in ``INSTALLED_APPS``. Set the authentication scheme for the Django REST Framework to ``TokenAuthentication``.
+In the ``settings.py`` file of your project, include ``rest_framework`` and ``rest_framework.authtoken`` in ``INSTALLED_APPS``. Set the authentication scheme for the Django REST Framework to ``TokenAuthentication``.
 
 .. code-block:: python
 
@@ -55,7 +55,6 @@ In the ``settings.py`` file of your project, include ``south``, ``rest_framework
         #'south',        # Remove comment if you're using South for migrations.
         'rest_framework',
         'rest_framework.authtoken',
-        'authemail',
         ...
     )
 
@@ -86,7 +85,7 @@ In the ``models.py`` file of your application, extend ``EmailAbstractUser``, add
         # Required
         objects = EmailUserManager()
 
-In the ``settings.py`` file of your project, include your application in ``INSTALLED_APPS``. Set ``AUTH_USER_MODEL`` to the class of your user model.  For example,
+In the ``settings.py`` file of your project, include ``authemail`` and your application in ``INSTALLED_APPS``. Set ``AUTH_USER_MODEL`` to the class of your user model.  For example,
 
 .. code-block:: python
 
@@ -126,10 +125,11 @@ In the ``admin.py`` file of your application, extend ``EmailUserAdmin`` to add y
 
 Use one of the following steps to create the database tables:
 
-1. For Django >= 1.7, create the database tables with Django's ``migrate`` and create a superuser with ``createsuperuser``.
+1. For Django >= 1.7, create the database tables with Django's ``makemigrations``, ``migrate`` and create a superuser with ``createsuperuser``.
 
 .. code-block:: python
 
+    python manage.py makemigrations
     python manage.py migrate
     python manage.py createsuperuser
 
