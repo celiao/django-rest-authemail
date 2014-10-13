@@ -8,6 +8,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
+import django
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -30,19 +32,21 @@ ALLOWED_HOSTS = []
 # Application definition
 AUTH_USER_MODEL = 'accounts.MyUser'
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'south',
     'rest_framework',
     'rest_framework.authtoken',
     'authemail',
     'accounts',
-)
+]
+
+if django.VERSION[:2] < (1,7):
+    INSTALLED_APPS.append('south')
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -101,3 +105,10 @@ STATIC_URL = '/static/'
 
 # Email settings
 from example_project.settings_email import *
+
+
+# South settings (when used)
+SOUTH_MIGRATION_MODULES = {
+    'accounts': 'accounts.south_migrations',
+    'authemail': 'authemail.south_migrations',
+}

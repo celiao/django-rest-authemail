@@ -24,7 +24,7 @@ class SignupCodeInline(admin.TabularInline):
             'fields': ('code', 'ipaddr', 'created_at')
         }),
     )
-    readonly_fields = SignupCode._meta.get_all_field_names()
+    readonly_fields = ('code', 'ipaddr', 'created_at')
 
     def has_add_permission(self, request):
         return False
@@ -46,7 +46,7 @@ class PasswordResetCodeInline(admin.TabularInline):
             'fields': ('code', 'created_at')
         }),
     )
-    readonly_fields = PasswordResetCode._meta.get_all_field_names()
+    readonly_fields = ('code', 'created_at')
 
     def has_add_permission(self, request):
         return False

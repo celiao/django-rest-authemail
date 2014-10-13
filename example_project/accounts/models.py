@@ -14,8 +14,8 @@ class MyUser(EmailAbstractUser):
 
 
 class VerifiedUserManager(EmailUserManager):
-    def get_query_set(self):
-        return super(VerifiedUserManager, self).get_query_set().filter(
+    def get_queryset(self):
+        return super(VerifiedUserManager, self).get_queryset().filter(
             is_verified=True)
 
 

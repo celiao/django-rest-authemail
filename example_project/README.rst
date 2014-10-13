@@ -85,7 +85,7 @@ Click on the ``Signup`` link, or go to the ``/signup`` page directly.
 
     http://127.0.0.1:8000/signup
 
-Enter your signup details.  A verification email will be sent to the email address you enter, so include an email address to which you have access (but not the superuser email you entered earlier).
+Enter your signup details.  A verification email will be sent to the email address you enter, so include an email address to which you have access (but not the superuser email you entered earlier).  If you don't see the email in your inbox, check your spam folder.
 
 Once you have entered your signup information and submitted the form, open up a new tab in your browser and go to the ``Django`` ``/admin``.  Click on ``Signup codes`` to see the newly issued code. A new ``User`` will have been created with your email address, but will not yet appear under ``Verified users``.
 

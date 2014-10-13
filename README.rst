@@ -50,7 +50,7 @@ In the ``settings.py`` file of your project, include ``south``, ``rest_framework
 
     INSTALLED_APPS = (
         ...
-        'south',
+        'south',        # Only if you're relying on South for migrations.
         'rest_framework',
         'rest_framework.authtoken',
         'authemail',
@@ -92,7 +92,7 @@ In the ``settings.py`` file of your project, include your application in ``INSTA
 
     INSTALLED_APPS = (
         ...
-        'south',
+        'south',        # Only if you are relying on South for migrations.
         'rest_framework',
         'rest_framework.authtoken',
         'authemail',
