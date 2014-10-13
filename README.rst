@@ -7,6 +7,8 @@ django-rest-authemail
 Features
 --------
 
+- UPDATED for Django 1.7
+- Supports and tested with Django 1.6.5, 1.6.7, and 1.7
 - API endpoints for signup, signup email verification, login, logout, password reset, password reset verification, password change, and user detail.
 - Extensible abstract user model.
 - Perform password confirmation and other client-side validation on the front end for a better user experience.
@@ -33,7 +35,7 @@ Install ``django-rest-authemail`` using one of the following techniques.
 - Download the ``.tar.gz`` file from PyPI and install it yourself
 - Download the `source from Github`_ and install it yourself
 
-If you install it yourself, also install the `Django`_, `Django REST Framework`_, `South`_, and `requests`_.
+If you install it yourself, also install the `Django`_, `Django REST Framework`_, and `requests`_.  Install `South`_ if you are using Django < 1.7.
 
 .. _source from Github: http://github.com/celiao/django-rest-authemail
 .. _Django: https://www.djangoproject.com/
@@ -50,7 +52,7 @@ In the ``settings.py`` file of your project, include ``south``, ``rest_framework
 
     INSTALLED_APPS = (
         ...
-        'south',        # Only if you're relying on South for migrations.
+        #'south',        # Remove comment if you're using South for migrations.
         'rest_framework',
         'rest_framework.authtoken',
         'authemail',
@@ -92,7 +94,7 @@ In the ``settings.py`` file of your project, include your application in ``INSTA
 
     INSTALLED_APPS = (
         ...
-        'south',        # Only if you are relying on South for migrations.
+        #'south',        # Remove comment if you're using South for migrations.
         'rest_framework',
         'rest_framework.authtoken',
         'authemail',
@@ -122,19 +124,31 @@ In the ``admin.py`` file of your application, extend ``EmailUserAdmin`` to add y
     admin.site.unregister(get_user_model())
     admin.site.register(get_user_model(), MyUserAdmin)
 
-Create the database tables with ``syncdb`` and South's ``migrate``.  Set up a superuser when prompted by ``syncdb``.
+Use one of the following steps to create the database tables:
+
+1. For Django >= 1.7, create the database tables with Django's ``migrate`` and create a superuser with ``createsuperuser``.
+
+.. code-block:: python
+
+    python manage.py migrate
+    python manage.py createsuperuser
+
+2. For Django < 1.7, create the database tables with ``syncdb`` and South's ``migrate``.  Set up a superuser when prompted by ``syncdb``.  Convert your ``accounts`` application to South.  You will receive an error message from South, so fake the initial migration as a workaround (see http://south.aeracode.org/ticket/1179).
 
 .. code-block:: python
 
     python manage.py syncdb
     python manage.py migrate
+    python manage.py convert_to_south accounts
+    python manage.py migrate accounts 0001 --fake
 
-Convert your ``accounts`` application to South.  You will receive an error message from South, so fake the initial migration as a workaround (see http://south.aeracode.org/ticket/1179).
+3. To migrate from Django 1.6.X to 1.7, upgrade ``django-rest-authemail``, uninstall ``south``, and bring the migrations up-to-date with ``migrate``.
 
 .. code-block:: python
 
-    python manage.py convert_to_south accounts
-    python manage.py migrate accounts 0001 --fake
+    pip install --upgrade django-rest-authemail
+    pip uninstall south
+    python manage.py migrate
 
 Check your setup by starting a Web server on your local machine:
 

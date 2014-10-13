@@ -30,7 +30,7 @@ Clone the ``django-rest-authemail`` repo and change into the ``example_project``
     git clone https://github.com/celiao/django-rest-authemail.git
     cd django-rest-authemail/example_project
 
-Install the required packages into your virtual environment.
+Install the required packages into your virtual environment.  Edit ``requirements.txt`` beforehand, if you are using a version of Django other than 1.7.
 
 .. code-block:: python
 
@@ -43,7 +43,16 @@ Copy the ``setting_email.py.TEMPLATE`` file to ``settings_email.py`` and add you
     cp example_project/settings_email.py.TEMPLATE example_project/settings_email.py
     vim example_project/settings_email.py
 
-Create the database tables with ``syncdb`` and South's ``migrate``.  Create a superuser if not prompted during ``syncdb``.
+Use one of the following steps to create the database tables:
+
+1. For Django >= 1.7, create the database tables with Django's ``migrate`` and create a superuser with ``createsuperuser``.
+
+.. code-block:: python
+
+    python manage.py migrate
+    python manage.py createsuperuser
+
+2. For Django < 1.7, create the database tables with ``syncdb`` and South's ``migrate``.  Create a superuser if not prompted during ``syncdb``.
 
 .. code-block:: python
 
@@ -51,6 +60,13 @@ Create the database tables with ``syncdb`` and South's ``migrate``.  Create a su
     python manage.py migrate
     python manage.py createsuperuser
 
+3. To migrate from Django 1.6.X to 1.7, upgrade ``django-rest-authemail``, uninstall ``south``, and bring the migrations up-to-date with ``migrate``.
+
+.. code-block:: python
+
+    pip install --upgrade django-rest-authemail
+    pip uninstall south
+    python manage.py migrate
 
 Usage
 -----
