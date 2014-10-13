@@ -9,7 +9,7 @@ Features
 
 - API endpoints for signup, signup email verification, login, logout, password reset, password reset verification, password change, and user detail.
 - Extensible abstract user model.
-- Perform password confirmation on the front end for a better user experience.
+- Perform password confirmation and other client-side validation on the front end for a better user experience.
 - Token authentication.
 - User models in the admin interface include inlines for signup and password reset codes.
 - Uses the Django REST Framework.
