@@ -1,5 +1,5 @@
 __title__ = 'django-rest-authemail'
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 __author__ = 'Celia Oakley'
 __copyright__ = 'Copyright (c) 1014 Celia Oakley'
 __license__ = 'GPLv3'
