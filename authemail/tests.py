@@ -127,6 +127,29 @@ class SignupTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['success'], 'User verified.')
 
+
+    def test_signup_without_email_verification(self):
+        
+        with self.settings(AUTH_EMAIL_VERIFICATION=False):
+
+            # Send Signup request
+            url = reverse('authemail-signup')
+            payload = {
+                'email': self.em_visitor,
+                'password': self.pw_visitor,
+            }
+            response = self.client.post(url, payload)
+
+            # Confirm that new user got created, and was automatically marked as verified
+            # (else changing AUTH_EMAIL_VERIFICATION setting later would have horrible consequences)
+            user = get_user_model().objects.latest('id')
+            self.assertEqual(user.email, self.em_visitor)
+            self.assertEqual(user.is_verified, True)
+
+            # no verification email sent
+            self.assertEqual(len(mail.outbox), 0)
+
+
     def test_signup_twice_then_email_verify(self):
         # Signup mulitple times with same credentials
         num_signups = 2

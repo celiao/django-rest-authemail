@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 AUTH_USER_MODEL = 'accounts.MyUser'
+AUTH_EMAIL_VERIFICATION = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',

@@ -38,6 +38,8 @@ Install the required packages into your virtual environment.  Edit ``requirement
 
 Copy the ``setting_email.py.TEMPLATE`` file to ``settings_email.py`` and add your email settings.
 
+The setting AUTH_EMAIL_VERIFICATION (default: True) can be set to False, if you don't want email verification to be performed.
+
 .. code-block:: python
 
     cp example_project/settings_email.py.TEMPLATE example_project/settings_email.py

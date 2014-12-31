@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -27,10 +28,12 @@ class Signup(APIView):
             first_name = serializer.data['first_name']
             last_name = serializer.data['last_name']
 
+            must_validate_email = getattr(settings, "AUTH_EMAIL_VERIFICATION", True)
+
             try:
                 user = get_user_model().objects.get(email=email)
                 if user.is_verified:
-                    content = {'detail': 
+                    content = {'detail':
                         'User with this Email address already exists.'}
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
@@ -40,23 +43,25 @@ class Signup(APIView):
                     signup_code.delete()
                 except SignupCode.DoesNotExist:
                     pass
-                    
+
             except get_user_model().DoesNotExist:
                 user = get_user_model().objects.create_user(email=email)
-            
+
             # Set user fields provided
             user.set_password(password)
             user.first_name = first_name
             user.last_name = last_name
+            if not must_validate_email:
+                user.is_verified = True
             user.save()
 
-            # Create and associate signup code
-            ipaddr = self.request.META.get('REMOTE_ADDR', '0.0.0.0')
-            signup_code = SignupCode.objects.create_signup_code(user, ipaddr)
+            if must_validate_email:
+                # Create and associate signup code
+                ipaddr = self.request.META.get('REMOTE_ADDR', '0.0.0.0')
+                signup_code = SignupCode.objects.create_signup_code(user, ipaddr)
+                signup_code.send_signup_email()
 
-            signup_code.send_signup_email()
-
-            content = {'email': email, 'first_name': first_name, 
+            content = {'email': email, 'first_name': first_name,
                 'last_name': last_name}
             return Response(content, status=status.HTTP_201_CREATED)
 
@@ -98,19 +103,19 @@ class Login(APIView):
             if user and user.is_verified:
                 if user.is_active:
                     token, created = Token.objects.get_or_create(user=user)
-                    return Response({'token': token.key}, 
+                    return Response({'token': token.key},
                         status=status.HTTP_200_OK)
                 else:
                     content = {'detail': 'User account not active.'}
-                    return Response(content, 
+                    return Response(content,
                         status=status.HTTP_401_UNAUTHORIZED)
             else:
-                content = {'detail': 
+                content = {'detail':
                     'Unable to login with provided credentials.'}
                 return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
         else:
-            return Response(serializer.errors, 
+            return Response(serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -155,7 +160,7 @@ class PasswordReset(APIView):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         else:
-            return Response(serializer.errors, 
+            return Response(serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -196,7 +201,7 @@ class PasswordResetVerified(APIView):
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         else:
-            return Response(serializer.errors, 
+            return Response(serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -218,7 +223,7 @@ class PasswordChange(APIView):
             return Response(content, status=status.HTTP_200_OK)
 
         else:
-            return Response(serializer.errors, 
+            return Response(serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST)
 
 
