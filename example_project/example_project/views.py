@@ -9,8 +9,8 @@ from django.views.generic.edit import FormView
 
 from authemail import wrapper
 
-from forms import SignupForm, LoginForm, PasswordResetForm
-from forms import PasswordResetVerifiedForm, PasswordChangeForm
+from .forms import SignupForm, LoginForm, PasswordResetForm
+from .forms import PasswordResetVerifiedForm, PasswordChangeForm
 
 
 class LandingView(TemplateView):

@@ -3,7 +3,7 @@ from django.contrib import admin
 
 admin.autodiscover()
 
-import views
+from . import views
 
 
 urlpatterns = patterns('',
