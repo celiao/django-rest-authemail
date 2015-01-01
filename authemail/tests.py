@@ -2,12 +2,14 @@ import re
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
+from django.test.utils import override_settings
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
 from authemail.models import SignupCode, PasswordResetCode
 from authemail import wrapper
+
 
 
 def _get_code_from_email(mail):
@@ -18,6 +20,7 @@ def _get_code_from_email(mail):
     return None
 
 
+@override_settings(AUTH_EMAIL_VERIFICATION=True)
 class SignupTests(APITestCase):
     def setUp(self):
         # A visitor to the site
