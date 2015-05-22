@@ -1,0 +1,146 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-05-22 12:11+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: .\admin.py:58
+msgid "Personal Info"
+msgstr ""
+
+#: .\admin.py:59
+msgid "Permissions"
+msgstr ""
+
+#: .\admin.py:61
+msgid "Important dates"
+msgstr ""
+
+#: .\forms.py:14
+msgid "Password"
+msgstr ""
+
+#: .\forms.py:16
+msgid "Password confirmation"
+msgstr ""
+
+#: .\forms.py:18
+msgid "Enter the same password as above, for verification."
+msgstr ""
+
+#: .\forms.py:30
+msgid "A user with that email already exists."
+msgstr ""
+
+#: .\forms.py:37
+msgid "The two password fields did not match."
+msgstr ""
+
+#: .\models.py:52
+msgid "first name"
+msgstr ""
+
+#: .\models.py:53
+msgid "last name"
+msgstr ""
+
+#: .\models.py:54
+msgid "email address"
+msgstr ""
+
+#: .\models.py:55
+msgid "staff status"
+msgstr ""
+
+#: .\models.py:56
+msgid "Designates whether the user can log into this admin site."
+msgstr ""
+
+#: .\models.py:58
+msgid "active"
+msgstr ""
+
+#: .\models.py:59
+msgid ""
+"Designates whether this user should be treated as active. Unselect this "
+"instead of deleting accounts."
+msgstr ""
+
+#: .\models.py:61
+msgid "date joined"
+msgstr ""
+
+#: .\models.py:63
+msgid "verified"
+msgstr ""
+
+#: .\models.py:64
+msgid ""
+"Designates whether this user has completed the email verification process to "
+"allow login."
+msgstr ""
+
+#: .\models.py:71
+msgid "user"
+msgstr ""
+
+#: .\models.py:72
+msgid "users"
+msgstr ""
+
+#: .\models.py:125
+msgid "code"
+msgstr ""
+
+#: .\models.py:159
+msgid "ip address"
+msgstr ""
+
+#: .\views.py:39
+msgid "User with this Email address already exists."
+msgstr ""
+
+#: .\views.py:86 .\views.py:177
+msgid "User verified."
+msgstr ""
+
+#: .\views.py:89 .\views.py:180 .\views.py:202
+msgid "Unable to verify user."
+msgstr ""
+
+#: .\views.py:111
+msgid "User account not active."
+msgstr ""
+
+#: .\views.py:116
+msgid "Unable to login with provided credentials."
+msgstr ""
+
+#: .\views.py:134
+msgid "User logged out."
+msgstr ""
+
+#: .\views.py:161
+msgid "Password reset not allowed."
+msgstr ""
+
+#: .\views.py:199
+msgid "Password reset."
+msgstr ""
+
+#: .\views.py:224
+msgid "Password changed."
+msgstr ""
