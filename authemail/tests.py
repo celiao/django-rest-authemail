@@ -44,13 +44,13 @@ class SignupTests(APITestCase):
             {'payload': {'email': '',
                          'password': self.pw_visitor},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('email', 'This field is required.') 
+             'error': ('email', 'This field may not be blank.')
             },
             # Password required
             {'payload': {'email': self.em_visitor,
                          'password': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('password', 'This field is required.') 
+             'error': ('password', 'This field may not be blank.')
             },
             # Invalid email
             {'payload': {'email': 'XXX',
@@ -208,13 +208,13 @@ class LoginTests(APITestCase):
             {'payload': {'email': '',
                          'password': self.pw_user},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('email', 'This field is required.') 
+             'error': ('email', 'This field may not be blank.')
             },
             # Password required
             {'payload': {'email': self.em_user,
                          'password': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('password', 'This field is required.') 
+             'error': ('password', 'This field may not be blank.')
             },
             # Invalid email
             {'payload': {'email': 'XXX',
@@ -271,7 +271,7 @@ class LoginTests(APITestCase):
         response = self.client.get(url)
         
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 'Invalid token')
+        self.assertEqual(response.data['detail'], 'Invalid token.')
 
     def test_login_logout(self):
         # Log in as the user
@@ -352,7 +352,7 @@ class PasswordTests(APITestCase):
             # Email required
             {'payload': {'email': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('email', 'This field is required.') 
+             'error': ('email', 'This field may not be blank.')
             },
             # Invalid email
             {'payload': {'email': 'XXX'},
@@ -396,7 +396,7 @@ class PasswordTests(APITestCase):
             # Password required
             {'payload': {'password': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('password', 'This field is required.') 
+             'error': ('password', 'This field may not be blank.')
             },
         ]
 
@@ -482,7 +482,7 @@ class PasswordTests(APITestCase):
             # Password required
             {'payload': {'password': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('password', 'This field is required.') 
+             'error': ('password', 'This field may not be blank.')
             },
         ]
 
@@ -512,7 +512,7 @@ class PasswordTests(APITestCase):
         response = self.client.post(url)
         
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 'Invalid token')
+        self.assertEqual(response.data['detail'], 'Invalid token.')
 
     def test_password_change(self):
         # Change password
@@ -577,7 +577,7 @@ class UserDetailTests(APITestCase):
         response = self.client.post(url)
         
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 'Invalid token')
+        self.assertEqual(response.data['detail'], 'Invalid token.')
 
     def test_me(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
