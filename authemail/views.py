@@ -1,6 +1,8 @@
 from datetime import datetime
 from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
+from django.utils.translation import gettext as _
+
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -34,7 +36,7 @@ class Signup(APIView):
                 user = get_user_model().objects.get(email=email)
                 if user.is_verified:
                     content = {'detail':
-                        'User with this Email address already exists.'}
+                        _('User with this Email address already exists.')}
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
                 try:
@@ -81,10 +83,10 @@ class SignupVerify(APIView):
                 signup_code.delete()
             except SignupCode.DoesNotExist:
                 pass
-            content = {'success': 'User verified.'}
+            content = {'success': _('User verified.')}
             return Response(content, status=status.HTTP_200_OK)
         else:
-            content = {'detail': 'Unable to verify user.'}
+            content = {'detail': _('Unable to verify user.')}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -106,12 +108,12 @@ class Login(APIView):
                     return Response({'token': token.key},
                         status=status.HTTP_200_OK)
                 else:
-                    content = {'detail': 'User account not active.'}
+                    content = {'detail': _('User account not active.')}
                     return Response(content,
                         status=status.HTTP_401_UNAUTHORIZED)
             else:
                 content = {'detail':
-                    'Unable to login with provided credentials.'}
+                    _('Unable to login with provided credentials.')}
                 return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
         else:
@@ -129,7 +131,7 @@ class Logout(APIView):
         tokens = Token.objects.filter(user=request.user)
         for token in tokens:
             token.delete()
-        content = {'success': 'User logged out.'}
+        content = {'success': _('User logged out.')}
         return Response(content, status=status.HTTP_200_OK)
 
 
@@ -156,7 +158,7 @@ class PasswordReset(APIView):
                 pass
 
             # Since this is AllowAny, don't give away error.
-            content = {'detail': 'Password reset not allowed.'}
+            content = {'detail': _('Password reset not allowed.')}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         else:
@@ -172,10 +174,10 @@ class PasswordResetVerify(APIView):
 
         try:
             password_reset_code = PasswordResetCode.objects.get(code=code)
-            content = {'success': 'User verified.'}
+            content = {'success': _('User verified.')}
             return Response(content, status=status.HTTP_200_OK)
         except PasswordResetCode.DoesNotExist:
-            content = {'detail': 'Unable to verify user.'}
+            content = {'detail': _('Unable to verify user.')}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -194,10 +196,10 @@ class PasswordResetVerified(APIView):
                 password_reset_code = PasswordResetCode.objects.get(code=code)
                 password_reset_code.user.set_password(password)
                 password_reset_code.user.save()
-                content = {'success': 'Password reset.'}
+                content = {'success': _('Password reset.')}
                 return Response(content, status=status.HTTP_200_OK)
             except PasswordResetCode.DoesNotExist:
-                content = {'detail': 'Unable to verify user.'}
+                content = {'detail': _('Unable to verify user.')}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         else:
@@ -219,7 +221,7 @@ class PasswordChange(APIView):
             user.set_password(password)
             user.save()
 
-            content = {'success': 'Password changed.'}
+            content = {'success': _('Password changed.')}
             return Response(content, status=status.HTTP_200_OK)
 
         else:
