@@ -9,7 +9,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from authemail.models import SignupCode, PasswordResetCode
+from authemail.models import SignupCode, PasswordResetCode, send_email
 from authemail.serializers import SignupSerializer, LoginSerializer
 from authemail.serializers import PasswordResetSerializer
 from authemail.serializers import PasswordResetVerifiedSerializer
@@ -55,6 +55,9 @@ class Signup(APIView):
             user.last_name = last_name
             if not must_validate_email:
                 user.is_verified = True
+                send_email('welcome_email', {
+                    'email': user.email,
+                })
             user.save()
 
             if must_validate_email:
