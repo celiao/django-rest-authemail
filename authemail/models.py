@@ -120,14 +120,14 @@ class PasswordResetCodeManager(models.Manager):
         return password_reset_code
 
 
-def send_email(template_prefix, template_ctxt):
+def send_multi_format_email(template_prefix, template_ctxt, target_email):
         subject_file = 'authemail/%s_subject.txt' % template_prefix
         txt_file = 'authemail/%s.txt' % template_prefix
         html_file = 'authemail/%s.html' % template_prefix
 
         subject = render_to_string(subject_file).strip()
         from_email = settings.DEFAULT_EMAIL_FROM
-        to = template_ctxt['email']
+        to = target_email
         bcc_email = settings.DEFAULT_EMAIL_BCC
         text_content = render_to_string(txt_file, template_ctxt)
         html_content = render_to_string(html_file, template_ctxt)
@@ -152,7 +152,7 @@ class AbstractBaseCode(models.Model):
             'last_name': self.user.last_name,
             'code': self.code
         }
-        send_email(prefix, ctxt)
+        send_multi_format_email(prefix, ctxt, target_email=self.user.email)
 
     def __str__(self):
         return self.code
