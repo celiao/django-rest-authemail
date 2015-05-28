@@ -150,8 +150,9 @@ class SignupTests(APITestCase):
             self.assertEqual(user.is_verified, True)
 
             # no verification email sent
-            self.assertEqual(len(mail.outbox), 0)
-
+            self.assertEqual(len(mail.outbox), 1)
+            self.assertEqual(mail.outbox[0].subject, 
+                'Welcome')
 
     def test_signup_twice_then_email_verify(self):
         # Signup mulitple times with same credentials
