@@ -19,7 +19,7 @@ class Signup(APIView):
     serializer_class = SignupSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.DATA)
+        serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
             email = serializer.data['email']
@@ -88,7 +88,7 @@ class Login(APIView):
     serializer_class = LoginSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.DATA)
+        serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
             email = serializer.data['email']
@@ -133,7 +133,7 @@ class PasswordReset(APIView):
     serializer_class = PasswordResetSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.DATA)
+        serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
             email = serializer.data['email']
@@ -179,7 +179,7 @@ class PasswordResetVerified(APIView):
     serializer_class = PasswordResetVerifiedSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.DATA)
+        serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
             code = serializer.data['code']
@@ -205,7 +205,7 @@ class PasswordChange(APIView):
     serializer_class = PasswordChangeSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.DATA)
+        serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
             user = request.user
