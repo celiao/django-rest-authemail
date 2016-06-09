@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.forms.util import ErrorList
+from django.forms.utils import ErrorList
 from django.forms.forms import NON_FIELD_ERRORS
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
