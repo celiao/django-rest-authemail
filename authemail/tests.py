@@ -11,7 +11,6 @@ from authemail.models import SignupCode, PasswordResetCode
 from authemail import wrapper
 
 
-
 def _get_code_from_email(mail):
     match = re.search('\?code=([0-9a-f]+)$', mail.outbox[-1].body, re.MULTILINE)
     if match:
@@ -115,7 +114,7 @@ class SignupTests(APITestCase):
         # Confirm that one email sent and that Subject correct
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 
-            'Verify your email address (override version)')
+            'Verify your email address')
 
         code = _get_code_from_email(mail)
 
@@ -171,7 +170,7 @@ class SignupTests(APITestCase):
             self.assertEqual(SignupCode.objects.count(), 1)
             self.assertEqual(len(mail.outbox), i+1)
             self.assertEqual(mail.outbox[i].subject, 
-                'Verify your email address (override version)')
+                'Verify your email address')
 
         code = _get_code_from_email(mail)
 
@@ -427,8 +426,7 @@ class PasswordTests(APITestCase):
 
         # Confirm that one email sent and that Subject correct
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, 
-            'Reset Your Password (override version)')
+        self.assertEqual(mail.outbox[0].subject, 'Reset Your Password')
 
         code = _get_code_from_email(mail)
 

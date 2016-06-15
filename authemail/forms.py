@@ -52,4 +52,5 @@ class EmailUserChangeForm(UserChangeForm):
 
     def __init__(self, *args, **kwargs):
         super(EmailUserChangeForm, self).__init__(*args, **kwargs)
-        del self.fields['username']
+        if 'username' in self.fields:
+            del self.fields['username']
