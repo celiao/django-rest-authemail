@@ -7,7 +7,7 @@ django-rest-authemail
 Features
 --------
 
-- UPDATED for Django 1.7.
+- UPDATED for Django 1.9.
 - Supports and tested with Django 1.6.5, 1.6.7, and 1.7.
 - API endpoints for signup, signup email verification, login, logout, password reset, password reset verification, password change, and user detail.
 - Extensible abstract user model.
@@ -16,7 +16,7 @@ Features
 - User models in the admin interface include inlines for signup and password reset codes.
 - Uses the Django REST Framework.
 - An example project is included and contains example UI templates.
-- Supports and tested under Python 2.7.6.
+- Supports and tested under Python 2.7.6
 
 
 Installation
@@ -63,6 +63,8 @@ In the ``settings.py`` file of your project, include ``rest_framework`` and ``re
             'rest_framework.authentication.TokenAuthentication',
         )
     }
+
+Optionally, you may add a ``AUTH_EMAIL_VERIFICATION`` setting to specify whether to enable email verification for new users on account registration/signup. Setting this to ``False`` will automatically verify newly created users.
 
 Create a Django application for your user data.  For example,
 
