@@ -1,1 +1,1 @@
-Verify your email address (override version)
+Verify your email address
