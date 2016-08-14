@@ -4,7 +4,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from authemail import views
 
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^signup/$', views.Signup.as_view(), name='authemail-signup'),
     url(r'^signup/verify/$', views.SignupVerify.as_view(),
         name='authemail-signup-verify'),
@@ -22,7 +22,7 @@ urlpatterns = patterns('',
         name='authemail-password-change'),
 
     url(r'^users/me/$', views.UserMe.as_view(), name='authemail-me'),
-)
+]
 
 
 urlpatterns = format_suffix_patterns(urlpatterns)

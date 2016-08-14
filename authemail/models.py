@@ -9,6 +9,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from django.core.mail import send_mail
 
 
 def _generate_code():
@@ -120,6 +121,23 @@ class PasswordResetCodeManager(models.Manager):
         return password_reset_code
 
 
+def send_multi_format_email(template_prefix, template_ctxt, target_email):
+        subject_file = 'authemail/%s_subject.txt' % template_prefix
+        txt_file = 'authemail/%s.txt' % template_prefix
+        html_file = 'authemail/%s.html' % template_prefix
+
+        subject = render_to_string(subject_file).strip()
+        from_email = settings.DEFAULT_EMAIL_FROM
+        to = target_email
+        bcc_email = settings.DEFAULT_EMAIL_BCC
+        text_content = render_to_string(txt_file, template_ctxt)
+        html_content = render_to_string(html_file, template_ctxt)
+        msg = EmailMultiAlternatives(subject, text_content, from_email, [to],
+                  bcc=[bcc_email])
+        msg.attach_alternative(html_content, 'text/html')
+        msg.send()
+
+
 class AbstractBaseCode(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     code = models.CharField(_('code'), max_length=40, primary_key=True)
@@ -129,27 +147,13 @@ class AbstractBaseCode(models.Model):
         abstract = True
 
     def send_email(self, prefix):
-        subject_file = 'authemail/%s_subject.txt' % prefix
-        txt_file = 'authemail/%s.txt' % prefix
-        html_file = 'authemail/%s.html' % prefix
-
-        subject = render_to_string(subject_file).strip()
-        from_email = settings.DEFAULT_EMAIL_FROM
-        to = self.user.email
-        bcc_email = settings.DEFAULT_EMAIL_BCC
-        # Make some context available
         ctxt = {
             'email': self.user.email,
             'first_name': self.user.first_name,
             'last_name': self.user.last_name,
             'code': self.code
         }
-        text_content = render_to_string(txt_file, ctxt)
-        html_content = render_to_string(html_file, ctxt)
-        msg = EmailMultiAlternatives(subject, text_content, from_email, [to],
-                  bcc=[bcc_email])
-        msg.attach_alternative(html_content, 'text/html')
-        msg.send()
+        send_multi_format_email(prefix, ctxt, target_email=self.user.email)
 
     def __str__(self):
         return self.code

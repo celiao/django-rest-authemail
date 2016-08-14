@@ -1,12 +1,15 @@
 from datetime import datetime
+from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
+from django.utils.translation import gettext as _
+
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from authemail.models import SignupCode, PasswordResetCode
+from authemail.models import SignupCode, PasswordResetCode, send_multi_format_email
 from authemail.serializers import SignupSerializer, LoginSerializer
 from authemail.serializers import PasswordResetSerializer
 from authemail.serializers import PasswordResetVerifiedSerializer
@@ -19,7 +22,7 @@ class Signup(APIView):
     serializer_class = SignupSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.DATA)
+        serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
             email = serializer.data['email']
@@ -27,11 +30,13 @@ class Signup(APIView):
             first_name = serializer.data['first_name']
             last_name = serializer.data['last_name']
 
+            must_validate_email = getattr(settings, "AUTH_EMAIL_VERIFICATION", True)
+
             try:
                 user = get_user_model().objects.get(email=email)
                 if user.is_verified:
-                    content = {'detail': 
-                        'User with this Email address already exists.'}
+                    content = {'detail':
+                        _('User with this Email address already exists.')}
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
                 try:
@@ -40,23 +45,28 @@ class Signup(APIView):
                     signup_code.delete()
                 except SignupCode.DoesNotExist:
                     pass
-                    
+
             except get_user_model().DoesNotExist:
                 user = get_user_model().objects.create_user(email=email)
-            
+
             # Set user fields provided
             user.set_password(password)
             user.first_name = first_name
             user.last_name = last_name
+            if not must_validate_email:
+                user.is_verified = True
+                send_multi_format_email('welcome_email', 
+                                        {'email': user.email,},
+                                        target_email=user.email)
             user.save()
 
-            # Create and associate signup code
-            ipaddr = self.request.META.get('REMOTE_ADDR', '0.0.0.0')
-            signup_code = SignupCode.objects.create_signup_code(user, ipaddr)
+            if must_validate_email:
+                # Create and associate signup code
+                ipaddr = self.request.META.get('REMOTE_ADDR', '0.0.0.0')
+                signup_code = SignupCode.objects.create_signup_code(user, ipaddr)
+                signup_code.send_signup_email()
 
-            signup_code.send_signup_email()
-
-            content = {'email': email, 'first_name': first_name, 
+            content = {'email': email, 'first_name': first_name,
                 'last_name': last_name}
             return Response(content, status=status.HTTP_201_CREATED)
 
@@ -76,10 +86,10 @@ class SignupVerify(APIView):
                 signup_code.delete()
             except SignupCode.DoesNotExist:
                 pass
-            content = {'success': 'User verified.'}
+            content = {'success': _('User verified.')}
             return Response(content, status=status.HTTP_200_OK)
         else:
-            content = {'detail': 'Unable to verify user.'}
+            content = {'detail': _('Unable to verify user.')}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -88,7 +98,7 @@ class Login(APIView):
     serializer_class = LoginSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.DATA)
+        serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
             email = serializer.data['email']
@@ -98,19 +108,19 @@ class Login(APIView):
             if user and user.is_verified:
                 if user.is_active:
                     token, created = Token.objects.get_or_create(user=user)
-                    return Response({'token': token.key}, 
+                    return Response({'token': token.key},
                         status=status.HTTP_200_OK)
                 else:
-                    content = {'detail': 'User account not active.'}
-                    return Response(content, 
+                    content = {'detail': _('User account not active.')}
+                    return Response(content,
                         status=status.HTTP_401_UNAUTHORIZED)
             else:
-                content = {'detail': 
-                    'Unable to login with provided credentials.'}
+                content = {'detail':
+                    _('Unable to login with provided credentials.')}
                 return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
         else:
-            return Response(serializer.errors, 
+            return Response(serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -124,7 +134,7 @@ class Logout(APIView):
         tokens = Token.objects.filter(user=request.user)
         for token in tokens:
             token.delete()
-        content = {'success': 'User logged out.'}
+        content = {'success': _('User logged out.')}
         return Response(content, status=status.HTTP_200_OK)
 
 
@@ -133,7 +143,7 @@ class PasswordReset(APIView):
     serializer_class = PasswordResetSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.DATA)
+        serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
             email = serializer.data['email']
@@ -151,11 +161,11 @@ class PasswordReset(APIView):
                 pass
 
             # Since this is AllowAny, don't give away error.
-            content = {'detail': 'Password reset not allowed.'}
+            content = {'detail': _('Password reset not allowed.')}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         else:
-            return Response(serializer.errors, 
+            return Response(serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -167,10 +177,10 @@ class PasswordResetVerify(APIView):
 
         try:
             password_reset_code = PasswordResetCode.objects.get(code=code)
-            content = {'success': 'User verified.'}
+            content = {'success': _('User verified.')}
             return Response(content, status=status.HTTP_200_OK)
         except PasswordResetCode.DoesNotExist:
-            content = {'detail': 'Unable to verify user.'}
+            content = {'detail': _('Unable to verify user.')}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -179,7 +189,7 @@ class PasswordResetVerified(APIView):
     serializer_class = PasswordResetVerifiedSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.DATA)
+        serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
             code = serializer.data['code']
@@ -189,14 +199,14 @@ class PasswordResetVerified(APIView):
                 password_reset_code = PasswordResetCode.objects.get(code=code)
                 password_reset_code.user.set_password(password)
                 password_reset_code.user.save()
-                content = {'success': 'Password reset.'}
+                content = {'success': _('Password reset.')}
                 return Response(content, status=status.HTTP_200_OK)
             except PasswordResetCode.DoesNotExist:
-                content = {'detail': 'Unable to verify user.'}
+                content = {'detail': _('Unable to verify user.')}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         else:
-            return Response(serializer.errors, 
+            return Response(serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -205,7 +215,7 @@ class PasswordChange(APIView):
     serializer_class = PasswordChangeSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.DATA)
+        serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
             user = request.user
@@ -214,11 +224,11 @@ class PasswordChange(APIView):
             user.set_password(password)
             user.save()
 
-            content = {'success': 'Password changed.'}
+            content = {'success': _('Password changed.')}
             return Response(content, status=status.HTTP_200_OK)
 
         else:
-            return Response(serializer.errors, 
+            return Response(serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST)
 
 

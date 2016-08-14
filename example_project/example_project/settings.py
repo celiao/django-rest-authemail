@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 AUTH_USER_MODEL = 'accounts.MyUser'
+AUTH_EMAIL_VERIFICATION = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -52,6 +53,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

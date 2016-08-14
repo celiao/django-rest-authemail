@@ -2,6 +2,7 @@ import re
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
+from django.test.utils import override_settings
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
@@ -18,6 +19,7 @@ def _get_code_from_email(mail):
     return None
 
 
+@override_settings(AUTH_EMAIL_VERIFICATION=True)
 class SignupTests(APITestCase):
     def setUp(self):
         # A visitor to the site
@@ -41,13 +43,13 @@ class SignupTests(APITestCase):
             {'payload': {'email': '',
                          'password': self.pw_visitor},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('email', 'This field is required.') 
+             'error': ('email', 'This field may not be blank.')
             },
             # Password required
             {'payload': {'email': self.em_visitor,
                          'password': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('password', 'This field is required.') 
+             'error': ('password', 'This field may not be blank.')
             },
             # Invalid email
             {'payload': {'email': 'XXX',
@@ -112,7 +114,7 @@ class SignupTests(APITestCase):
         # Confirm that one email sent and that Subject correct
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 
-            'Verify your email address (override version)')
+            'Verify your email address')
 
         code = _get_code_from_email(mail)
 
@@ -126,6 +128,30 @@ class SignupTests(APITestCase):
         # Confirm email verified successfully
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['success'], 'User verified.')
+
+
+    def test_signup_without_email_verification(self):
+        
+        with self.settings(AUTH_EMAIL_VERIFICATION=False):
+
+            # Send Signup request
+            url = reverse('authemail-signup')
+            payload = {
+                'email': self.em_visitor,
+                'password': self.pw_visitor,
+            }
+            response = self.client.post(url, payload)
+
+            # Confirm that new user got created, and was automatically marked as verified
+            # (else changing AUTH_EMAIL_VERIFICATION setting later would have horrible consequences)
+            user = get_user_model().objects.latest('id')
+            self.assertEqual(user.email, self.em_visitor)
+            self.assertEqual(user.is_verified, True)
+
+            # no verification email sent
+            self.assertEqual(len(mail.outbox), 1)
+            self.assertEqual(mail.outbox[0].subject, 
+                'Welcome')
 
     def test_signup_twice_then_email_verify(self):
         # Signup mulitple times with same credentials
@@ -144,7 +170,7 @@ class SignupTests(APITestCase):
             self.assertEqual(SignupCode.objects.count(), 1)
             self.assertEqual(len(mail.outbox), i+1)
             self.assertEqual(mail.outbox[i].subject, 
-                'Verify your email address (override version)')
+                'Verify your email address')
 
         code = _get_code_from_email(mail)
 
@@ -182,13 +208,13 @@ class LoginTests(APITestCase):
             {'payload': {'email': '',
                          'password': self.pw_user},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('email', 'This field is required.') 
+             'error': ('email', 'This field may not be blank.')
             },
             # Password required
             {'payload': {'email': self.em_user,
                          'password': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('password', 'This field is required.') 
+             'error': ('password', 'This field may not be blank.')
             },
             # Invalid email
             {'payload': {'email': 'XXX',
@@ -245,7 +271,7 @@ class LoginTests(APITestCase):
         response = self.client.get(url)
         
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 'Invalid token')
+        self.assertEqual(response.data['detail'], 'Invalid token.')
 
     def test_login_logout(self):
         # Log in as the user
@@ -326,7 +352,7 @@ class PasswordTests(APITestCase):
             # Email required
             {'payload': {'email': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('email', 'This field is required.') 
+             'error': ('email', 'This field may not be blank.')
             },
             # Invalid email
             {'payload': {'email': 'XXX'},
@@ -370,7 +396,7 @@ class PasswordTests(APITestCase):
             # Password required
             {'payload': {'password': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('password', 'This field is required.') 
+             'error': ('password', 'This field may not be blank.')
             },
         ]
 
@@ -400,8 +426,7 @@ class PasswordTests(APITestCase):
 
         # Confirm that one email sent and that Subject correct
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, 
-            'Reset Your Password (override version)')
+        self.assertEqual(mail.outbox[0].subject, 'Reset Your Password')
 
         code = _get_code_from_email(mail)
 
@@ -456,7 +481,7 @@ class PasswordTests(APITestCase):
             # Password required
             {'payload': {'password': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('password', 'This field is required.') 
+             'error': ('password', 'This field may not be blank.')
             },
         ]
 
@@ -486,7 +511,7 @@ class PasswordTests(APITestCase):
         response = self.client.post(url)
         
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 'Invalid token')
+        self.assertEqual(response.data['detail'], 'Invalid token.')
 
     def test_password_change(self):
         # Change password
@@ -551,7 +576,7 @@ class UserDetailTests(APITestCase):
         response = self.client.post(url)
         
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 'Invalid token')
+        self.assertEqual(response.data['detail'], 'Invalid token.')
 
     def test_me(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
