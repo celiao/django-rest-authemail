@@ -22,15 +22,16 @@ setup(
     long_description=open('README.rst').read(),
     install_requires=[
         'Django>=1.7',
-        'djangorestframework>=2.4.3',
+        'djangorestframework>=3.3.3',
         'requests>=2.3.0',
     ],
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Framework :: Django',
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.3',
         'Topic :: Software Development',
         'Topic :: Utilities',
     ],
