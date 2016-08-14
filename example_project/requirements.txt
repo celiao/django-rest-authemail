@@ -1,6 +1,6 @@
 Django==1.9
 #South==0.8.4
-django-rest-authemail>=1.0.0
+django-rest-authemail=1.2.0
 djangorestframework==3.3.3
 requests>=2.3.0
 wsgiref>=0.1.2
