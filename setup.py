@@ -21,7 +21,7 @@ setup(
     include_package_data=True,
     long_description=open('README.rst').read(),
     install_requires=[
-        'Django==1.9',
+        'Django==1.11.23',
         'djangorestframework==3.3.3',
         'requests>=2.3.0',
     ],
