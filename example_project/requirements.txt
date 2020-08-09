@@ -3,4 +3,4 @@ Django==1.9
 django-rest-authemail==1.4.0
 djangorestframework==3.3.3
 requests>=2.3.0
-wsgiref>=0.1.2
+#wsgiref>=0.1.2
