@@ -1,5 +1,12 @@
-import os
+# -*- coding: utf-8 -*-
+
+# See http://pythonhosted.org/an_example_pypi_project/setuptools.html
+# See https://packaging.python.org/tutorials/packaging-projects/#uploading-your-project-to-pypi
+
 from setuptools import setup
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 setup(
     name='django-rest-authemail',
@@ -16,10 +23,9 @@ setup(
     ],
     url='http://github.com/celiao/django-rest-authemail',
     download_url='https://github.com/celiao/django-rest-authemail/tarball/1.4.0',
-    license='GPLv3 licence, see LICENSE file',
     packages=['authemail'],
-    include_package_data=True,
-    long_description=open('README.rst').read(),
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     install_requires=[
         'Django==1.9',
         'djangorestframework==3.3.3',
