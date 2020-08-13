@@ -1,7 +1,7 @@
 django-rest-authemail
 =====================
 
-`django-rest-authemail` is a Django/Python application that provides a RESTful API interface for user signup and authentication.  Email addresses are used for authentication, rather than usernames.  Because the authentication user model is based on Django's `AbstractBaseUser` and is itself abstract, the model can be extended without the need for additional database tables.  Token authentication allows the API to be accessed from a variety of front ends, including Django, AngularJS clients, and iOS and Android mobile apps.
+`django-rest-authemail` is a Django/Python application that provides a RESTful API interface for user signup and authentication.  Email addresses are used for authentication, rather than usernames.  Because the authentication user model is based on Django's `AbstractBaseUser` and is itself abstract, the model can be extended without the need for additional database tables.  Token authentication allows the API to be accessed from a variety of front ends, including Django, React and AngularJS clients, and iOS and Android mobile apps.
 
 
 Features
@@ -16,7 +16,7 @@ Features
 - User models in the admin interface include inlines for signup and password reset codes.
 - Uses the Django REST Framework.
 - An example project is included and contains example UI templates.
-- Supports and tested under Python 2.7.6
+- Supports and tested under Python 3.7.
 
 
 Installation
@@ -58,7 +58,7 @@ In the `settings.py` file of your project, include `rest_framework` and `rest_fr
     }
 ```
 
-Optionally, you may add a `AUTH_EMAIL_VERIFICATION` setting to specify whether to enable email verification for new users on account registration/signup. Setting this to `False` will automatically verify newly created users.
+Optionally, you may add an `AUTH_EMAIL_VERIFICATION` setting to specify whether to enable email verification for new users on account registration/signup. Setting this to `False` will automatically verify newly created users.
 
 Create a Django application for your user data.  For example,
 
@@ -74,8 +74,7 @@ In the `models.py` file of your application, extend `EmailAbstractUser`, add cus
 
     class MyUser(EmailAbstractUser):
         # Custom fields
-        date_of_birth = models.DateField('Date of birth', null=True, 
-            blank=True)
+        date_of_birth = models.DateField('Date of birth', null=True, blank=True)
 
         # Required
         objects = EmailUserManager()
@@ -121,7 +120,7 @@ In the `admin.py` file of your application, extend `EmailUserAdmin` to add your 
 
 Use one of the following steps to create the database tables:
 
-1. For Django >= 1.7, create the database tables with Django's `makemigrations`, `migrate` and create a superuser with `createsuperuser`.
+1. For Django >= 1.7, create the database tables with Django's `makemigrations`, `migrate`, and create a superuser with `createsuperuser`.
 
 ```python
     python manage.py makemigrations
@@ -266,7 +265,7 @@ Then click on `POST`.  You will either receive an error message to help in your 
 
 Try out the other `authemail` API endpoints with the Django REST Framework Browsable API.
 
-Make `authemail` API calls with front end code.  To get started, follow the steps in the `README.md` for the `example_project`.  Enhance the Django code in the `example_project` or extend the concepts to AngularJS, iOS, and Android front ends.
+Make `authemail` API calls with front end code.  To get started, follow the steps in the `README.md` for the `example_project`.  Enhance the Django code in the `example_project` or extend the concepts to React, AngularJS, iOS, and Android front ends.
 
 When calling endpoints from the front end that require authentication (`logout`, `password/change`, and `users/me`), include the authorization token key in the HTTP header.  For example,
 
@@ -334,7 +333,7 @@ Unverified users can sign up multiple times, but only the latest signup code wil
     }
 ```
 
-**GET /api/accounts/signup/verify/?code=<code>**
+**GET /api/accounts/signup/verify/?code=\<code\>**
 
 When the user clicks the link in the verification email, the front end should call this endpoint to verify the user.
 
@@ -475,7 +474,7 @@ Call this endpoint to send an email to a user so they can reset their password. 
     }
 ```
 
-**GET /api/accounts/password/reset/verify/?code=<code>**
+**GET /api/accounts/password/reset/verify/?code=\<code\>**
 
 When the user clicks the link in the password reset email, call this endpoint to verify the password reset code.
 
