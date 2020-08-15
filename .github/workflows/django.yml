@@ -27,6 +27,13 @@ jobs:
         cd example_project
         pip install -r requirements.txt
     - name: Run Tests
+      env:
+        AUTHEMAIL_EMAIL_BCC: ${{ secrets.AUTHEMAIL_EMAIL_BCC }}
+        AUTHEMAIL_EMAIL_FROM: ${{ secrets.AUTHEMAIL_EMAIL_FROM }}
+        AUTHEMAIL_EMAIL_HOST: ${{ secrets.AUTHEMAIL_EMAIL_HOST }}
+        AUTHEMAIL_EMAIL_HOST_PASSWORD: ${{ secrets.AUTHEMAIL_EMAIL_HOST_PASSWORD }}
+        AUTHEMAIL_EMAIL_HOST_USER: ${{ secrets.AUTHEMAIL_EMAIL_HOST_USER }}
+        AUTHEMAIL_EMAIL_PORT: ${{ secrets.AUTHEMAIL_EMAIL_PORT }}
       run: |
         cd example_project
         python manage.py test
