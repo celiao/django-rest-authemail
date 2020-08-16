@@ -24,8 +24,6 @@ SECRET_KEY = '1@cv(g5-(czg7_5%cy&c=3uy((ybw6h+)@1qoh&vli0wz3cd(t'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
-
 ALLOWED_HOSTS = []
 
 
@@ -67,10 +65,22 @@ REST_FRAMEWORK = {
 
 ROOT_URLCONF = 'example_project.urls'
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'example_project/templates'),
-    os.path.join(BASE_DIR, 'accounts/templates'),
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'example_project/templates'),
+            os.path.join(BASE_DIR, 'accounts/templates'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+            ],
+        },
+    },
+]
 
 WSGI_APPLICATION = 'example_project.wsgi.application'
 

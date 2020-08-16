@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
 
 admin.autodiscover()
@@ -6,7 +6,7 @@ admin.autodiscover()
 from . import views
 
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^api/accounts/', include('accounts.urls')),
@@ -44,4 +44,4 @@ urlpatterns = patterns('',
 
     url(r'^password/change/$', views.PasswordChangeView.as_view(), 
         name='password_change_page'),
-)
+]

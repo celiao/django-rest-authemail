@@ -308,7 +308,8 @@ class LoginTests(APITestCase):
         response = self.client.post(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 'User account not active.')
+        self.assertEqual(response.data['detail'], 
+            'Unable to login with provided credentials.')
 
         self.user.is_active = True
         self.user.save()

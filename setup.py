@@ -27,8 +27,8 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
-        'Django==1.9',
-        'djangorestframework==3.3.3',
+        'Django==1.11',
+        'djangorestframework==3.7.0',
         'requests>=2.3.0',
     ],
     classifiers=[
@@ -38,8 +38,6 @@ setup(
         'Operating System :: OS Independent',
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
         'Topic :: Software Development',
         'Topic :: Utilities',
     ],
