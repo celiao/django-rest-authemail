@@ -127,9 +127,9 @@ def send_multi_format_email(template_prefix, template_ctxt, target_email):
         html_file = 'authemail/%s.html' % template_prefix
 
         subject = render_to_string(subject_file).strip()
-        from_email = settings.AUTHEMAIL_EMAIL_FROM
+        from_email = settings.EMAIL_FROM
         to = target_email
-        bcc_email = settings.AUTHEMAIL_EMAIL_BCC
+        bcc_email = settings.EMAIL_BCC
         text_content = render_to_string(txt_file, template_ctxt)
         html_content = render_to_string(html_file, template_ctxt)
         msg = EmailMultiAlternatives(subject, text_content, from_email, [to],
