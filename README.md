@@ -9,8 +9,7 @@ django-rest-authemail
 Features
 --------
 
-- UPDATED for Django 1.9.
-- Supports and tested with Django 1.6.5, 1.6.7, and 1.7.
+- Supports and tested with Django 1.11.
 - API endpoints for signup, signup email verification, login, logout, password reset, password reset verification, password change, and user detail.
 - Extensible abstract user model.
 - Perform password confirmation and other client-side validation on the front end for a better user experience.

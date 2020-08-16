@@ -36,4 +36,4 @@ jobs:
         AUTHEMAIL_EMAIL_PORT: ${{ secrets.AUTHEMAIL_EMAIL_PORT }}
       run: |
         cd example_project
-        python manage.py test
+        python manage.py test authemail
