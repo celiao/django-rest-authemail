@@ -1,6 +1,18 @@
-*.pyc
-*.swp
-django_rest_authemail.egg-info
-db.sqlite3
-Makefile
+# Python files
+*.py[cod]
+*.py.swo
+*.egg-info
+__pycache__
+build
 dist
+
+# Django files
+db.sqlite3
+
+# Make files
+Makefile
+
+# Editor files
+## Vim files
+.*.swp
+.idea
