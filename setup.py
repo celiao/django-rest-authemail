@@ -15,10 +15,10 @@ setup(
     author_email='celia.oakley@alumni.stanford.edu',
     description='A RESTful API for user signup and authentication using email addresses',
     keywords=[
-        'django', 'python', 'rest', 'rest-framework', 'api', 
-        'auth', 'authentication', 'email', 'user', 'username', 
+        'django', 'python', 'rest', 'rest-framework', 'api',
+        'auth', 'authentication', 'email', 'user', 'username',
         'registration', 'signup', 'login', 'logout', 'password',
-        'django-rest-framework', 'djangorestframework', 'django-registration', 
+        'django-rest-framework', 'djangorestframework', 'django-registration',
         'django-email-as-username'
     ],
     url='http://github.com/celiao/django-rest-authemail',

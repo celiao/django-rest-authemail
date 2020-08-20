@@ -1,6 +1,7 @@
 import json
 import requests
 
+
 # API class from https://pypi.python.org/pypi/tmdbsimple
 class API(object):
     headers = {
@@ -12,7 +13,7 @@ class API(object):
     URLS = {}
 
     def __init__(self):
-        self.base_uri= 'http://127.0.0.1:8000/api'
+        self.base_uri = 'http://127.0.0.1:8000/api'
 
     def _get_path(self, key):
         return self.BASE_PATH + self.URLS[key]
@@ -31,8 +32,8 @@ class API(object):
             headers.update({'Authorization': 'Token ' + params['token']})
 
         response = requests.request(
-            method, url, params=params, 
-            data=json.dumps(payload) if payload else payload, 
+            method, url, params=params,
+            data=json.dumps(payload) if payload else payload,
             headers=headers)
 
         response.encoding = 'utf-8'
@@ -45,11 +46,12 @@ class API(object):
         return self._request('POST', path, params=params, payload=payload)
 
     def _set_attrs_to_values(self, response={}):
-        """ 
+        """
         Set attributes to dictionary values so can access via dot notation.
         """
         for key in response.keys():
             setattr(self, key, response[key])
+
 
 class Authemail(API):
     BASE_PATH = 'accounts'

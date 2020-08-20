@@ -17,7 +17,7 @@ def _generate_code():
 
 
 class EmailUserManager(BaseUserManager):
-    def _create_user(self, email, password, is_staff, is_superuser, 
+    def _create_user(self, email, password, is_staff, is_superuser,
                      is_verified, **extra_fields):
         """
         Creates and saves a User with a given email and password.
@@ -26,7 +26,7 @@ class EmailUserManager(BaseUserManager):
         if not email:
             raise ValueError('Users must have an email address')
         email = self.normalize_email(email)
-        user = self.model(email=email, 
+        user = self.model(email=email,
                           is_staff=is_staff, is_active=True,
                           is_superuser=is_superuser, is_verified=is_verified,
                           last_login=now, date_joined=now, **extra_fields)
@@ -36,11 +36,11 @@ class EmailUserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
         return self._create_user(email, password, False, False, False,
-            **extra_fields)
-    
+                                 **extra_fields)
+
     def create_superuser(self, email, password, **extra_fields):
         return self._create_user(email, password, True, True, True,
-            **extra_fields)
+                                 **extra_fields)
 
 
 class EmailAbstractUser(AbstractBaseUser, PermissionsMixin):
@@ -53,17 +53,20 @@ class EmailAbstractUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
     email = models.EmailField(_('email address'), max_length=255, unique=True)
-    is_staff = models.BooleanField(_('staff status'), default=False,
-        help_text=_('Designates whether the user can log into this admin '
-                    'site.'))
-    is_active = models.BooleanField(_('active'), default=True,
+    is_staff = models.BooleanField(
+        _('staff status'), default=False,
+        help_text=_('Designates whether the user can log into this '
+                    'admin site.'))
+    is_active = models.BooleanField(
+        _('active'), default=True,
         help_text=_('Designates whether this user should be treated as '
-                    'active. Unselect this instead of deleting accounts.'))
+                    'active.  Unselect this instead of deleting accounts.'))
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
-    is_verified = models.BooleanField(_('verified'), default=False,
-        help_text=_('Designates whether this user has completed the '
-                    'email verification process to allow login.'))
+    is_verified = models.BooleanField(
+        _('verified'), default=False,
+        help_text=_('Designates whether this user has completed the email '
+                    'verification process to allow login.'))
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -122,20 +125,20 @@ class PasswordResetCodeManager(models.Manager):
 
 
 def send_multi_format_email(template_prefix, template_ctxt, target_email):
-        subject_file = 'authemail/%s_subject.txt' % template_prefix
-        txt_file = 'authemail/%s.txt' % template_prefix
-        html_file = 'authemail/%s.html' % template_prefix
+    subject_file = 'authemail/%s_subject.txt' % template_prefix
+    txt_file = 'authemail/%s.txt' % template_prefix
+    html_file = 'authemail/%s.html' % template_prefix
 
-        subject = render_to_string(subject_file).strip()
-        from_email = settings.EMAIL_FROM
-        to = target_email
-        bcc_email = settings.EMAIL_BCC
-        text_content = render_to_string(txt_file, template_ctxt)
-        html_content = render_to_string(html_file, template_ctxt)
-        msg = EmailMultiAlternatives(subject, text_content, from_email, [to],
-                  bcc=[bcc_email])
-        msg.attach_alternative(html_content, 'text/html')
-        msg.send()
+    subject = render_to_string(subject_file).strip()
+    from_email = settings.EMAIL_FROM
+    to = target_email
+    bcc_email = settings.EMAIL_BCC
+    text_content = render_to_string(txt_file, template_ctxt)
+    html_content = render_to_string(html_file, template_ctxt)
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [to],
+                                 bcc=[bcc_email])
+    msg.attach_alternative(html_content, 'text/html')
+    msg.send()
 
 
 class AbstractBaseCode(models.Model):
@@ -163,7 +166,7 @@ class SignupCode(AbstractBaseCode):
     ipaddr = models.GenericIPAddressField(_('ip address'))
 
     objects = SignupCodeManager()
-    
+
     def send_signup_email(self):
         prefix = 'signup_email'
         self.send_email(prefix)
