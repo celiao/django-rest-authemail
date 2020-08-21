@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 from authemail.forms import EmailUserCreationForm, EmailUserChangeForm
 from authemail.models import SignupCode, PasswordResetCode
@@ -69,8 +69,8 @@ class EmailUserAdmin(UserAdmin):
     form = EmailUserChangeForm
     add_form = EmailUserCreationForm
     inlines = [SignupCodeInline, PasswordResetCodeInline]
-    list_display = ('email', 'is_verified', 'first_name', 'last_name', 
-        'is_staff')
+    list_display = ('email', 'is_verified', 'first_name', 'last_name',
+                    'is_staff')
     search_fields = ('first_name', 'last_name', 'email')
     ordering = ('email',)
 
