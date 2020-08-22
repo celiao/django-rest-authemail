@@ -28,7 +28,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
-        'Django==1.11',
+        'Django==1.11.17',
         'djangorestframework==3.7.0',
         'requests>=2.3.0',
     ],

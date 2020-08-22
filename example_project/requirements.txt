@@ -1,4 +1,4 @@
-Django==1.11
+Django==1.11.17
 #South==0.8.4
 django-rest-authemail==1.5.4
 djangorestframework==3.7.0
