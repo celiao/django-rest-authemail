@@ -19,7 +19,7 @@ Features
 - User models in the admin interface include inlines for signup and password reset codes.
 - Uses the Django REST Framework.
 - An example project is included and contains example UI templates.
-- Supports and tested under Python 3.6.
+- Supports and tested under Python 3.6 and 3.7.
 
 
 Installation
