@@ -27,7 +27,7 @@ jobs:
         python -m pip install --upgrade pip
         cd example_project
         pip install -r requirements.txt
-        pip install Django==${{ matrix.django-verson }}
+        pip install Django==${{ matrix.django-version }}
     - name: Run Tests
       env:
         AUTHEMAIL_EMAIL_BCC: ${{ secrets.AUTHEMAIL_EMAIL_BCC }}
