@@ -28,8 +28,8 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
-        'Django==1.11.17',
-        'djangorestframework==3.7.0',
+        'Django>=1.11.17,<=2.0',
+        'djangorestframework==3.7.1',
         'requests>=2.3.0',
     ],
     classifiers=[

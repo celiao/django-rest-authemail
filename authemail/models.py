@@ -13,7 +13,7 @@ from django.core.mail import send_mail
 
 
 def _generate_code():
-    return binascii.hexlify(os.urandom(20))
+    return binascii.hexlify(os.urandom(20)).decode('utf-8')
 
 
 class EmailUserManager(BaseUserManager):
@@ -142,7 +142,7 @@ def send_multi_format_email(template_prefix, template_ctxt, target_email):
 
 
 class AbstractBaseCode(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     code = models.CharField(_('code'), max_length=40, primary_key=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

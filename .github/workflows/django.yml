@@ -14,6 +14,7 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.6, 3.7]
+        django-version: [1.11.17, 2.0]
 
     steps:
     - uses: actions/checkout@v2
@@ -26,6 +27,7 @@ jobs:
         python -m pip install --upgrade pip
         cd example_project
         pip install -r requirements.txt
+        pip install Django==${{ matrix.django-verson }}
     - name: Run Tests
       env:
         AUTHEMAIL_EMAIL_BCC: ${{ secrets.AUTHEMAIL_EMAIL_BCC }}

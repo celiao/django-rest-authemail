@@ -7,7 +7,7 @@ from . import views
 
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 
     url(r'^api/accounts/', include('accounts.urls')),
     url(r'^api/accounts/', include('authemail.urls')),
