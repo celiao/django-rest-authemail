@@ -159,20 +159,20 @@ Add the `authemail` API endpoints to your project's `urls.py` file.  For example
 When users signup or reset their password, they will be sent an email with a link and verification code.  Include email settings as environment variables or in your project's `settings.py` file.  See https://docs.djangoproject.com/en/dev/ref/settings/#email-host for more information.  For example,
 
 ```python
-	# Email settings
-	import os
+    # Email settings
+    import os
 
-	EMAIL_FROM = os.environ.get('AUTHEMAIL_DEFAULT_EMAIL_FROM') or '<YOUR DEFAULT_EMAIL_FROM HERE>'
-	EMAIL_BCC = os.environ.get('AUTHEMAIL_DEFAULT_EMAIL_BCC') or '<YOUR DEFAULT_EMAIL_BCC HERE>'
+    EMAIL_FROM = os.environ.get('AUTHEMAIL_DEFAULT_EMAIL_FROM') or '<YOUR DEFAULT_EMAIL_FROM HERE>'
+    EMAIL_BCC = os.environ.get('AUTHEMAIL_DEFAULT_EMAIL_BCC') or '<YOUR DEFAULT_EMAIL_BCC HERE>'
 
-	EMAIL_HOST = os.environ.get('AUTHEMAIL_EMAIL_HOST') or '<YOUR EMAIL_HOST HERE>'
-	EMAIL_PORT = os.environ.get('AUTHEMAIL_EMAIL_PORT') or 0
-	EMAIL_HOST_USER = os.environ.get('AUTHEMAIL_EMAIL_HOST_USER') or '<YOUR EMAIL_HOST_USER HERE>'
-	EMAIL_HOST_PASSWORD = os.environ.get('AUTHEMAIL_EMAIL_HOST_PASSWORD') or '<YOUR EMAIL_HOST_PASSWORD HERE>'
-	EMAIL_USE_TLS = True
-	EMAIL_USE_SSL = False
+    EMAIL_HOST = os.environ.get('AUTHEMAIL_EMAIL_HOST') or '<YOUR EMAIL_HOST HERE>'
+    EMAIL_PORT = os.environ.get('AUTHEMAIL_EMAIL_PORT') or 0
+    EMAIL_HOST_USER = os.environ.get('AUTHEMAIL_EMAIL_HOST_USER') or '<YOUR EMAIL_HOST_USER HERE>'
+    EMAIL_HOST_PASSWORD = os.environ.get('AUTHEMAIL_EMAIL_HOST_PASSWORD') or '<YOUR EMAIL_HOST_PASSWORD HERE>'
+    EMAIL_USE_TLS = True
+    EMAIL_USE_SSL = False
 
-	SERVER_EMAIL = os.environ.get('AUTHEMAIL_SERVER_EMAIL') or '<YOUR SERVER_EMAIL HERE>'
+    SERVER_EMAIL = os.environ.get('AUTHEMAIL_SERVER_EMAIL') or '<YOUR SERVER_EMAIL HERE>'
 ```
 
 Try out `authemail` API calls by firing up `python` and using the `authemail` wrapper methods (`runserver` should still be executing).  For example,
