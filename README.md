@@ -169,7 +169,7 @@ Add the `authemail` API endpoints to your project's `urls.py` file.  For example
     from accounts import views
 
     urlpatterns = [
-        url(r'^admin/', include(admin.site.urls)),
+        url(r'^admin/', admin.site.urls),
 
         url(r'^api/accounts/', include('authemail.urls')),
     ]
