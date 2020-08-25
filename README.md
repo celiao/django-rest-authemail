@@ -38,7 +38,7 @@ pip install django-rest-authemail
 - Download the .tar.gz file from PyPI and install it yourself.
 - Download the [source from Github](http://github.com/celiao/django-rest-authemai) and install it yourself.
 
-If you install it yourself, also install the [Django](https://www.djangoproject.com/), [Django REST Framework](http://www.django-rest-framework.org), and [requests](http://www.python-requests.org/en/latest).  Install [South](http://south.readthedocs.org/en/latest/index.html) if you are using Django < 1.7.
+If you install it yourself, also install the [Django](https://www.djangoproject.com/), [Django REST Framework](http://www.django-rest-framework.org), and [requests](http://www.python-requests.org/en/latest).
 
 Usage
 -----
@@ -48,7 +48,6 @@ In the `settings.py` file of your project, include `rest_framework` and `rest_fr
 ```python
     INSTALLED_APPS = (
         ...
-        #'south',        # Remove comment if you're using South for migrations.
         'rest_framework',
         'rest_framework.authtoken',
         ...
@@ -90,7 +89,6 @@ In the `settings.py` file of your project, include `authemail` and your applicat
 
     INSTALLED_APPS = (
         ...
-        #'south',        # Remove comment if you're using South for migrations.
         'rest_framework',
         'rest_framework.authtoken',
         'authemail',
@@ -121,9 +119,8 @@ In the `admin.py` file of your application, extend `EmailUserAdmin` to add your 
     admin.site.register(get_user_model(), MyUserAdmin)
 ```
 
-Use one of the following steps to create the database tables:
 
-1. For Django >= 1.7, create the database tables with Django's `makemigrations`, `migrate`, and create a superuser with `createsuperuser`.
+Create the database tables with Django's `makemigrations`, `migrate`, and create a superuser with `createsuperuser`.
 
 ```python
     python manage.py makemigrations
@@ -131,22 +128,6 @@ Use one of the following steps to create the database tables:
     python manage.py createsuperuser
 ```
 
-2. For Django < 1.7, create the database tables with `syncdb` and South's `migrate`.  Set up a superuser when prompted by `syncdb`.  Convert your `accounts` application to South.  You will receive an error message from South, so fake the initial migration as a workaround (see http://south.aeracode.org/ticket/1179).
-
-```python
-    python manage.py syncdb
-    python manage.py migrate
-    python manage.py convert_to_south accounts
-    python manage.py migrate accounts 0001 --fake
-```
-
-3. To migrate from Django 1.6.X to 1.7, upgrade `django-rest-authemail`, uninstall `south`, and bring the migrations up-to-date with `migrate`.
-
-```python
-    pip install --upgrade django-rest-authemail
-    pip uninstall south
-    python manage.py migrate
-```
 
 Check your setup by starting a Web server on your local machine:
 
