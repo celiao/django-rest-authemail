@@ -3,6 +3,7 @@ django-rest-authemail
 
 ![Python package](https://github.com/celiao/django-rest-authemail/workflows/build/badge.svg)
 ![pypi](https://img.shields.io/pypi/pyversions/django-rest-authemail)
+![pypi](https://img.shields.io/pypi/djversions/django-rest-authemail)
 ![pypi](https://img.shields.io/pypi/v/django-rest-authemail)
 
 `django-rest-authemail` is a Django/Python application that provides a RESTful API interface for user signup and authentication.  Email addresses are used for authentication, rather than usernames.  Because the authentication user model is based on Django's `AbstractBaseUser` and is itself abstract, the model can be extended without the need for additional database tables.  Token authentication allows the API to be accessed from a variety of front ends, including Django, React and AngularJS clients, and iOS and Android mobile apps.
@@ -32,7 +33,7 @@ Install `django-rest-authemail` using one of the following techniques.
 - Use pip:
 
 ```
-pip install django-rest-authemail
+    pip install django-rest-authemail
 ```
 
 - Download the .tar.gz file from PyPI and install it yourself.
