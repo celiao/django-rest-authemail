@@ -34,7 +34,7 @@ setup(
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
-        'Framework :: Django :: 1.11.17',
+        'Framework :: Django :: 1.11',
         'Framework :: Django :: 2.0',
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
