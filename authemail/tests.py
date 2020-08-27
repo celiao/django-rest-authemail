@@ -8,11 +8,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
 from authemail.models import SignupCode, PasswordResetCode
-from authemail import wrapper
 
 
 def _get_code_from_email(mail):
-    match = re.search('\?code=([0-9a-f]+)$', mail.outbox[-1].body, re.MULTILINE)
+    match = re.search(r'\?code=([0-9a-f]+)$', mail.outbox[-1].body, re.MULTILINE)
     if match:
         code = match.group(1)
         return code
@@ -44,19 +43,19 @@ class SignupTests(APITestCase):
                          'password': self.pw_visitor},
              'status_code': status.HTTP_400_BAD_REQUEST,
              'error': ('email', 'This field may not be blank.')
-            },
+             },
             # Password required
             {'payload': {'email': self.em_visitor,
                          'password': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
              'error': ('password', 'This field may not be blank.')
-            },
+             },
             # Invalid email
             {'payload': {'email': 'XXX',
                          'password': self.pw_visitor},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('email', 'Enter a valid email address.') 
-            },
+             'error': ('email', 'Enter a valid email address.')
+             },
         ]
 
         url = reverse('authemail-signup')
@@ -64,8 +63,8 @@ class SignupTests(APITestCase):
             response = self.client.post(url, error_dict['payload'])
 
             self.assertEqual(response.status_code, error_dict['status_code'])
-            self.assertEqual(response.data[error_dict['error'][0]][0], 
-                error_dict['error'][1])
+            self.assertEqual(response.data[error_dict['error'][0]][0],
+                             error_dict['error'][1])
 
     def test_signup_email_already_exists(self):
         url = reverse('authemail-signup')
@@ -76,8 +75,8 @@ class SignupTests(APITestCase):
         response = self.client.post(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['detail'], 
-            'User with this Email address already exists.')
+        self.assertEqual(response.data['detail'],
+                         'User with this Email address already exists.')
 
     def test_signup_verify_invalid_code(self):
         url = reverse('authemail-signup-verify')
@@ -113,8 +112,8 @@ class SignupTests(APITestCase):
 
         # Confirm that one email sent and that Subject correct
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, 
-            'Verify your email address')
+        self.assertEqual(mail.outbox[0].subject,
+                         'Verify your email address')
 
         code = _get_code_from_email(mail)
 
@@ -129,9 +128,8 @@ class SignupTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['success'], 'User verified.')
 
-
     def test_signup_without_email_verification(self):
-        
+
         with self.settings(AUTH_EMAIL_VERIFICATION=False):
 
             # Send Signup request
@@ -140,7 +138,7 @@ class SignupTests(APITestCase):
                 'email': self.em_visitor,
                 'password': self.pw_visitor,
             }
-            response = self.client.post(url, payload)
+            self.client.post(url, payload)
 
             # Confirm that new user got created, and was automatically marked as verified
             # (else changing AUTH_EMAIL_VERIFICATION setting later would have horrible consequences)
@@ -150,8 +148,8 @@ class SignupTests(APITestCase):
 
             # no verification email sent
             self.assertEqual(len(mail.outbox), 1)
-            self.assertEqual(mail.outbox[0].subject, 
-                'Welcome')
+            self.assertEqual(mail.outbox[0].subject,
+                             'Welcome')
 
     def test_signup_twice_then_email_verify(self):
         # Signup mulitple times with same credentials
@@ -169,8 +167,8 @@ class SignupTests(APITestCase):
             self.assertEqual(response.data['email'], payload['email'])
             self.assertEqual(SignupCode.objects.count(), 1)
             self.assertEqual(len(mail.outbox), i+1)
-            self.assertEqual(mail.outbox[i].subject, 
-                'Verify your email address')
+            self.assertEqual(mail.outbox[i].subject,
+                             'Verify your email address')
 
         code = _get_code_from_email(mail)
 
@@ -180,7 +178,7 @@ class SignupTests(APITestCase):
             'code': code,
         }
         response = self.client.get(url, params)
-        
+
         # Confirm email verified successfully
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['success'], 'User verified.')
@@ -209,19 +207,19 @@ class LoginTests(APITestCase):
                          'password': self.pw_user},
              'status_code': status.HTTP_400_BAD_REQUEST,
              'error': ('email', 'This field may not be blank.')
-            },
+             },
             # Password required
             {'payload': {'email': self.em_user,
                          'password': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
              'error': ('password', 'This field may not be blank.')
-            },
+             },
             # Invalid email
             {'payload': {'email': 'XXX',
                          'password': self.pw_user},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('email', 'Enter a valid email address.') 
-            },
+             'error': ('email', 'Enter a valid email address.')
+             },
         ]
 
         url = reverse('authemail-login')
@@ -229,8 +227,8 @@ class LoginTests(APITestCase):
             response = self.client.post(url, error_dict['payload'])
 
             self.assertEqual(response.status_code, error_dict['status_code'])
-            self.assertEqual(response.data[error_dict['error'][0]][0], 
-                error_dict['error'][1])
+            self.assertEqual(response.data[error_dict['error'][0]][0],
+                             error_dict['error'][1])
 
     def test_login_invalid_credentials(self):
         # Invalid email address
@@ -242,8 +240,8 @@ class LoginTests(APITestCase):
         response = self.client.post(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 
-            'Unable to login with provided credentials.')
+        self.assertEqual(response.data['detail'],
+                         'Unable to login with provided credentials.')
 
         # Invalid password for user
         url = reverse('authemail-login')
@@ -254,22 +252,22 @@ class LoginTests(APITestCase):
         response = self.client.post(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 
-            'Unable to login with provided credentials.')
+        self.assertEqual(response.data['detail'],
+                         'Unable to login with provided credentials.')
 
     def test_logout_no_auth_token(self):
         url = reverse('authemail-logout')
         response = self.client.get(url)
-        
+
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 
-            'Authentication credentials were not provided.')
+        self.assertEqual(response.data['detail'],
+                         'Authentication credentials were not provided.')
 
     def test_logout_invalid_auth_token(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + 'XXX')
         url = reverse('authemail-logout')
         response = self.client.get(url)
-        
+
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data['detail'], 'Invalid token.')
 
@@ -308,8 +306,8 @@ class LoginTests(APITestCase):
         response = self.client.post(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 
-            'Unable to login with provided credentials.')
+        self.assertEqual(response.data['detail'],
+                         'Unable to login with provided credentials.')
 
         self.user.is_active = True
         self.user.save()
@@ -326,8 +324,8 @@ class LoginTests(APITestCase):
         response = self.client.post(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 
-            'Unable to login with provided credentials.')
+        self.assertEqual(response.data['detail'],
+                         'Unable to login with provided credentials.')
 
         self.user.is_verified = True
         self.user.save()
@@ -354,12 +352,12 @@ class PasswordTests(APITestCase):
             {'payload': {'email': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
              'error': ('email', 'This field may not be blank.')
-            },
+             },
             # Invalid email
             {'payload': {'email': 'XXX'},
              'status_code': status.HTTP_400_BAD_REQUEST,
-             'error': ('email', 'Enter a valid email address.') 
-            },
+             'error': ('email', 'Enter a valid email address.')
+             },
         ]
 
         url = reverse('authemail-password-reset')
@@ -367,8 +365,8 @@ class PasswordTests(APITestCase):
             response = self.client.post(url, error_dict['payload'])
 
             self.assertEqual(response.status_code, error_dict['status_code'])
-            self.assertEqual(response.data[error_dict['error'][0]][0], 
-                error_dict['error'][1])
+            self.assertEqual(response.data[error_dict['error'][0]][0],
+                             error_dict['error'][1])
 
     def test_password_reset_invalid_code(self):
         code = 'XXX'
@@ -379,7 +377,7 @@ class PasswordTests(APITestCase):
             'password': self.pw_user,
         }
         response = self.client.get(url, payload)
-        
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['detail'], 'Unable to verify user.')
 
@@ -398,7 +396,7 @@ class PasswordTests(APITestCase):
             {'payload': {'password': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
              'error': ('password', 'This field may not be blank.')
-            },
+             },
         ]
 
         url = reverse('authemail-password-reset-verified')
@@ -406,8 +404,8 @@ class PasswordTests(APITestCase):
             response = self.client.post(url, error_dict['payload'])
 
             self.assertEqual(response.status_code, error_dict['status_code'])
-            self.assertEqual(response.data[error_dict['error'][0]][0], 
-                error_dict['error'][1])
+            self.assertEqual(response.data[error_dict['error'][0]][0],
+                             error_dict['error'][1])
 
     def test_password_reset_and_verify_and_verified(self):
         # Send Password Reset request
@@ -463,8 +461,8 @@ class PasswordTests(APITestCase):
         response = self.client.post(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 
-            'Unable to login with provided credentials.')
+        self.assertEqual(response.data['detail'],
+                         'Unable to login with provided credentials.')
 
         # Confirm able to log in with new password
         url = reverse('authemail-login')
@@ -483,7 +481,7 @@ class PasswordTests(APITestCase):
             {'payload': {'password': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
              'error': ('password', 'This field may not be blank.')
-            },
+             },
         ]
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
@@ -492,8 +490,8 @@ class PasswordTests(APITestCase):
             response = self.client.post(url, error_dict['payload'])
 
             self.assertEqual(response.status_code, error_dict['status_code'])
-            self.assertEqual(response.data[error_dict['error'][0]][0], 
-                error_dict['error'][1])
+            self.assertEqual(response.data[error_dict['error'][0]][0],
+                             error_dict['error'][1])
 
     def test_password_change_no_auth_token(self):
         url = reverse('authemail-password-change')
@@ -501,16 +499,16 @@ class PasswordTests(APITestCase):
             'password': self.pw_user,
         }
         response = self.client.post(url, payload)
-        
+
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 
-            'Authentication credentials were not provided.')
+        self.assertEqual(response.data['detail'],
+                         'Authentication credentials were not provided.')
 
     def test_password_change_invalid_auth_token(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + 'XXX')
         url = reverse('authemail-password-change')
         response = self.client.post(url)
-        
+
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data['detail'], 'Invalid token.')
 
@@ -535,8 +533,8 @@ class PasswordTests(APITestCase):
         response = self.client.post(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 
-            'Unable to login with provided credentials.')
+        self.assertEqual(response.data['detail'],
+                         'Unable to login with provided credentials.')
 
         # Confirm able to log in with new password
         url = reverse('authemail-login')
@@ -566,16 +564,16 @@ class UserDetailTests(APITestCase):
     def test_me_no_auth_token(self):
         url = reverse('authemail-me')
         response = self.client.post(url)
-        
+
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.data['detail'], 
-            'Authentication credentials were not provided.')
+        self.assertEqual(response.data['detail'],
+                         'Authentication credentials were not provided.')
 
     def test_me_invalid_auth_token(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + 'XXX')
         url = reverse('authemail-me')
         response = self.client.post(url)
-        
+
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data['detail'], 'Invalid token.')
 
@@ -586,4 +584,3 @@ class UserDetailTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['email'], self.em_user)
-
