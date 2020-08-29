@@ -1,5 +1,4 @@
 Django>=1.11.17,<=2.0
-#South==0.8.4
 django-rest-authemail==1.7.2
 djangorestframework==3.7.1
 requests>=2.3.0
