@@ -14,7 +14,7 @@ Features
 
 - Supports and tested with Python 3.6 and 3.7.
 - Supports and tested with Django 1.11.17, 2.0, and 2.1.
-- Supports and tested with Django REST Framework 3.7.1.
+- Supports and tested with Django REST Framework 3.7.1 through 3.11.0.
 - API endpoints for signup, signup email verification, login, logout, password reset, password reset verification, password change, and user detail.
 - Extensible abstract user model.
 - Perform password confirmation and other client-side validation on the front end for a better user experience.
