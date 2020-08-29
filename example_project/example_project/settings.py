@@ -44,9 +44,6 @@ INSTALLED_APPS = [
     'accounts',
 ]
 
-if django.VERSION[:2] < (1,7):
-    INSTALLED_APPS.append('south')
-
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -121,11 +118,3 @@ STATIC_URL = '/static/'
 
 # Email settings
 from example_project.settings_email import *
-
-
-# South settings (when used)
-SOUTH_MIGRATION_MODULES = {
-    'accounts': 'accounts.south_migrations',
-    'authemail': 'authemail.south_migrations',
-    'authtoken': 'rest_framework.authtoken.south_migrations',
-}
