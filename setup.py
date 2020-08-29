@@ -29,7 +29,7 @@ setup(
     long_description_content_type="text/markdown",
     install_requires=[
         'Django>=1.11.17,<=2.1',
-        'djangorestframework==3.7.1',
+        'djangorestframework==3.9.1',
         'requests>=2.3.0',
     ],
     classifiers=[
