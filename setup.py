@@ -28,7 +28,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
-        'Django>=1.11.17,<=2.0',
+        'Django>=1.11.17,<=2.1',
         'djangorestframework==3.7.1',
         'requests>=2.3.0',
     ],
@@ -36,6 +36,7 @@ setup(
         'Development Status :: 5 - Production/Stable',
         'Framework :: Django :: 1.11',
         'Framework :: Django :: 2.0',
+        'Framework :: Django :: 2.1',
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
         "Programming Language :: Python :: 3.6",
