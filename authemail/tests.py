@@ -325,7 +325,7 @@ class LoginTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data['detail'],
-                         'Unable to login with provided credentials.')
+                         'User account not verified.')
 
         self.user.is_verified = True
         self.user.save()
