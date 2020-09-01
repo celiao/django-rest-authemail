@@ -1,10 +1,8 @@
 from django.conf.urls import include, url
 from django.contrib import admin
-
-admin.autodiscover()
-
 from . import views
 
+admin.autodiscover()
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -27,21 +25,21 @@ urlpatterns = [
     url(r'^home/$', views.HomeView.as_view(), name='home_page'),
     url(r'^logout/$', views.LogoutView.as_view(), name='logout_page'),
 
-    url(r'^password/reset/$', views.PasswordResetView.as_view(), 
+    url(r'^password/reset/$', views.PasswordResetView.as_view(),
         name='password_reset_page'),
-    url(r'^password/reset/email_sent/$', 
+    url(r'^password/reset/email_sent/$',
         views.PasswordResetEmailSentView.as_view(),
         name='password_reset_email_sent_page'),
     url(r'^password/reset/verify/$', views.PasswordResetVerifyView.as_view()),
-    url(r'^password/reset/verified/$', 
+    url(r'^password/reset/verified/$',
         views.PasswordResetVerifiedView.as_view(),
         name='password_reset_verified_page'),
-    url(r'^password/reset/not_verified/$', 
+    url(r'^password/reset/not_verified/$',
         views.PasswordResetNotVerifiedView.as_view(),
         name='password_reset_not_verified_page'),
     url(r'^password/reset/success/$', views.PasswordResetSuccessView.as_view(),
         name='password_reset_success'),
 
-    url(r'^password/change/$', views.PasswordChangeView.as_view(), 
+    url(r'^password/change/$', views.PasswordChangeView.as_view(),
         name='password_change_page'),
 ]

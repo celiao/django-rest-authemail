@@ -24,5 +24,3 @@ class VerifiedUser(MyUser):
 
     class Meta:
         proxy = True
-
-

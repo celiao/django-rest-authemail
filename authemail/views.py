@@ -1,4 +1,3 @@
-from datetime import datetime
 from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import gettext as _
@@ -35,8 +34,9 @@ class Signup(APIView):
             try:
                 user = get_user_model().objects.get(email=email)
                 if user.is_verified:
-                    content = {'detail':
-                        _('User with this Email address already exists.')}
+                    content = {
+                        'detail': _('User with this Email address already '
+                                    'exists.')}
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
                 try:
@@ -67,7 +67,7 @@ class Signup(APIView):
                 signup_code.send_signup_email()
 
             content = {'email': email, 'first_name': first_name,
-                'last_name': last_name}
+                       'last_name': last_name}
             return Response(content, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -171,7 +171,7 @@ class PasswordReset(APIView):
 
         else:
             return Response(serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST)
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class PasswordResetVerify(APIView):
@@ -181,7 +181,7 @@ class PasswordResetVerify(APIView):
         code = request.GET.get('code', '')
 
         try:
-            password_reset_code = PasswordResetCode.objects.get(code=code)
+            PasswordResetCode.objects.get(code=code)
             content = {'success': _('User verified.')}
             return Response(content, status=status.HTTP_200_OK)
         except PasswordResetCode.DoesNotExist:
@@ -212,7 +212,7 @@ class PasswordResetVerified(APIView):
 
         else:
             return Response(serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST)
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class PasswordChange(APIView):
@@ -234,7 +234,7 @@ class PasswordChange(APIView):
 
         else:
             return Response(serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST)
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserMe(APIView):

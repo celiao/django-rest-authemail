@@ -1,7 +1,4 @@
 from django.urls import reverse
-from django.forms.utils import ErrorList
-from django.forms.forms import NON_FIELD_ERRORS
-from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.views.generic.base import View
@@ -29,7 +26,7 @@ class SignupView(FormView):
 
         account = wrapper.Authemail()
         response = account.signup(first_name=first_name, last_name=last_name,
-            email=email, password=password)
+                                  email=email, password=password)
 
         # Handle other error responses from API
         if 'detail' in response:
@@ -114,7 +111,7 @@ class LogoutView(View):
         token = self.request.session['auth_token']
 
         account = wrapper.Authemail()
-        response = account.logout(token=token)
+        account.logout(token=token)
 
         self.request.session.flush()
 
