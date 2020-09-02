@@ -56,7 +56,7 @@ class Signup(APIView):
             if not must_validate_email:
                 user.is_verified = True
                 send_multi_format_email('welcome_email',
-                                        {'email': user.email,},
+                                        {'email': user.email, },
                                         target_email=user.email)
             user.save()
 
@@ -110,23 +110,23 @@ class Login(APIView):
                     if user.is_active:
                         token, created = Token.objects.get_or_create(user=user)
                         return Response({'token': token.key},
-                            status=status.HTTP_200_OK)
+                                        status=status.HTTP_200_OK)
                     else:
                         content = {'detail': _('User account not active.')}
                         return Response(content,
-                            status=status.HTTP_401_UNAUTHORIZED)
+                                        status=status.HTTP_401_UNAUTHORIZED)
                 else:
                     content = {'detail':
-                        _('User account not verified.')}
+                               _('User account not verified.')}
                     return Response(content, status=status.HTTP_401_UNAUTHORIZED)
             else:
                 content = {'detail':
-                    _('Unable to login with provided credentials.')}
+                           _('Unable to login with provided credentials.')}
                 return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
         else:
             return Response(serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST)
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class Logout(APIView):
