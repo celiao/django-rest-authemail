@@ -452,6 +452,16 @@ class PasswordTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['success'], 'Password reset.')
 
+        # Confirm password reset code can't be used again
+        url = reverse('authemail-password-reset-verify')
+        params = {
+            'code': code,
+        }
+        response = self.client.get(url, params)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Unable to verify user.')
+
         # Confirm unable to log in with old password
         url = reverse('authemail-login')
         payload = {

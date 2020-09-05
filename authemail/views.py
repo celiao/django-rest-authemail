@@ -204,6 +204,7 @@ class PasswordResetVerified(APIView):
                 password_reset_code = PasswordResetCode.objects.get(code=code)
                 password_reset_code.user.set_password(password)
                 password_reset_code.user.save()
+                PasswordResetCode.objects.filter(code=code).delete()
                 content = {'success': _('Password reset.')}
                 return Response(content, status=status.HTTP_200_OK)
             except PasswordResetCode.DoesNotExist:
