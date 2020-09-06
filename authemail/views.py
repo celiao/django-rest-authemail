@@ -155,6 +155,7 @@ class PasswordReset(APIView):
 
             try:
                 user = get_user_model().objects.get(email=email)
+                PasswordResetCode.objects.filter(user=user).delete()
                 if user.is_verified and user.is_active:
                     password_reset_code = \
                         PasswordResetCode.objects.create_reset_code(user)

@@ -427,12 +427,21 @@ class PasswordTests(APITestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'Reset Your Password')
 
-        code = _get_code_from_email(mail)
+        code_not_used = _get_code_from_email(mail)
+
+        # Get a second code to use
+        url = reverse('authemail-password-reset')
+        payload = {
+            'email': self.em_user,
+        }
+        self.client.post(url, payload)
+        password_reset_code = PasswordResetCode.objects.latest('code')
+        code_used = password_reset_code.code
 
         # Send Password Reset Verify request
         url = reverse('authemail-password-reset-verify')
         params = {
-            'code': code,
+            'code': code_used,
         }
         response = self.client.get(url, params)
 
@@ -443,7 +452,7 @@ class PasswordTests(APITestCase):
         # Send Password Reset Verified request
         url = reverse('authemail-password-reset-verified')
         payload = {
-            'code': code,
+            'code': code_used,
             'password': self.pw_user_reset,
         }
         response = self.client.post(url, payload)
@@ -452,10 +461,20 @@ class PasswordTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['success'], 'Password reset.')
 
-        # Confirm password reset code can't be used again
+        # Confirm password reset code_not_used can't be used again
         url = reverse('authemail-password-reset-verify')
         params = {
-            'code': code,
+            'code': code_not_used,
+        }
+        response = self.client.get(url, params)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Unable to verify user.')
+
+        # Confirm password reset code_used can't be used again
+        url = reverse('authemail-password-reset-verify')
+        params = {
+            'code': code_used,
         }
         response = self.client.get(url, params)
 
