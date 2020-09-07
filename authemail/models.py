@@ -11,6 +11,8 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import send_mail
 
+# Make part of the model eventually, so it can be edited
+EXPIRY_PERIOD = 3    # days
 
 def _generate_code():
     return binascii.hexlify(os.urandom(20)).decode('utf-8')
@@ -122,6 +124,9 @@ class PasswordResetCodeManager(models.Manager):
         password_reset_code = self.create(user=user, code=code)
 
         return password_reset_code
+
+    def get_expiry_period(self):
+        return EXPIRY_PERIOD
 
 
 def send_multi_format_email(template_prefix, template_ctxt, target_email):

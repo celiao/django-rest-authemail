@@ -1,4 +1,6 @@
 import re
+from datetime import timedelta
+
 from django.core import mail
 from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
@@ -475,6 +477,27 @@ class PasswordTests(APITestCase):
         url = reverse('authemail-password-reset-verify')
         params = {
             'code': code_used,
+        }
+        response = self.client.get(url, params)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Unable to verify user.')
+
+        # Get a third code to lapse
+        url = reverse('authemail-password-reset')
+        payload = {
+            'email': self.em_user,
+        }
+        self.client.post(url, payload)
+        password_reset_code = PasswordResetCode.objects.latest('code')
+        password_reset_code.created_at += timedelta(days=-(PasswordResetCode.objects.get_expiry_period()+1))
+        password_reset_code.save()
+        code_lapsed = password_reset_code.code
+
+        # Confirm password reset code_lapsed can't be used
+        url = reverse('authemail-password-reset-verify')
+        params = {
+            'code': code_lapsed,
         }
         response = self.client.get(url, params)
 

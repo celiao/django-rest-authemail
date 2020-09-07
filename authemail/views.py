@@ -1,3 +1,5 @@
+from datetime import date, timedelta
+
 from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import gettext as _
@@ -155,7 +157,10 @@ class PasswordReset(APIView):
 
             try:
                 user = get_user_model().objects.get(email=email)
+
+                # Delete all unused password reset codes
                 PasswordResetCode.objects.filter(user=user).delete()
+
                 if user.is_verified and user.is_active:
                     password_reset_code = \
                         PasswordResetCode.objects.create_reset_code(user)
@@ -182,7 +187,14 @@ class PasswordResetVerify(APIView):
         code = request.GET.get('code', '')
 
         try:
-            PasswordResetCode.objects.get(code=code)
+            password_reset_code = PasswordResetCode.objects.get(code=code)
+
+            # Delete password reset code if older than expiry period
+            delta = date.today() - password_reset_code.created_at.date()
+            if delta.days > PasswordResetCode.objects.get_expiry_period():
+                password_reset_code.delete()
+                raise PasswordResetCode.DoesNotExist()
+                
             content = {'success': _('User verified.')}
             return Response(content, status=status.HTTP_200_OK)
         except PasswordResetCode.DoesNotExist:
@@ -205,7 +217,10 @@ class PasswordResetVerified(APIView):
                 password_reset_code = PasswordResetCode.objects.get(code=code)
                 password_reset_code.user.set_password(password)
                 password_reset_code.user.save()
-                PasswordResetCode.objects.filter(code=code).delete()
+
+                # Delete password code just used
+                password_reset_code.delete()
+
                 content = {'success': _('Password reset.')}
                 return Response(content, status=status.HTTP_200_OK)
             except PasswordResetCode.DoesNotExist:
