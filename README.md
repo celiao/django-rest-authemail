@@ -30,7 +30,7 @@ Installation
 
 Install `django-rest-authemail` using one of the following techniques.
 
-- Use pip:
+- Use pip.  Note that particular versions of Django and the Django REST Framework may be installed.
 
 ```
 pip install django-rest-authemail
@@ -43,6 +43,12 @@ If you install it yourself, also install [Django](https://www.djangoproject.com/
 
 Usage
 -----
+
+Create a Django project, if you haven't already. For example,
+
+```python
+django-admin startproject mysite
+```
 
 In the `settings.py` file of your project, include `rest_framework` and `rest_framework.authtoken` in `INSTALLED_APPS`. Set the authentication scheme for the Django REST Framework to `TokenAuthentication`.
 
