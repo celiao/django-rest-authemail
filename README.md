@@ -47,12 +47,12 @@ Usage
 In the `settings.py` file of your project, include `rest_framework` and `rest_framework.authtoken` in `INSTALLED_APPS`. Set the authentication scheme for the Django REST Framework to `TokenAuthentication`.
 
 ```python
-    INSTALLED_APPS = (
+    INSTALLED_APPS = [
         ...
         'rest_framework',
         'rest_framework.authtoken',
         ...
-    )
+    ]
 
     REST_FRAMEWORK = {
         'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -88,14 +88,14 @@ In the `settings.py` file of your project, include `authemail` and your applicat
 ```python
     AUTH_USER_MODEL = 'accounts.MyUser'
 
-    INSTALLED_APPS = (
+    INSTALLED_APPS = [
         ...
         'rest_framework',
         'rest_framework.authtoken',
         'authemail',
         'accounts',
         ...
-    )
+    ]
 ```
 
 In the `admin.py` file of your application, extend `EmailUserAdmin` to add your custom fields.  For example,
