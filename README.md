@@ -149,7 +149,7 @@ Direct your browser to the `Django` `/admin` and log in.
 127.0.0.1:8000/admin
 ```
 
-You should see `Users`, `Groups`, `Password reset codes`, `Signup codes`, and `Tokens`.  If you click on `Users`, you should see your superuser account.
+You should see `Users`, `Tokens`, `Password reset codes`, `Signup codes`, and `Groups`.  If you click on `Users`, you should see your superuser account.
 
 Add the `authemail` API endpoints to your project's `urls.py` file.  For example,
 
@@ -208,7 +208,7 @@ In the `Django` `/admin`, the new user is now verified and the signup code is ab
 ```python
 >>> response = account.login(email=email, password=password)
 >>> account.token
-u'a84d062c1b60a36e6740eb60c6f9da8d1f709322'
+'a84d062c1b60a36e6740eb60c6f9da8d1f709322'
 ```
 
 You will find the same token for the user in the `Token` table in the `Django` `/admin`.  Find out more information about the user (insert your token):
@@ -217,7 +217,7 @@ You will find the same token for the user in the `Token` table in the `Django` `
 >>> token = 'a84d062c1b60a36e6740eb60c6f9da8d1f709322'
 >>> response = account.users_me(token=token)
 >>> response
-{u'first_name': u'Your first name', u'last_name': u'Your last name', u'email': u'your_email@gmail.com'}
+{'first_name': 'Your first name', 'last_name': 'Your last name', 'email': 'your_email@gmail.com'}
 ```
 
 Use the authentication token to logout:
@@ -225,7 +225,7 @@ Use the authentication token to logout:
 ```python
 >>> response = account.logout(token=token)
 >>> response
-{u'success': u'User logged out.'}
+{'success': 'User logged out.'}
 ```
 
 Play with password reset and change!
