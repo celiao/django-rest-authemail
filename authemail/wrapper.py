@@ -24,9 +24,6 @@ class API(object):
     def _request(self, method, path, params=None, payload=None):
         url = self._get_complete_url(path)
 
-        if method in ['GET']:
-            url += '.json'
-
         headers = self.headers.copy()
         if 'token' in params:
             headers.update({'Authorization': 'Token ' + params['token']})
