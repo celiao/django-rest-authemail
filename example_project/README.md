@@ -45,29 +45,11 @@ The setting AUTH_EMAIL_VERIFICATION (default: True) can be set to False, if you 
     vim example_project/settings_email.py
 ```
 
-Use one of the following steps to create the database tables:
-
-1. For Django >= 1.7, create the database tables with Django's `migrate` and create a superuser with `createsuperuser`.
+Create the database tables with Django's `migrate` and create a superuser with `createsuperuser`.
 
 ```python
     python manage.py migrate
     python manage.py createsuperuser
-```
-
-2. For Django < 1.7, create the database tables with `syncdb` and South's `migrate`.  Create a superuser if not prompted during `syncdb`.
-
-```python
-    python manage.py syncdb
-    python manage.py migrate
-    python manage.py createsuperuser
-```
-
-3. To migrate from Django 1.6.X to 1.7, upgrade `django-rest-authemail`, uninstall `south`, and bring the migrations up-to-date with `migrate`.
-
-```python
-    pip install --upgrade django-rest-authemail
-    pip uninstall south
-    python manage.py migrate
 ```
 
 Usage
