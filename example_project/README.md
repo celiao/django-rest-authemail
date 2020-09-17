@@ -19,21 +19,21 @@ Installation
 Create a virtual environment and activate it.
 
 ```python
-    virtualenv -p /usr/local/bin/python2.7 ~/.virtualenvs/authemail-2.7.6
-    source ~/.virtualenvs/authemail-2.7.6/bin/activate
+virtualenv -p /usr/local/bin/python2.7 ~/.virtualenvs/authemail-2.7.6
+source ~/.virtualenvs/authemail-2.7.6/bin/activate
 ```
 
 Clone the `django-rest-authemail` repo and change into the `example_project` directory.
 
 ```python
-    git clone https://github.com/celiao/django-rest-authemail.git
-    cd django-rest-authemail/example_project
+git clone https://github.com/celiao/django-rest-authemail.git
+cd django-rest-authemail/example_project
 ```
 
 Install the required packages into your virtual environment.  Edit `requirements.txt` beforehand, if you are using a version of Django other than 1.7.
 
 ```python
-    pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 Copy the `setting_email.py.TEMPLATE` file to `settings_email.py` and add your email settings.
@@ -41,15 +41,15 @@ Copy the `setting_email.py.TEMPLATE` file to `settings_email.py` and add your em
 The setting AUTH_EMAIL_VERIFICATION (default: True) can be set to False, if you don't want email verification to be performed.
 
 ```python
-    cp example_project/settings_email.py.TEMPLATE example_project/settings_email.py
-    vim example_project/settings_email.py
+cp example_project/settings_email.py.TEMPLATE example_project/settings_email.py
+vim example_project/settings_email.py
 ```
 
 Create the database tables with Django's `migrate` and create a superuser with `createsuperuser`.
 
 ```python
-    python manage.py migrate
-    python manage.py createsuperuser
+python manage.py migrate
+python manage.py createsuperuser
 ```
 
 Usage
@@ -58,31 +58,31 @@ Usage
 Test `django-rest-authemail`.  There shouldn't be any failures, but if there are, try to address them (most likely in your email settings).  Go onto the next step for more clues, if you get stuck.
 
 ```python
-    python manage.py test authemail
+python manage.py test authemail
 ```
 
 Check your setup by starting a Web server on your local machine.
 
 ```python
-    python manage.py runserver
+python manage.py runserver
 ```
 
 Direct your browser to the `Django` `/admin` interface, and log in.  You should see `Users`, `Verified users`, `Groups`, `Password reset codes`, `Signup codes`, and `Tokens`. If you click on `Users`, you should see your superuser account.
 
 ```python
-    http://127.0.0.1:8000/admin
+http://127.0.0.1:8000/admin
 ```
 
 Begin the playing with `django-rest-authemail` by going to the `/landing` page.
 
 ```python
-    http://127.0.0.1:8000/landing
+http://127.0.0.1:8000/landing
 ```
 
 Click on the `Signup` link, or go to the `/signup` page directly.
 
 ```python
-    http://127.0.0.1:8000/signup
+http://127.0.0.1:8000/signup
 ```
 
 Enter your signup details.  A verification email will be sent to the email address you enter, so include an email address to which you have access (but not the superuser email you entered earlier).  If you don't see the email in your inbox, check your spam folder.
@@ -96,7 +96,7 @@ Go back to the `Django` `/admin` and check that the `Signup code` has been remov
 Now, go back to the `Email Verified` page and click on the `Login` link, or go to the `/login` page directly.
 
 ```python
-    http://127.0.0.1:8000/login
+http://127.0.0.1:8000/login
 ```
 
 Login with your credentials.  Go back to the `Django` `/admin` and click on `Tokens` to see your newly issued authorization token.
