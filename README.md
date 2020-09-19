@@ -289,8 +289,8 @@ Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
 Here's an example using ``curl``,
 
 ```python
-curl -X GET 'http://127.0.0.1:8000/accounts/logout' \
-	 -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'
+curl -X GET 'http://127.0.0.1:8000/accounts/logout/' \
+     -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'
 ```
 
 
