@@ -53,6 +53,8 @@ django-admin startproject mysite
 In the `settings.py` file of your project, include `rest_framework` and `rest_framework.authtoken` in `INSTALLED_APPS`. Set the authentication scheme for the Django REST Framework to `TokenAuthentication`.
 
 ```python
+mysite/settings.py
+
 INSTALLED_APPS = [
 	...
 	'rest_framework',
@@ -78,6 +80,8 @@ python manage.py startapp accounts
 In the `models.py` file of your application, extend `EmailAbstractUser`, add custom fields, and assign `objects` to `EmailUserManager()`.  For example,
 
 ```python
+accounts/models.py
+
 from django.db import models
 from authemail.models import EmailUserManager, EmailAbstractUser
 
@@ -92,7 +96,7 @@ class MyUser(EmailAbstractUser):
 In the `settings.py` file of your project, include `authemail` and your application in `INSTALLED_APPS`. Set `AUTH_USER_MODEL` to the class of your user model.  For example,
 
 ```python
-AUTH_USER_MODEL = 'accounts.MyUser'
+mysite/settings.py
 
 INSTALLED_APPS = [
 	...
@@ -102,11 +106,16 @@ INSTALLED_APPS = [
 	'accounts',
 	...
 ]
+
+AUTH_USER_MODEL = 'accounts.MyUser'
+
 ```
 
-In the `admin.py` file of your application, extend `EmailUserAdmin` to add your custom fields.  For example,
+In the `admin.py` file of your project, extend `EmailUserAdmin` to add your custom fields.  For example,
 
 ```python
+mysite/admin.py
+
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from authemail.admin import EmailUserAdmin
@@ -154,6 +163,8 @@ You should see `Users`, `Tokens`, `Password reset codes`, `Signup codes`, and `G
 Add the `authemail` API endpoints to your project's `urls.py` file.  For example,
 
 ```python
+mysite/urls.py
+
 from accounts import views
 
 urlpatterns = [
@@ -166,6 +177,8 @@ urlpatterns = [
 When users signup or reset their password, they will be sent an email with a link and verification code.  Include email settings as environment variables or in your project's `settings.py` file.  See https://docs.djangoproject.com/en/dev/ref/settings/#email-host for more information.  For example,
 
 ```python
+mysite/settings.py
+
 # Email settings
 import os
 
@@ -609,6 +622,8 @@ Wrapper
 A wrapper is available to access the Authemail API with Python code.  First create an instance of the Authemail class, then call methods to access the API.  There is a one-to-one mapping between the endpoints and instance methods.  For example,
 
 ```python
+mysite/views.py
+
 from authemail import wrapper
 
 account = wrapper.Authemail()
