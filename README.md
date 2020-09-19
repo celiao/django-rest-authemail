@@ -54,6 +54,7 @@ In the `settings.py` file of your project, include `rest_framework` and `rest_fr
 
 ```python
 mysite/settings.py
+----
 
 INSTALLED_APPS = [
 	...
@@ -81,6 +82,7 @@ In the `models.py` file of your application, extend `EmailAbstractUser`, add cus
 
 ```python
 accounts/models.py
+----
 
 from django.db import models
 from authemail.models import EmailUserManager, EmailAbstractUser
@@ -97,6 +99,7 @@ In the `settings.py` file of your project, include `authemail` and your applicat
 
 ```python
 mysite/settings.py
+----
 
 INSTALLED_APPS = [
 	...
@@ -115,6 +118,7 @@ In the `admin.py` file of your project, extend `EmailUserAdmin` to add your cust
 
 ```python
 mysite/admin.py
+----
 
 from django.contrib import admin
 from django.contrib.auth import get_user_model
@@ -164,6 +168,7 @@ Add the `authemail` API endpoints to your project's `urls.py` file.  For example
 
 ```python
 mysite/urls.py
+----
 
 from accounts import views
 
@@ -178,6 +183,7 @@ When users signup or reset their password, they will be sent an email with a lin
 
 ```python
 mysite/settings.py
+----
 
 # Email settings
 import os
@@ -623,6 +629,7 @@ A wrapper is available to access the Authemail API with Python code.  First crea
 
 ```python
 mysite/views.py
+----
 
 from authemail import wrapper
 
