@@ -19,8 +19,8 @@ Installation
 Create a virtual environment and activate it.
 
 ```python
-virtualenv -p /usr/local/bin/python2.7 ~/.virtualenvs/authemail-2.7.6
-source ~/.virtualenvs/authemail-2.7.6/bin/activate
+virtualenv -p /usr/local/bin/python3.7 ~/.virtualenvs/authemail-3.7
+source ~/.virtualenvs/authemail-3.7/bin/activate
 ```
 
 Clone the `django-rest-authemail` repo and change into the `example_project` directory.
@@ -30,19 +30,18 @@ git clone https://github.com/celiao/django-rest-authemail.git
 cd django-rest-authemail/example_project
 ```
 
-Install the required packages into your virtual environment.  Edit `requirements.txt` beforehand, if you are using a version of Django other than 1.7.
+Install the required packages into your virtual environment.
 
 ```python
 pip install -r requirements.txt
 ```
 
-Copy the `setting_email.py.TEMPLATE` file to `settings_email.py` and add your email settings.
+Either add your email settings to your environment or enter them directly in the `settings.py` file.
 
 The setting AUTH_EMAIL_VERIFICATION (default: True) can be set to False, if you don't want email verification to be performed.
 
 ```python
-cp example_project/settings_email.py.TEMPLATE example_project/settings_email.py
-vim example_project/settings_email.py
+vim example_project/settings.py
 ```
 
 Create the database tables with Django's `migrate` and create a superuser with `createsuperuser`.
@@ -67,7 +66,7 @@ Check your setup by starting a Web server on your local machine.
 python manage.py runserver
 ```
 
-Direct your browser to the `Django` `/admin` interface, and log in.  You should see `Users`, `Verified users`, `Groups`, `Password reset codes`, `Signup codes`, and `Tokens`. If you click on `Users`, you should see your superuser account.
+Direct your browser to the `Django /admin` interface, and log in.  You should see `Users`, `Tokens`, `Password reset codes`, `Signup codes`, and `Groups`.  If you click on `Users`, you should see your superuser account.
 
 ```python
 http://127.0.0.1:8000/admin
@@ -87,11 +86,11 @@ http://127.0.0.1:8000/signup
 
 Enter your signup details.  A verification email will be sent to the email address you enter, so include an email address to which you have access (but not the superuser email you entered earlier).  If you don't see the email in your inbox, check your spam folder.
 
-Once you have entered your signup information and submitted the form, open up a new tab in your browser and go to the `Django` `/admin`.  Click on `Signup codes` to see the newly issued code. A new `User` will have been created with your email address, but will not yet appear under `Verified users`.
+Once you have entered your signup information and submitted the form, open up a new tab in your browser and go to the `Django /admin`.  Click on `Signup codes` to see the newly issued code. A new `User` will have been created with the email address, but will not yet appear under `Verified users`.
 
-Go to the inbox for your email address and click on the link in the verification email.  The `code` in the email should match that in the database.
+Go to the inbox for the email address and click on the link in the verification email.  The `code` in the email should match that in the database.
 
-Go back to the `Django` `/admin` and check that the `Signup code` has been removed and that your email address appears on the `Verified users` list.
+Go back to the `Django /admin` and check that the `Signup code` has been removed and that your email address appears on the `Verified users` list.
 
 Now, go back to the `Email Verified` page and click on the `Login` link, or go to the `/login` page directly.
 
@@ -99,7 +98,7 @@ Now, go back to the `Email Verified` page and click on the `Login` link, or go t
 http://127.0.0.1:8000/login
 ```
 
-Login with your credentials.  Go back to the `Django` `/admin` and click on `Tokens` to see your newly issued authorization token.
+Login with your credentials.  Go back to the `Django /admin` and click on `Tokens` to see your newly issued authorization token.
 
 Go back to your `Home` page and click on the `Logout` button.  You will be returned to the `/landing` page.
 
