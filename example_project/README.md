@@ -38,7 +38,7 @@ pip install -r requirements.txt
 
 Either add your email settings to your environment or enter them directly in the `settings.py` file.
 
-The setting AUTH_EMAIL_VERIFICATION (default: True) can be set to False, if you don't want email verification to be performed.
+The setting `AUTH_EMAIL_VERIFICATION` (default: True) can be set to False, if you don't want email verification to be performed.
 
 ```python
 vim example_project/settings.py
@@ -66,7 +66,7 @@ Check your setup by starting a Web server on your local machine.
 python manage.py runserver
 ```
 
-Direct your browser to the `Django /admin` interface, and log in.  You should see `Users`, `Tokens`, `Password reset codes`, `Signup codes`, and `Groups`.  If you click on `Users`, you should see your superuser account.
+Direct your browser to the `Django /admin` interface, and log in.  You should see `Users`, `Verified Users`, `Tokens`, `Password reset codes`, `Signup codes`, and `Groups`.  If you click on `Users`, you should see your superuser account.
 
 ```python
 http://127.0.0.1:8000/admin
