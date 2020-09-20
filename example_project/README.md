@@ -19,8 +19,8 @@ Installation
 Create a virtual environment and activate it.
 
 ```python
-virtualenv -p /usr/local/bin/python3.7 ~/.virtualenvs/authemail-3.7
-source ~/.virtualenvs/authemail-3.7/bin/activate
+virtualenv -p /usr/local/bin/python3.7 ~/.virtualenvs/example_project-3.7
+source ~/.virtualenvs/example_project-3.7/bin/activate
 ```
 
 Clone the `django-rest-authemail` repo and change into the `example_project` directory.
