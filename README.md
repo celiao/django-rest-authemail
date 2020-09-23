@@ -261,11 +261,11 @@ If you are having trouble getting your code to execute, or are just curious, try
 
 Enter information in the HTML form fields of the Browsable API, e.g.:
 
-![alt text](signup_html_form.jpg)
+![signup_html_form here](README_images/signup_html_form.jpg)
 
 Then click on `POST`.  You will either receive an error message to help in your debugging, or, if your signup was successful:
 
-![alt text](signup_html_form_success.jpg)
+![signup_html_form_success here](README_images/signup_html_form_success.jpg)
 
 Try out the other `authemail` API endpoints with the Django REST Framework Browsable API.
 
