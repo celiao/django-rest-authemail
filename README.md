@@ -250,32 +250,22 @@ Use the authentication token to logout:
 
 Play with password reset and change!
 
+Django REST Framework Browsable API
+-----
+
 If you are having trouble getting your code to execute, or are just curious, try out the Django REST Framework Browsable API.  If you type an `authemail` API endpoint into your browser, the Browsable API should appear (`runserver` should still be executing).  For example,
 
 ```python
-127.0.0.1/api/accounts/signup
+127.0.0.1:8000/api/accounts/signup
 ```
 
-In the `Content:` field of the Browsable API, type:
+Enter information in the HTML form fields of the Browsable API, e.g.:
 
-```python
-{
-	"first_name": "Your first name",
-	"last_name": "Your last name",
-	"email": "your_email@gmail.com",
-	"password": "Your password"
-}
-```
+![alt text](signup_html_form.jpg?raw=true)
 
 Then click on `POST`.  You will either receive an error message to help in your debugging, or, if your signup was successful:
 
-```python
-{
-	"first_name": "Your first name",
-	"last_name": "Your last name",
-	"email": "your_email@gmail.com",
-}
-```
+![alt text](signup_html_form_success.jpg)?raw=true
 
 Try out the other `authemail` API endpoints with the Django REST Framework Browsable API.
 
