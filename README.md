@@ -269,7 +269,11 @@ Then click on `POST`.  You will either receive an error message to help in your 
 
 Try out the other `authemail` API endpoints with the Django REST Framework Browsable API.
 
-Make `authemail` API calls with front end code.  To get started, follow the steps in the `README.md` for the `example_project`.  Enhance the Django code in the `example_project` or extend the concepts to React, AngularJS, iOS, and Android front ends.
+
+Front End Example Project
+----
+
+Make `authemail` API calls from front end code.  To get started, follow the steps in the`example_project` `README.md`.  Enhance the Django code in the `example_project` or extend the concepts to React, AngularJS, iOS, and Android front ends.
 
 When calling endpoints from the front end that require authentication (`logout`, `password/change`, and `users/me`), include the authorization token key in the HTTP header.  For example,
 
@@ -280,7 +284,7 @@ Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
 Here's an example using ``curl``,
 
 ```python
-curl -X GET 'http://127.0.0.1:8000/accounts/logout/' \
+curl -X GET 'http://127.0.0.1:8000/api/accounts/logout/' \
      -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'
 ```
 
