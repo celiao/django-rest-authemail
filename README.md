@@ -288,6 +288,28 @@ curl -X GET 'http://127.0.0.1:8000/api/accounts/logout/' \
      -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'
 ```
 
+Wrapper
+-------
+A wrapper is available to access the Authemail API with Python code.  First create an instance of the Authemail class, then call methods to access the API.  There is a one-to-one mapping between the endpoints and instance methods.  For example,
+
+```python
+mysite/views.py
+----
+
+from authemail import wrapper
+
+account = wrapper.Authemail()
+response = account.signup(first_name=first_name, last_name=last_name,
+	email=email, password=password)
+
+if 'detail' in response:
+	# Handle error condition
+else:
+	# Handle good response
+```
+
+See `example_project/views.py` for more sample usage.
+
 
 Authemail API Endpoints
 -----------------------
@@ -616,29 +638,6 @@ Content-Type: application/json
 	"detail": "Invalid token"
 }
 ```
-
-
-Wrapper
--------
-A wrapper is available to access the Authemail API with Python code.  First create an instance of the Authemail class, then call methods to access the API.  There is a one-to-one mapping between the endpoints and instance methods.  For example,
-
-```python
-mysite/views.py
-----
-
-from authemail import wrapper
-
-account = wrapper.Authemail()
-response = account.signup(first_name=first_name, last_name=last_name,
-	email=email, password=password)
-
-if 'detail' in response:
-	# Handle error condition
-else:
-	# Handle good response
-```
-
-See `example_project/views.py` for more sample usage.
 
 
 Inspiration and Ideas
