@@ -1,11 +1,11 @@
-from django.conf.urls import url
+from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from accounts import views
 
 
 urlpatterns = [
-    url(r'^users/me/$', views.MyUserMe.as_view()),
+    path('users/me/', views.MyUserMe.as_view()),
 ]
 
 
