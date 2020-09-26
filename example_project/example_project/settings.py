@@ -96,7 +96,7 @@ DATABASES = {
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/1.6/topics/i18n/
+# https://docs.djangoproject.com/en/3.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
@@ -115,6 +115,10 @@ STATIC_URL = '/static/'
 
 
 # Email settings
+# https://docs.djangoproject.com/en/3.1/topics/email/
+# https://docs.djangoproject.com/en/3.1/ref/settings/#email-host
+# e.g., EMAIL_HOST = smtp.gmail.com, EMAIL_PORT = 587
+
 EMAIL_FROM = os.environ.get('AUTHEMAIL_DEFAULT_EMAIL_FROM') or '<YOUR DEFAULT_EMAIL_FROM HERE>'
 EMAIL_BCC = os.environ.get('AUTHEMAIL_DEFAULT_EMAIL_BCC') or '<YOUR DEFAULT_EMAIL_BCC HERE>'
 
@@ -124,5 +128,3 @@ EMAIL_HOST_USER = os.environ.get('AUTHEMAIL_EMAIL_HOST_USER') or '<YOUR EMAIL_HO
 EMAIL_HOST_PASSWORD = os.environ.get('AUTHEMAIL_EMAIL_HOST_PASSWORD') or '<YOUR EMAIL_HOST_PASSWORD HERE>'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-
-SERVER_EMAIL = os.environ.get('AUTHEMAIL_SERVER_EMAIL') or '<YOUR SERVER_EMAIL HERE>'

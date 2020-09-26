@@ -180,13 +180,17 @@ urlpatterns = [
 ]
 ```
 
-When users signup or reset their password, they will be sent an email with a link and verification code.  Include email settings as environment variables or in your project's `settings.py` file.  See https://docs.djangoproject.com/en/dev/ref/settings/#email-host for more information.  For example,
+When users signup or reset their password, they will be sent an email with a link and verification code.  Include email settings as environment variables or in your project's `settings.py` file.  For example,
 
 ```python
 mysite/settings.py
 ----
 
 # Email settings
+# https://docs.djangoproject.com/en/3.1/topics/email/
+# https://docs.djangoproject.com/en/3.1/ref/settings/#email-host
+# e.g., EMAIL_HOST = smtp.gmail.com, EMAIL_PORT = 587
+
 import os
 
 EMAIL_FROM = os.environ.get('AUTHEMAIL_DEFAULT_EMAIL_FROM') or '<YOUR DEFAULT_EMAIL_FROM HERE>'
@@ -198,8 +202,6 @@ EMAIL_HOST_USER = os.environ.get('AUTHEMAIL_EMAIL_HOST_USER') or '<YOUR EMAIL_HO
 EMAIL_HOST_PASSWORD = os.environ.get('AUTHEMAIL_EMAIL_HOST_PASSWORD') or '<YOUR EMAIL_HOST_PASSWORD HERE>'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-
-SERVER_EMAIL = os.environ.get('AUTHEMAIL_SERVER_EMAIL') or '<YOUR SERVER_EMAIL HERE>'
 ```
 
 Try out `authemail` API calls by firing up `python` and using the `authemail` wrapper methods (`runserver` should still be executing).  For example,
