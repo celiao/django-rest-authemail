@@ -29,7 +29,7 @@ Clone the `django-rest-authemail` repo.
 git clone https://github.com/celiao/django-rest-authemail.git
 ```
 
-All you need is the `example_project` directory, so extract the `example_project` directory and delete the other files and directories.
+All you need is the `example_project` directory, so extract `example_project` and delete the other files and directories.
 
 ```
 mv django-rest-authemail/example_project .
