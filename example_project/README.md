@@ -23,11 +23,23 @@ virtualenv -p /usr/local/bin/python3.7 ~/.virtualenvs/example_project-3.7
 source ~/.virtualenvs/example_project-3.7/bin/activate
 ```
 
-Clone the `django-rest-authemail` repo and change into the `example_project` directory.
+Clone the `django-rest-authemail` repo.
 
 ```python
 git clone https://github.com/celiao/django-rest-authemail.git
-cd django-rest-authemail/example_project
+```
+
+All you need is the `example_project` directory, so extract the `example_project` directory and delete the other files and directories.
+
+```
+mv django-rest-authemail/example_project .
+rm -rf django-rest-authemail
+```
+
+Change into the `example_project` directory.
+
+```
+cd example_project
 ```
 
 Install the required packages into your virtual environment.
@@ -36,9 +48,7 @@ Install the required packages into your virtual environment.
 pip install -r requirements.txt
 ```
 
-Either add your email settings to your environment or enter them directly in the `settings.py` file.
-
-The setting `AUTH_EMAIL_VERIFICATION` (default: True) can be set to False, if you don't want email verification to be performed.
+Either add your email settings to your environment or enter them directly at the bottom of the `settings.py` file.  The setting `AUTH_EMAIL_VERIFICATION` (default: True) can be set to False, if you don't want email verification to be performed.
 
 ```python
 vim example_project/settings.py
