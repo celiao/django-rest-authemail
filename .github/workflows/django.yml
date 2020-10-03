@@ -47,9 +47,9 @@ jobs:
       run: |
         cd example_project
         coverage run --source=.,authemail manage.py test authemail
-        coverage report -m
+        coverage xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
-        file: ./example_project/.coverage
+        file: ./example_project/coverage.xml
         name: codecov-django-rest-authemail
