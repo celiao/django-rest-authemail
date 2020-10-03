@@ -51,5 +51,5 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
-        file: ./.coverage
+        file: ./example_project/.coverage
         name: codecov-django-rest-authemail
