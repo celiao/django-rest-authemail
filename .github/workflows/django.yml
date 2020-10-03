@@ -29,6 +29,7 @@ jobs:
         pip install flake8
         cd example_project
         pip install -r requirements.txt
+        pip install coverage
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
