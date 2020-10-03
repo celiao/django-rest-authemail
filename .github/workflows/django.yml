@@ -45,4 +45,10 @@ jobs:
         AUTHEMAIL_EMAIL_PORT: ${{ secrets.AUTHEMAIL_EMAIL_PORT }}
       run: |
         cd example_project
-        python manage.py test authemail
+        coverage run --source=.,authemail manage.py test authemail
+        coverage report -m
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        file: ./.coverage
+        name: codecov-django-rest-authemail
