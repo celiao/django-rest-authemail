@@ -6,6 +6,7 @@ from accounts import views
 
 urlpatterns = [
     path('users/me/', views.MyUserMe.as_view()),
+    path('users/me/change/', views.MyUserMeChange.as_view()),
 ]
 
 
