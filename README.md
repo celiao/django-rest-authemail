@@ -2,6 +2,7 @@ django-rest-authemail
 =====================
 
 ![Python package](https://github.com/celiao/django-rest-authemail/workflows/build/badge.svg)
+![codecov](https://img.shields.io/codecov/c/github/celiao/django-rest-authemail)
 ![pypi](https://img.shields.io/pypi/pyversions/django-rest-authemail)
 ![pypi](https://img.shields.io/pypi/djversions/django-rest-authemail?label=django)
 ![pypi](https://img.shields.io/pypi/v/django-rest-authemail)
