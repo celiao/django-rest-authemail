@@ -14,6 +14,7 @@ Makefile
 
 # Build files
 .coverage
+coverage.xml
 
 # Editor files
 ## Vim files
