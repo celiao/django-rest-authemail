@@ -46,3 +46,9 @@ class PasswordResetVerifiedForm(PasswordForm):
 
 class PasswordChangeForm(PasswordForm):
     pass
+
+
+class UsersMeChangeForm(AddErrorMixin, forms.Form):
+    first_name = forms.CharField(max_length=30, required=False)
+    last_name = forms.CharField(max_length=30, required=False)
+    date_of_birth = forms.DateField(required=False)

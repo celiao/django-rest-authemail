@@ -1,6 +1,8 @@
 import json
 import requests
 
+from django.core.serializers.json import DjangoJSONEncoder
+
 
 # API class from https://pypi.python.org/pypi/tmdbsimple
 class API(object):
@@ -30,7 +32,7 @@ class API(object):
 
         response = requests.request(
             method, url, params=params,
-            data=json.dumps(payload) if payload else payload,
+            data=json.dumps(payload, cls=DjangoJSONEncoder) if payload else payload,
             headers=headers)
 
         response.encoding = 'utf-8'

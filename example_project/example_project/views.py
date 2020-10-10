@@ -6,9 +6,11 @@ from django.views.generic.edit import FormView
 
 from authemail import wrapper
 
-from .forms import SignupForm, LoginForm, PasswordResetForm
-from .forms import PasswordResetVerifiedForm, PasswordChangeForm
+from .forms import SignupForm, LoginForm
+from .forms import PasswordResetForm, PasswordResetVerifiedForm
+from .forms import PasswordChangeForm, UsersMeChangeForm
 
+from . import wrapperplus
 
 class LandingView(TemplateView):
     template_name = 'landing.html'
@@ -210,3 +212,34 @@ class PasswordChangeView(FormView):
 
     def get_success_url(self):
         return reverse('home_page')
+
+
+class UsersMeChangeView(FormView):
+    template_name = 'users_me_change.html'
+    form_class = UsersMeChangeForm
+
+    def form_valid(self, form):
+        token = self.request.session['auth_token']
+        first_name = form.cleaned_data['first_name']
+        last_name = form.cleaned_data['last_name']
+        date_of_birth = form.cleaned_data['date_of_birth']
+
+        account = wrapperplus.AuthemailPlus()
+        response = account.users_me_change(token=token,
+                                           first_name=first_name,
+                                           last_name=last_name,
+                                           date_of_birth=date_of_birth)
+
+        # Handle other error responses from API
+        if 'detail' in response:
+            form.add_error(None, response['detail'])
+            return self.form_invalid(form)
+
+        return super(UsersMeChangeView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('users_me_change_success')
+
+
+class UsersMeChangeSuccessView(TemplateView):
+    template_name = 'users_me_change_success.html'
