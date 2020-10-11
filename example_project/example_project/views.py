@@ -218,6 +218,20 @@ class UsersMeChangeView(FormView):
     template_name = 'users_me_change.html'
     form_class = UsersMeChangeForm
 
+    def get_context_data(self, **kwargs):
+        context = super(UsersMeChangeView, self).get_context_data(**kwargs)
+
+        token = self.request.session['auth_token']
+
+        account = wrapper.Authemail()
+        response = account.users_me(token=token)
+
+        context['first_name'] = response['first_name']
+        context['last_name'] = response['last_name']
+        context['date_of_birth'] = response['date_of_birth']
+        
+        return context
+
     def form_valid(self, form):
         token = self.request.session['auth_token']
         first_name = form.cleaned_data['first_name']
