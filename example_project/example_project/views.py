@@ -103,6 +103,8 @@ class HomeView(TemplateView):
         account = wrapper.Authemail()
         response = account.users_me(token=token)
 
+        context['first_name'] = response['first_name']
+        context['last_name'] = response['last_name']
         context['email'] = response['email']
 
         return context
