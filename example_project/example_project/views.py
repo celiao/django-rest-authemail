@@ -1,4 +1,4 @@
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.views.generic.base import View
@@ -19,6 +19,7 @@ class LandingView(TemplateView):
 class SignupView(FormView):
     template_name = 'signup.html'
     form_class = SignupForm
+    success_url = reverse_lazy('signup_email_sent_page')
 
     def form_valid(self, form):
         first_name = form.cleaned_data['first_name']
@@ -36,9 +37,6 @@ class SignupView(FormView):
             return self.form_invalid(form)
 
         return super(SignupView, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse('signup_email_sent_page')
 
 
 class SignupEmailSentView(TemplateView):
@@ -70,6 +68,7 @@ class SignupNotVerifiedView(TemplateView):
 class LoginView(FormView):
     template_name = 'login.html'
     form_class = LoginForm
+    success_url = reverse_lazy('home_page')
 
     def form_valid(self, form):
         email = form.cleaned_data['email']
@@ -88,9 +87,6 @@ class LoginView(FormView):
 
         return super(LoginView, self).form_valid(form)
 
-    def get_success_url(self):
-        return reverse('home_page')
-
 
 class HomeView(TemplateView):
     template_name = 'home.html'
@@ -103,8 +99,6 @@ class HomeView(TemplateView):
         account = wrapper.Authemail()
         response = account.users_me(token=token)
 
-        context['first_name'] = response['first_name']
-        context['last_name'] = response['last_name']
         context['email'] = response['email']
 
         return context
@@ -125,6 +119,7 @@ class LogoutView(View):
 class PasswordResetView(FormView):
     template_name = 'password_reset.html'
     form_class = PasswordResetForm
+    success_url = reverse_lazy('password_reset_email_sent_page')
 
     def form_valid(self, form):
         email = form.cleaned_data['email']
@@ -138,9 +133,6 @@ class PasswordResetView(FormView):
             return self.form_invalid(form)
 
         return super(PasswordResetView, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse('password_reset_email_sent_page')
 
 
 class PasswordResetEmailSentView(TemplateView):
@@ -167,6 +159,7 @@ class PasswordResetVerifyView(View):
 class PasswordResetVerifiedView(FormView):
     template_name = 'password_reset_verified.html'
     form_class = PasswordResetVerifiedForm
+    success_url = reverse_lazy('password_reset_success')
 
     def form_valid(self, form):
         code = self.request.session['password_reset_code']
@@ -182,9 +175,6 @@ class PasswordResetVerifiedView(FormView):
 
         return super(PasswordResetVerifiedView, self).form_valid(form)
 
-    def get_success_url(self):
-        return reverse('password_reset_success')
-
 
 class PasswordResetNotVerifiedView(TemplateView):
     template_name = 'password_reset_not_verified.html'
@@ -197,6 +187,7 @@ class PasswordResetSuccessView(TemplateView):
 class PasswordChangeView(FormView):
     template_name = 'password_change.html'
     form_class = PasswordChangeForm
+    success_url = reverse_lazy('home_page')
 
     def form_valid(self, form):
         token = self.request.session['auth_token']
@@ -212,13 +203,11 @@ class PasswordChangeView(FormView):
 
         return super(PasswordChangeView, self).form_valid(form)
 
-    def get_success_url(self):
-        return reverse('home_page')
-
 
 class UsersMeChangeView(FormView):
     template_name = 'users_me_change.html'
     form_class = UsersMeChangeForm
+    success_url = reverse_lazy('users_me_change_success')
 
     def get_context_data(self, **kwargs):
         context = super(UsersMeChangeView, self).get_context_data(**kwargs)
@@ -252,9 +241,6 @@ class UsersMeChangeView(FormView):
             return self.form_invalid(form)
 
         return super(UsersMeChangeView, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse('users_me_change_success')
 
 
 class UsersMeChangeSuccessView(TemplateView):
