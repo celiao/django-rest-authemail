@@ -38,7 +38,7 @@ urlpatterns = [
         views.PasswordResetNotVerifiedView.as_view(),
         name='password_reset_not_verified_page'),
     path('password/reset/success/', views.PasswordResetSuccessView.as_view(),
-        name='password_reset_success'),
+        name='password_reset_success_page'),
 
     path('password/change/', views.PasswordChangeView.as_view(),
         name='password_change_page'),
@@ -46,5 +46,5 @@ urlpatterns = [
     path('users/me/change/', views.UsersMeChangeView.as_view(),
         name='users_me_change_page'),
     path('users/me/change/success/', views.UsersMeChangeSuccessView.as_view(),
-        name='users_me_change_success'),
+        name='users_me_change_success_page'),
 ]

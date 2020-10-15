@@ -99,6 +99,8 @@ class HomeView(TemplateView):
         account = wrapper.Authemail()
         response = account.users_me(token=token)
 
+        context['first_name'] = response['first_name']
+        context['last_name'] = response['last_name']
         context['email'] = response['email']
 
         return context
@@ -159,7 +161,7 @@ class PasswordResetVerifyView(View):
 class PasswordResetVerifiedView(FormView):
     template_name = 'password_reset_verified.html'
     form_class = PasswordResetVerifiedForm
-    success_url = reverse_lazy('password_reset_success')
+    success_url = reverse_lazy('password_reset_success_page')
 
     def form_valid(self, form):
         code = self.request.session['password_reset_code']
@@ -207,7 +209,7 @@ class PasswordChangeView(FormView):
 class UsersMeChangeView(FormView):
     template_name = 'users_me_change.html'
     form_class = UsersMeChangeForm
-    success_url = reverse_lazy('users_me_change_success')
+    success_url = reverse_lazy('users_me_change_success_page')
 
     def get_context_data(self, **kwargs):
         context = super(UsersMeChangeView, self).get_context_data(**kwargs)
