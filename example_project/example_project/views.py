@@ -189,7 +189,7 @@ class PasswordResetSuccessView(TemplateView):
 class PasswordChangeView(FormView):
     template_name = 'password_change.html'
     form_class = PasswordChangeForm
-    success_url = reverse_lazy('home_page')
+    success_url = reverse_lazy('password_change_success_page')
 
     def form_valid(self, form):
         token = self.request.session['auth_token']
@@ -204,6 +204,10 @@ class PasswordChangeView(FormView):
             return self.form_invalid(form)
 
         return super(PasswordChangeView, self).form_valid(form)
+
+
+class PasswordChangeSuccessView(TemplateView):
+    template_name = 'password_change_success.html'
 
 
 class UsersMeChangeView(FormView):
