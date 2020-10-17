@@ -97,11 +97,11 @@ class HomeView(TemplateView):
         token = self.request.session['auth_token']
 
         account = wrapper.Authemail()
-        response = account.users_me(token=token)
+        account.users_me(token=token)
 
-        context['first_name'] = response['first_name']
-        context['last_name'] = response['last_name']
-        context['email'] = response['email']
+        context['first_name'] = account.first_name
+        context['last_name'] = account.last_name
+        context['email'] = account.email
 
         return context
 
@@ -221,11 +221,11 @@ class UsersMeChangeView(FormView):
         token = self.request.session['auth_token']
 
         account = wrapper.Authemail()
-        response = account.users_me(token=token)
+        account.users_me(token=token)
 
-        context['first_name'] = response['first_name']
-        context['last_name'] = response['last_name']
-        context['date_of_birth'] = response['date_of_birth']
+        context['first_name'] = account.first_name
+        context['last_name'] = account.last_name
+        context['date_of_birth'] = account.date_of_birth
         
         return context
 
