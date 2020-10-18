@@ -118,6 +118,17 @@ class SignupCodeManager(models.Manager):
         return False
 
 
+class EmailChangeCodeManager(models.Manager):
+    def create_email_change_code(self, user):
+        code = _generate_code()
+        email_change_code = self.create(user=user, code=code)
+
+        return email_change_code
+
+    def get_expiry_period(self):
+        return EXPIRY_PERIOD
+
+
 class PasswordResetCodeManager(models.Manager):
     def create_reset_code(self, user):
         code = _generate_code()
@@ -174,6 +185,17 @@ class SignupCode(AbstractBaseCode):
 
     def send_signup_email(self):
         prefix = 'signup_email'
+        self.send_email(prefix)
+
+
+class EmailChangeCode(AbstractBaseCode):
+    objects = EmailChangeCodeManager()
+
+    def send_email_change_emails(self):
+        prefix = 'email_change_email_previous'
+        self.send_email(prefix)
+
+        prefix = 'email_change_email_new'
         self.send_email(prefix)
 
 
