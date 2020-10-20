@@ -160,6 +160,7 @@ class EmailChange(APIView):
             # Delete all unused email change codes
             EmailChangeCode.objects.filter(user=user).delete()
 
+            email = serializer.data['email']
             email_change_code = \
                 EmailChangeCode.objects.create_email_change_code(user)
             email_change_code.send_email_change_emails()
