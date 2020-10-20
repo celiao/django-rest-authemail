@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 
 from authemail.models import SignupCode, PasswordResetCode, send_multi_format_email
 from authemail.serializers import SignupSerializer, LoginSerializer
+from authemail.serializers import EmailChangeSerializer
 from authemail.serializers import PasswordResetSerializer
 from authemail.serializers import PasswordResetVerifiedSerializer
 from authemail.serializers import PasswordChangeSerializer
@@ -143,6 +144,30 @@ class Logout(APIView):
             token.delete()
         content = {'success': _('User logged out.')}
         return Response(content, status=status.HTTP_200_OK)
+
+
+class EmailChange(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = EmailChangeSerializer
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            user = request.user
+
+            # Delete all unused email change codes
+            EmailChangeCode.objects.filter(user=user).delete()
+
+            email_change_code = \
+                EmailChangeCode.objects.create_email_change_code(user)
+            email_change_code.send_email_change_emails()
+            content = {'email': email}
+            return Response(content, status=status.HTTP_201_CREATED)
+
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class PasswordReset(APIView):
