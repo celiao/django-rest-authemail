@@ -130,7 +130,7 @@ class EmailChangeCodeManager(models.Manager):
 
 
 class PasswordResetCodeManager(models.Manager):
-    def create_reset_code(self, user):
+    def create_password_reset_code(self, user):
         code = _generate_code()
         password_reset_code = self.create(user=user, code=code)
 

@@ -172,6 +172,14 @@ class EmailChange(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
+class EmailChangeVerify(APIView):
+    pass
+
+
+class EmailChangeVerified(APIView):
+    pass
+
+
 class PasswordReset(APIView):
     permission_classes = (AllowAny,)
     serializer_class = PasswordResetSerializer
@@ -190,7 +198,7 @@ class PasswordReset(APIView):
 
                 if user.is_verified and user.is_active:
                     password_reset_code = \
-                        PasswordResetCode.objects.create_reset_code(user)
+                        PasswordResetCode.objects.create_password_reset_code(user)
                     password_reset_code.send_password_reset_email()
                     content = {'email': email}
                     return Response(content, status=status.HTTP_201_CREATED)
