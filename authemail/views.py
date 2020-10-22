@@ -14,6 +14,8 @@ from authemail.models import SignupCode, EmailChangeCode, PasswordResetCode
 from authemail.models import send_multi_format_email
 from authemail.serializers import SignupSerializer, LoginSerializer
 from authemail.serializers import EmailChangeSerializer
+from authemail.serializers import EmailChangeVerifySerializer
+from authemail.serializers import EmailChangeVerifiedSerializer
 from authemail.serializers import PasswordResetSerializer
 from authemail.serializers import PasswordResetVerifiedSerializer
 from authemail.serializers import PasswordChangeSerializer
@@ -173,11 +175,55 @@ class EmailChange(APIView):
 
 
 class EmailChangeVerify(APIView):
-    pass
+    permission_classes = (AllowAny,)
+
+    def get(self, request, format=None):
+        code = request.GET.get('code', '')
+
+        try:
+            email_change_code = EmailChangeCode.objects.get(code=code)
+
+            # Delete email change code if older than expiry period
+            delta = date.today() - email_change_code.created_at.date()
+            if delta.days > PasswordResetCode.objects.get_expiry_period():
+                email_change_code.delete()
+                raise EmailChangeCode.DoesNotExist()
+                
+            content = {'success': _('User verified.')}
+            return Response(content, status=status.HTTP_200_OK)
+        except EmailChangeCode.DoesNotExist:
+            content = {'detail': _('Unable to verify user.')}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 
 class EmailChangeVerified(APIView):
-    pass
+    permission_classes = (AllowAny,)
+    serializer_class = EmailChangeVerifiedSerializer
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            code = serializer.data['code']
+            email = serializer.data['email']
+
+            try:
+                email_change_code = EmailChangeCode.objects.get(code=code)
+                email_change_code.user.email = email
+                email_change_code.user.save()
+
+                # Delete password code just used
+                email_change_code.delete()
+
+                content = {'success': _('Email changed.')}
+                return Response(content, status=status.HTTP_200_OK)
+            except EmailChangeCode.DoesNotExist:
+                content = {'detail': _('Unable to verify user.')}
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class PasswordReset(APIView):

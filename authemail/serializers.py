@@ -24,6 +24,15 @@ class EmailChangeSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255)
 
 
+class EmailChangeVerifySerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255)
+
+
+class EmailChangeVerifiedSerializer(serializers.Serializer):
+    code = serializers.CharField(max_length=40)
+    email = serializers.EmailField(max_length=255)
+
+
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255)
 
