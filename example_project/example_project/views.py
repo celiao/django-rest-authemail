@@ -7,6 +7,7 @@ from django.views.generic.edit import FormView
 from authemail import wrapper
 
 from .forms import SignupForm, LoginForm
+from .forms import EmailChangeForm, EmailChangeVerifiedForm
 from .forms import PasswordResetForm, PasswordResetVerifiedForm
 from .forms import PasswordChangeForm, UsersMeChangeForm
 
@@ -116,6 +117,66 @@ class LogoutView(View):
         self.request.session.flush()
 
         return HttpResponseRedirect(reverse('landing_page'))
+
+
+class EmailChangeView(FormView):
+    template_name = 'email_change.html'
+    form_class = EmailChangeForm
+    success_url = reverse_lazy('email_change_emails_sent_page')
+
+    def form_valid(self, form):
+        email = form.cleaned_data['email']
+
+        account = wrapper.Authemail()
+        response = account.email_change(email=email)
+
+        # Handle other error responses from API
+        if 'detail' in response:
+            form.add_error(None, response['detail'])
+            return self.form_invalid(form)
+
+        return super(EmailChangeView, self).form_valid(form)
+
+
+class EmailChangeEmailsSentView(TemplateView):
+    template_name = 'email_change_emails_sent.html'
+
+
+class EmailChangeVerifyView(View):
+    def get(self, request, format=None):
+        code = request.GET.get('code', '')
+
+        account = wrapper.Authemail()
+        response = account.email_change_verify(code=code)
+
+        # Handle other error responses from API
+        if 'detail' in response:
+            return HttpResponseRedirect(
+                reverse('email_change_not_verified_page'))
+
+        request.session['email_change_code'] = code
+
+        return HttpResponseRedirect(reverse('email_change_verified_page'))
+
+
+class EmailChangeVerifiedView(FormView):
+    template_name = 'email_change_verified.html'
+    form_class = EmailChangeVerifiedForm
+    success_url = reverse_lazy('email_change_success_page')
+
+    def form_valid(self, form):
+        code = self.request.session['email_change_code']
+        email = form.cleaned_data['email']
+
+        account = wrapper.Authemail()
+        response = account.email_change_verified(code=code, email=email)
+
+        # Handle other error responses from API
+        if 'detail' in response:
+            form.add_error(None, response['detail'])
+            return self.form_invalid(form)
+
+        return super(EmailChangeVerifiedView, self).form_valid(form)
 
 
 class PasswordResetView(FormView):

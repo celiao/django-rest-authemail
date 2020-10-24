@@ -12,7 +12,7 @@ class AddErrorMixin(object):
             self._errors[field] = self.error_class([msg])
 
 
-class PasswordForm(AddErrorMixin, forms.Form):
+class PasswordConfirmForm(AddErrorMixin, forms.Form):
     password = forms.CharField(max_length=128)
     password2 = forms.CharField(max_length=128)
 
@@ -25,7 +25,7 @@ class PasswordForm(AddErrorMixin, forms.Form):
         return password2
 
 
-class SignupForm(PasswordForm):
+class SignupForm(PasswordConfirmForm):
     first_name = forms.CharField(max_length=30, required=False)
     last_name = forms.CharField(max_length=30, required=False)
     email = forms.EmailField(max_length=255)
@@ -36,15 +36,23 @@ class LoginForm(AddErrorMixin, forms.Form):
     password = forms.CharField(max_length=128)
 
 
+class EmailChangeForm(AddErrorMixin, forms.Form):
+    email = forms.EmailField(max_length=255)
+
+
+class EmailChangeVerifiedForm(forms.Form):
+    pass
+
+
 class PasswordResetForm(AddErrorMixin, forms.Form):
     email = forms.EmailField(max_length=255)
 
 
-class PasswordResetVerifiedForm(PasswordForm):
+class PasswordResetVerifiedForm(PasswordConfirmForm):
     pass
 
 
-class PasswordChangeForm(PasswordForm):
+class PasswordChangeForm(PasswordConfirmForm):
     pass
 
 

@@ -192,10 +192,10 @@ class EmailChangeCode(AbstractBaseCode):
     objects = EmailChangeCodeManager()
 
     def send_email_change_emails(self):
-        prefix = 'email_change_email_previous'
+        prefix = 'email_change_notify_previous_email'
         self.send_email(prefix)
 
-        prefix = 'email_change_email_new'
+        prefix = 'email_change_confirm_new_email'
         self.send_email(prefix)
 
 
