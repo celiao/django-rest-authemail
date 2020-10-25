@@ -179,6 +179,14 @@ class EmailChangeVerifiedView(FormView):
         return super(EmailChangeVerifiedView, self).form_valid(form)
 
 
+class EmailChangeNotVerifiedView(TemplateView):
+    template_name = 'email_change_not_verified.html'
+
+
+class EmailChangeSuccessView(TemplateView):
+    template_name = 'password_reset_success.html'
+
+
 class PasswordResetView(FormView):
     template_name = 'password_reset.html'
     form_class = PasswordResetForm
