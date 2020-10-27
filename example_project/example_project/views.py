@@ -125,10 +125,11 @@ class EmailChangeView(FormView):
     success_url = reverse_lazy('email_change_emails_sent_page')
 
     def form_valid(self, form):
+        token = self.request.session['auth_token']
         email = form.cleaned_data['email']
 
         account = wrapper.Authemail()
-        response = account.email_change(email=email)
+        response = account.email_change(token=token, email=email)
 
         # Handle other error responses from API
         if 'detail' in response:
@@ -165,11 +166,13 @@ class EmailChangeVerifiedView(FormView):
     success_url = reverse_lazy('email_change_success_page')
 
     def form_valid(self, form):
+        token = self.request.session['auth_token']
         code = self.request.session['email_change_code']
         email = form.cleaned_data['email']
 
         account = wrapper.Authemail()
-        response = account.email_change_verified(code=code, email=email)
+        response = account.email_change_verified(token=token, code=code,
+                                                 email=email)
 
         # Handle other error responses from API
         if 'detail' in response:

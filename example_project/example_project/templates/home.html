@@ -10,6 +10,7 @@
 {% csrf_token %}
 <p>
 <font style="font-size:24px">
+<a href="{% url 'email_change_page' %}">Change Email</a><br><br>
 <a href="{% url 'password_change_page' %}">Change Password</a><br><br>
 <a href="{% url 'users_me_change_page' %}">Change Me</a><br><br>
 <button type="submit" value="Logout">Logout<br>
