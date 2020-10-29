@@ -163,9 +163,8 @@ class EmailChange(APIView):
             EmailChangeCode.objects.filter(user=user).delete()
 
             email = serializer.data['email']
-            email_change_code = \
-                EmailChangeCode.objects.create_email_change_code(user)
-            email_change_code.send_email_change_emails()
+            code = EmailChangeCode.objects.create_email_change_code(user)
+            code.send_email_change_emails(email, code)
             content = {'email': email}
             return Response(content, status=status.HTTP_201_CREATED)
 

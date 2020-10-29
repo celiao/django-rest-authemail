@@ -191,12 +191,20 @@ class SignupCode(AbstractBaseCode):
 class EmailChangeCode(AbstractBaseCode):
     objects = EmailChangeCodeManager()
 
-    def send_email_change_emails(self):
+    def send_email_change_emails(self, email, code):
         prefix = 'email_change_notify_previous_email'
         self.send_email(prefix)
 
         prefix = 'email_change_confirm_new_email'
-        self.send_email(prefix)
+
+        print("email =", email)
+        print("code =", code)
+
+        ctxt = {
+            'email': email,
+            'code': code
+        }
+        send_multi_format_email(prefix, ctxt, target_email=email)
 
 
 class PasswordResetCode(AbstractBaseCode):

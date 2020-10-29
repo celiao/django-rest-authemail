@@ -6,23 +6,11 @@
 </head>
 <body>
 <h1>Email Change Verified</h1>
-<form method="post" action="{% url 'email_change_verified_page' %}">
-{% csrf_token %}
-{% if form.non_field_errors %}
-    Non-Field Errors:<br>
-    {{ form.non_field_errors }}
-{% endif %}
-{% if form.errors %}
-    Field Errors:<br>
-    <font color="red">{{ form.errors }}</font>
-{% endif %}
 <p>
 <font style="font-size:24px;">
-Email address: <input type="text" name="email" style="font-size:24px;"><br>
+Thank you for verifying your new email address.
 <br>
-<button type="submit" value="Submit" style="font-size:24px;">Submit</button>
 </font>
 </p>
-</form>
 </body>
 </html>
