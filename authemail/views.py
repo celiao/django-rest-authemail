@@ -163,8 +163,10 @@ class EmailChange(APIView):
             EmailChangeCode.objects.filter(user=user).delete()
 
             email = serializer.data['email']
-            code = EmailChangeCode.objects.create_email_change_code(user)
-            code.send_email_change_emails(email, code)
+            email_change_code = EmailChangeCode.objects.create_email_change_code(user, email)
+
+            email_change_code.send_email_change_emails()
+
             content = {'email': email}
             return Response(content, status=status.HTTP_201_CREATED)
 
@@ -184,7 +186,7 @@ class EmailChangeVerify(APIView):
 
             # Delete email change code if older than expiry period
             delta = date.today() - email_change_code.created_at.date()
-            if delta.days > PasswordResetCode.objects.get_expiry_period():
+            if delta.days > EmailChangeCode.objects.get_expiry_period():
                 email_change_code.delete()
                 raise EmailChangeCode.DoesNotExist()
                 

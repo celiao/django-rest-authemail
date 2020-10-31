@@ -31,9 +31,9 @@ class SignupCodeInline(admin.TabularInline):
 
 
 class EmailChangeCodeAdmin(admin.ModelAdmin):
-    list_display = ('code', 'user', 'created_at')
+    list_display = ('code', 'user', 'email', 'created_at')
     ordering = ('-created_at',)
-    readonly_fields = ('user', 'code')
+    readonly_fields = ('user', 'code', 'email')
 
     def has_add_permission(self, request):
         return False
@@ -43,10 +43,10 @@ class EmailChangeCodeInline(admin.TabularInline):
     model = EmailChangeCode
     fieldsets = (
         (None, {
-            'fields': ('code', 'created_at')
+            'fields': ('code', 'email', 'created_at')
         }),
     )
-    readonly_fields = ('code', 'created_at')
+    readonly_fields = ('code', 'email', 'created_at')
 
     def has_add_permission(self, request):
         return False

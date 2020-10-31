@@ -119,9 +119,9 @@ class SignupCodeManager(models.Manager):
 
 
 class EmailChangeCodeManager(models.Manager):
-    def create_email_change_code(self, user):
+    def create_email_change_code(self, user, email):
         code = _generate_code()
-        email_change_code = self.create(user=user, code=code)
+        email_change_code = self.create(user=user, code=code, email=email)
 
         return email_change_code
 
@@ -189,22 +189,21 @@ class SignupCode(AbstractBaseCode):
 
 
 class EmailChangeCode(AbstractBaseCode):
+    email = models.EmailField(_('email address'), max_length=255)
+
     objects = EmailChangeCodeManager()
 
-    def send_email_change_emails(self, email, code):
+    def send_email_change_emails(self):
         prefix = 'email_change_notify_previous_email'
         self.send_email(prefix)
 
         prefix = 'email_change_confirm_new_email'
-
-        print("email =", email)
-        print("code =", code)
-
         ctxt = {
-            'email': email,
-            'code': code
+            'email': self.email,
+            'code': self.code
         }
-        send_multi_format_email(prefix, ctxt, target_email=email)
+
+        send_multi_format_email(prefix, ctxt, target_email=self.email)
 
 
 class PasswordResetCode(AbstractBaseCode):
