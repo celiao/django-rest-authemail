@@ -40,9 +40,7 @@ class Signup(APIView):
             try:
                 user = get_user_model().objects.get(email=email)
                 if user.is_verified:
-                    content = {
-                        'detail': _('User with this Email address already '
-                                    'exists.')}
+                    content = {'detail': _('Email address already taken.')}
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
                 try:
@@ -163,12 +161,24 @@ class EmailChange(APIView):
             EmailChangeCode.objects.filter(user=user).delete()
 
             email = serializer.data['email']
-            email_change_code = EmailChangeCode.objects.create_email_change_code(user, email)
+            
+            try:
+                user_with_email = get_user_model().objects.get(email=email)
+                if user_with_email.is_verified:
+                    content = {'detail': _('Email address already taken.')}
+                    return Response(content, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    # if the account with this email address is not verified,
+                    # give this user a chance to verify and grab this email address
+                    raise get_user_model().DoesNotExist
 
-            email_change_code.send_email_change_emails()
+            except get_user_model().DoesNotExist:
+                email_change_code = EmailChangeCode.objects.create_email_change_code(user, email)
 
-            content = {'email': email}
-            return Response(content, status=status.HTTP_201_CREATED)
+                email_change_code.send_email_change_emails()
+
+                content = {'email': email}
+                return Response(content, status=status.HTTP_201_CREATED)
 
         else:
             return Response(serializer.errors,
