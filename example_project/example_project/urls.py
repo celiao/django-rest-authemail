@@ -37,8 +37,6 @@ urlpatterns = [
     path('email/change/not_verified/',
         views.EmailChangeNotVerifiedView.as_view(),
         name='email_change_not_verified_page'),
-    path('email/change/success/', views.EmailChangeSuccessView.as_view(),
-        name='email_change_success_page'),
 
     path('password/reset/', views.PasswordResetView.as_view(),
         name='password_reset_page'),

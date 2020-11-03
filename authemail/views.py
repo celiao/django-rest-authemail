@@ -90,7 +90,7 @@ class SignupVerify(APIView):
                 signup_code.delete()
             except SignupCode.DoesNotExist:
                 pass
-            content = {'success': _('User verified.')}
+            content = {'success': _('Email address verified.')}
             return Response(content, status=status.HTTP_200_OK)
         else:
             content = {'detail': _('Unable to verify user.')}
@@ -168,7 +168,7 @@ class EmailChange(APIView):
                     content = {'detail': _('Email address already taken.')}
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    # if the account with this email address is not verified,
+                    # If the account with this email address is not verified,
                     # give this user a chance to verify and grab this email address
                     raise get_user_model().DoesNotExist
 
@@ -192,15 +192,32 @@ class EmailChangeVerify(APIView):
         code = request.GET.get('code', '')
 
         try:
+            # Check if the code exists.
             email_change_code = EmailChangeCode.objects.get(code=code)
 
-            # Delete email change code if older than expiry period
+            # Check if the code has expired.
+            # Delete email change code if older than expiry period.
             delta = date.today() - email_change_code.created_at.date()
             if delta.days > EmailChangeCode.objects.get_expiry_period():
                 email_change_code.delete()
                 raise EmailChangeCode.DoesNotExist()
+
+            # Check if the email address is being used by a verified user.
+            try:
+                user_with_email = get_user_model().objects.get(email=email_change_code.email)
+                if user_with_email.is_verified:
+                    content = {'detail': _('Email address already taken.')}
+                    return Response(content, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    # If the account with this email address is not verified,
+                    # delete the account because the email address will be used
+                    # for the user that just verified.
+                    user_with_email.delete()
+            except get_user_model().DoesNotExist:
+                pass
                 
-            content = {'success': _('User verified.')}
+            # If all is well, verify the email address.
+            content = {'success': _('Email address verified.')}
             return Response(content, status=status.HTTP_200_OK)
         except EmailChangeCode.DoesNotExist:
             content = {'detail': _('Unable to verify user.')}
@@ -287,7 +304,7 @@ class PasswordResetVerify(APIView):
                 password_reset_code.delete()
                 raise PasswordResetCode.DoesNotExist()
                 
-            content = {'success': _('User verified.')}
+            content = {'success': _('Email address verified.')}
             return Response(content, status=status.HTTP_200_OK)
         except PasswordResetCode.DoesNotExist:
             content = {'detail': _('Unable to verify user.')}
