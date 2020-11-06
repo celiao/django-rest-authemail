@@ -78,7 +78,7 @@ class SignupTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['detail'],
-                         'User with this Email address already exists.')
+                         'Email address already taken.')
 
     def test_signup_verify_invalid_code(self):
         url = reverse('authemail-signup-verify')
@@ -128,7 +128,7 @@ class SignupTests(APITestCase):
 
         # Confirm email verified successfully
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['success'], 'User verified.')
+        self.assertEqual(response.data['success'], 'Email address verified.')
 
     def test_signup_without_email_verification(self):
 
@@ -183,7 +183,7 @@ class SignupTests(APITestCase):
 
         # Confirm email verified successfully
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['success'], 'User verified.')
+        self.assertEqual(response.data['success'], 'Email address verified.')
 
         # Confirm all signup codes were removed
         self.assertEqual(SignupCode.objects.count(), 0)
@@ -449,7 +449,7 @@ class PasswordTests(APITestCase):
 
         # Confirm password reset successfully
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['success'], 'User verified.')
+        self.assertEqual(response.data['success'], 'Email address verified.')
 
         # Send Password Reset Verified request
         url = reverse('authemail-password-reset-verified')
