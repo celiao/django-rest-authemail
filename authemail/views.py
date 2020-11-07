@@ -205,12 +205,15 @@ class EmailChangeVerify(APIView):
             try:
                 user_with_email = get_user_model().objects.get(email=email_change_code.email)
                 if user_with_email.is_verified:
+                    # Delete email change code since won't be used
+                    email_change_code.delete()
+
                     content = {'detail': _('Email address already taken.')}
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     # If the account with this email address is not verified,
-                    # delete the account because the email address will be used
-                    # for the user that just verified.
+                    # delete the account (and signup code) because the email
+                    # address will be used for the user who just verified.
                     user_with_email.delete()
             except get_user_model().DoesNotExist:
                 pass

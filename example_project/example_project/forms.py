@@ -48,7 +48,7 @@ class PasswordResetForm(AddErrorMixin, forms.Form):
     email = forms.EmailField(max_length=255)
 
 
-class PasswordResetVerifiedForm(PasswordConfirmForm):
+class PasswordResetVerifiedForm(AddErrorMixin, forms.Form):
     pass
 
 
