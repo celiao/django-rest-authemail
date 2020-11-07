@@ -13,11 +13,11 @@ from .forms import PasswordChangeForm, UsersMeChangeForm
 
 from . import wrapperplus
 
-class LandingView(TemplateView):
+class LandingFrontEnd(TemplateView):
     template_name = 'landing.html'
 
 
-class SignupView(FormView):
+class SignupFrontEnd(FormView):
     template_name = 'signup.html'
     form_class = SignupForm
     success_url = reverse_lazy('signup_email_sent_page')
@@ -40,11 +40,11 @@ class SignupView(FormView):
         return super(SignupView, self).form_valid(form)
 
 
-class SignupEmailSentView(TemplateView):
+class SignupEmailSentFrontEnd(TemplateView):
     template_name = 'signup_email_sent.html'
 
 
-class SignupVerifyView(View):
+class SignupVerifyFrontEnd(View):
     def get(self, request, format=None):
         code = request.GET.get('code', '')
 
@@ -58,15 +58,15 @@ class SignupVerifyView(View):
         return HttpResponseRedirect(reverse('signup_verified_page'))
 
 
-class SignupVerifiedView(TemplateView):
+class SignupVerifiedFrontEnd(TemplateView):
     template_name = 'signup_verified.html'
 
 
-class SignupNotVerifiedView(TemplateView):
+class SignupNotVerifiedFrontEnd(TemplateView):
     template_name = 'signup_not_verified.html'
 
 
-class LoginView(FormView):
+class LoginFrontEnd(FormView):
     template_name = 'login.html'
     form_class = LoginForm
     success_url = reverse_lazy('home_page')
@@ -89,7 +89,7 @@ class LoginView(FormView):
         return super(LoginView, self).form_valid(form)
 
 
-class HomeView(TemplateView):
+class HomeFrontEnd(TemplateView):
     template_name = 'home.html'
 
     def get_context_data(self, **kwargs):
@@ -107,7 +107,7 @@ class HomeView(TemplateView):
         return context
 
 
-class LogoutView(View):
+class LogoutFrontEnd(View):
     def get(self, request):
         token = self.request.session['auth_token']
 
@@ -119,7 +119,7 @@ class LogoutView(View):
         return HttpResponseRedirect(reverse('landing_page'))
 
 
-class EmailChangeView(FormView):
+class EmailChangeFrontEnd(FormView):
     template_name = 'email_change.html'
     form_class = EmailChangeForm
     success_url = reverse_lazy('email_change_emails_sent_page')
@@ -139,11 +139,11 @@ class EmailChangeView(FormView):
         return super(EmailChangeView, self).form_valid(form)
 
 
-class EmailChangeEmailsSentView(TemplateView):
+class EmailChangeEmailsSentFrontEnd(TemplateView):
     template_name = 'email_change_emails_sent.html'
 
 
-class EmailChangeVerifyView(View):
+class EmailChangeVerifyFrontEnd(View):
     def get(self, request, format=None):
         code = request.GET.get('code', '')
 
@@ -160,7 +160,7 @@ class EmailChangeVerifyView(View):
         return HttpResponseRedirect(reverse('email_change_verified_page'))
 
 
-class EmailChangeVerifiedView(FormView):
+class EmailChangeVerifiedFrontEnd(FormView):
     template_name = 'email_change_verified.html'
     form_class = EmailChangeVerifiedForm
     success_url = reverse_lazy('email_change_success_page')
@@ -182,11 +182,11 @@ class EmailChangeVerifiedView(FormView):
         return super(EmailChangeVerifiedView, self).form_valid(form)
 
 
-class EmailChangeNotVerifiedView(TemplateView):
+class EmailChangeNotVerifiedFrontEnd(TemplateView):
     template_name = 'email_change_not_verified.html'
 
 
-class PasswordResetView(FormView):
+class PasswordResetFrontEnd(FormView):
     template_name = 'password_reset.html'
     form_class = PasswordResetForm
     success_url = reverse_lazy('password_reset_email_sent_page')
@@ -205,11 +205,11 @@ class PasswordResetView(FormView):
         return super(PasswordResetView, self).form_valid(form)
 
 
-class PasswordResetEmailSentView(TemplateView):
+class PasswordResetEmailSentFrontEnd(TemplateView):
     template_name = 'password_reset_email_sent.html'
 
 
-class PasswordResetVerifyView(View):
+class PasswordResetVerifyFrontEnd(View):
     def get(self, request, format=None):
         code = request.GET.get('code', '')
 
@@ -226,7 +226,7 @@ class PasswordResetVerifyView(View):
         return HttpResponseRedirect(reverse('password_reset_verified_page'))
 
 
-class PasswordResetVerifiedView(FormView):
+class PasswordResetVerifiedFrontEnd(FormView):
     template_name = 'password_reset_verified.html'
     form_class = PasswordResetVerifiedForm
     success_url = reverse_lazy('password_reset_success_page')
@@ -246,15 +246,15 @@ class PasswordResetVerifiedView(FormView):
         return super(PasswordResetVerifiedView, self).form_valid(form)
 
 
-class PasswordResetNotVerifiedView(TemplateView):
+class PasswordResetNotVerifiedFrontEnd(TemplateView):
     template_name = 'password_reset_not_verified.html'
 
 
-class PasswordResetSuccessView(TemplateView):
+class PasswordResetSuccessFrontEnd(TemplateView):
     template_name = 'password_reset_success.html'
 
 
-class PasswordChangeView(FormView):
+class PasswordChangeFrontEnd(FormView):
     template_name = 'password_change.html'
     form_class = PasswordChangeForm
     success_url = reverse_lazy('password_change_success_page')
@@ -274,11 +274,11 @@ class PasswordChangeView(FormView):
         return super(PasswordChangeView, self).form_valid(form)
 
 
-class PasswordChangeSuccessView(TemplateView):
+class PasswordChangeSuccessFrontEnd(TemplateView):
     template_name = 'password_change_success.html'
 
 
-class UsersMeChangeView(FormView):
+class UsersMeChangeFrontEnd(FormView):
     template_name = 'users_me_change.html'
     form_class = UsersMeChangeForm
     success_url = reverse_lazy('users_me_change_success_page')
@@ -317,5 +317,5 @@ class UsersMeChangeView(FormView):
         return super(UsersMeChangeView, self).form_valid(form)
 
 
-class UsersMeChangeSuccessView(TemplateView):
+class UsersMeChangeSuccessFrontEnd(TemplateView):
     template_name = 'users_me_change_success.html'
