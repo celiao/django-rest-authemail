@@ -59,12 +59,12 @@ class Authemail(API):
         'signup_verify': '/signup/verify/',
         'login': '/login/',
         'logout': '/logout/',
-        'email_change': '/email/change/',
-        'email_change_verify': '/email/change/verify/',
-        'email_change_verified': '/email/change/verified/',
         'password_reset': '/password/reset/',
         'password_reset_verify': '/password/reset/verify/',
         'password_reset_verified': '/password/reset/verified/',
+        'email_change': '/email/change/',
+        'email_change_verify': '/email/change/verify/',
+        'email_change_verified': '/email/change/verified/',
         'password_change': '/password/change/',
         'users_me': '/users/me/',
     }
@@ -113,39 +113,6 @@ class Authemail(API):
         self._set_attrs_to_values(response)
         return response
 
-    def email_change(self, **kwargs):
-        path = self._get_path('email_change')
-
-        payload = {
-            'email': kwargs.pop('email'),
-        }
-
-        response = self._POST(path, kwargs, payload)
-
-        self._set_attrs_to_values(response)
-        return response
-
-    def email_change_verify(self, **kwargs):
-        path = self._get_path('email_change_verify')
-
-        response = self._GET(path, kwargs)
-
-        self._set_attrs_to_values(response)
-        return response
-
-    def email_change_verified(self, **kwargs):
-        path = self._get_path('email_change_verified')
-
-        payload = {
-            'code': kwargs.pop('code'),
-            'email': kwargs.pop('email'),
-        }
-
-        response = self._POST(path, kwargs, payload)
-
-        self._set_attrs_to_values(response)
-        return response
-
     def password_reset(self, **kwargs):
         path = self._get_path('password_reset')
 
@@ -172,6 +139,39 @@ class Authemail(API):
         payload = {
             'code': kwargs.pop('code'),
             'password': kwargs.pop('password'),
+        }
+
+        response = self._POST(path, kwargs, payload)
+
+        self._set_attrs_to_values(response)
+        return response
+
+    def email_change(self, **kwargs):
+        path = self._get_path('email_change')
+
+        payload = {
+            'email': kwargs.pop('email'),
+        }
+
+        response = self._POST(path, kwargs, payload)
+
+        self._set_attrs_to_values(response)
+        return response
+
+    def email_change_verify(self, **kwargs):
+        path = self._get_path('email_change_verify')
+
+        response = self._GET(path, kwargs)
+
+        self._set_attrs_to_values(response)
+        return response
+
+    def email_change_verified(self, **kwargs):
+        path = self._get_path('email_change_verified')
+
+        payload = {
+            'code': kwargs.pop('code'),
+            'email': kwargs.pop('email'),
         }
 
         response = self._POST(path, kwargs, payload)

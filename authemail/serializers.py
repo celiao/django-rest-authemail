@@ -20,14 +20,6 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128)
 
 
-class EmailChangeSerializer(serializers.Serializer):
-    email = serializers.EmailField(max_length=255)
-
-
-class EmailChangeVerifySerializer(serializers.Serializer):
-    email = serializers.EmailField(max_length=255)
-
-
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255)
 
@@ -39,6 +31,14 @@ class PasswordResetVerifiedSerializer(serializers.Serializer):
 
 class PasswordChangeSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128)
+
+
+class EmailChangeSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255)
+
+
+class EmailChangeVerifySerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255)
 
 
 class UserSerializer(serializers.ModelSerializer):

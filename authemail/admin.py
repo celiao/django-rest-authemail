@@ -5,7 +5,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext_lazy as _
 
 from authemail.forms import EmailUserCreationForm, EmailUserChangeForm
-from authemail.models import SignupCode, EmailChangeCode, PasswordResetCode
+from authemail.models import SignupCode, PasswordResetCode, EmailChangeCode
 
 
 class SignupCodeAdmin(admin.ModelAdmin):
@@ -30,28 +30,6 @@ class SignupCodeInline(admin.TabularInline):
         return False
 
 
-class EmailChangeCodeAdmin(admin.ModelAdmin):
-    list_display = ('code', 'user', 'email', 'created_at')
-    ordering = ('-created_at',)
-    readonly_fields = ('user', 'code', 'email')
-
-    def has_add_permission(self, request):
-        return False
-
-
-class EmailChangeCodeInline(admin.TabularInline):
-    model = EmailChangeCode
-    fieldsets = (
-        (None, {
-            'fields': ('code', 'email', 'created_at')
-        }),
-    )
-    readonly_fields = ('code', 'email', 'created_at')
-
-    def has_add_permission(self, request):
-        return False
-
-
 class PasswordResetCodeAdmin(admin.ModelAdmin):
     list_display = ('code', 'user', 'created_at')
     ordering = ('-created_at',)
@@ -69,6 +47,28 @@ class PasswordResetCodeInline(admin.TabularInline):
         }),
     )
     readonly_fields = ('code', 'created_at')
+
+    def has_add_permission(self, request):
+        return False
+
+
+class EmailChangeCodeAdmin(admin.ModelAdmin):
+    list_display = ('code', 'user', 'email', 'created_at')
+    ordering = ('-created_at',)
+    readonly_fields = ('user', 'code', 'email')
+
+    def has_add_permission(self, request):
+        return False
+
+
+class EmailChangeCodeInline(admin.TabularInline):
+    model = EmailChangeCode
+    fieldsets = (
+        (None, {
+            'fields': ('code', 'email', 'created_at')
+        }),
+    )
+    readonly_fields = ('code', 'email', 'created_at')
 
     def has_add_permission(self, request):
         return False
@@ -99,5 +99,5 @@ class EmailUserAdmin(UserAdmin):
 
 admin.site.register(get_user_model(), EmailUserAdmin)
 admin.site.register(SignupCode, SignupCodeAdmin)
-admin.site.register(EmailChangeCode, EmailChangeCodeAdmin)
 admin.site.register(PasswordResetCode, PasswordResetCodeAdmin)
+admin.site.register(EmailChangeCode, EmailChangeCodeAdmin)

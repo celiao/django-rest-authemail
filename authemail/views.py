@@ -13,10 +13,10 @@ from rest_framework.views import APIView
 from authemail.models import SignupCode, EmailChangeCode, PasswordResetCode
 from authemail.models import send_multi_format_email
 from authemail.serializers import SignupSerializer, LoginSerializer
-from authemail.serializers import EmailChangeSerializer
-from authemail.serializers import EmailChangeVerifySerializer
 from authemail.serializers import PasswordResetSerializer
 from authemail.serializers import PasswordResetVerifiedSerializer
+from authemail.serializers import EmailChangeSerializer
+from authemail.serializers import EmailChangeVerifySerializer
 from authemail.serializers import PasswordChangeSerializer
 from authemail.serializers import UserSerializer
 
@@ -146,92 +146,6 @@ class Logout(APIView):
         return Response(content, status=status.HTTP_200_OK)
 
 
-class EmailChange(APIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = EmailChangeSerializer
-
-    def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.data)
-
-        if serializer.is_valid():
-            user = request.user
-
-            # Delete all unused email change codes
-            EmailChangeCode.objects.filter(user=user).delete()
-
-            email = serializer.data['email']
-            
-            try:
-                user_with_email = get_user_model().objects.get(email=email)
-                if user_with_email.is_verified:
-                    content = {'detail': _('Email address already taken.')}
-                    return Response(content, status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    # If the account with this email address is not verified,
-                    # give this user a chance to verify and grab this email address
-                    raise get_user_model().DoesNotExist
-
-            except get_user_model().DoesNotExist:
-                email_change_code = EmailChangeCode.objects.create_email_change_code(user, email)
-
-                email_change_code.send_email_change_emails()
-
-                content = {'email': email}
-                return Response(content, status=status.HTTP_201_CREATED)
-
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
-
-
-class EmailChangeVerify(APIView):
-    permission_classes = (AllowAny,)
-
-    def get(self, request, format=None):
-        code = request.GET.get('code', '')
-
-        try:
-            # Check if the code exists.
-            email_change_code = EmailChangeCode.objects.get(code=code)
-
-            # Check if the code has expired.
-            # Delete email change code if older than expiry period.
-            delta = date.today() - email_change_code.created_at.date()
-            if delta.days > EmailChangeCode.objects.get_expiry_period():
-                email_change_code.delete()
-                raise EmailChangeCode.DoesNotExist()
-
-            # Check if the email address is being used by a verified user.
-            try:
-                user_with_email = get_user_model().objects.get(email=email_change_code.email)
-                if user_with_email.is_verified:
-                    # Delete email change code since won't be used
-                    email_change_code.delete()
-
-                    content = {'detail': _('Email address already taken.')}
-                    return Response(content, status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    # If the account with this email address is not verified,
-                    # delete the account (and signup code) because the email
-                    # address will be used for the user who just verified.
-                    user_with_email.delete()
-            except get_user_model().DoesNotExist:
-                pass
-                
-            # If all is well, change the email address.
-            email_change_code.user.email = email_change_code.email
-            email_change_code.user.save()
-
-            # Delete email change code just used
-            email_change_code.delete()
-
-            content = {'success': _('Email address changed.')}
-            return Response(content, status=status.HTTP_200_OK)
-        except EmailChangeCode.DoesNotExist:
-            content = {'detail': _('Unable to verify user.')}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
-
-
 class PasswordReset(APIView):
     permission_classes = (AllowAny,)
     serializer_class = PasswordResetSerializer
@@ -317,6 +231,92 @@ class PasswordResetVerified(APIView):
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+class EmailChange(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = EmailChangeSerializer
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            user = request.user
+
+            # Delete all unused email change codes
+            EmailChangeCode.objects.filter(user=user).delete()
+
+            email = serializer.data['email']
+            
+            try:
+                user_with_email = get_user_model().objects.get(email=email)
+                if user_with_email.is_verified:
+                    content = {'detail': _('Email address already taken.')}
+                    return Response(content, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    # If the account with this email address is not verified,
+                    # give this user a chance to verify and grab this email address
+                    raise get_user_model().DoesNotExist
+
+            except get_user_model().DoesNotExist:
+                email_change_code = EmailChangeCode.objects.create_email_change_code(user, email)
+
+                email_change_code.send_email_change_emails()
+
+                content = {'email': email}
+                return Response(content, status=status.HTTP_201_CREATED)
+
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+class EmailChangeVerify(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request, format=None):
+        code = request.GET.get('code', '')
+
+        try:
+            # Check if the code exists.
+            email_change_code = EmailChangeCode.objects.get(code=code)
+
+            # Check if the code has expired.
+            # Delete email change code if older than expiry period.
+            delta = date.today() - email_change_code.created_at.date()
+            if delta.days > EmailChangeCode.objects.get_expiry_period():
+                email_change_code.delete()
+                raise EmailChangeCode.DoesNotExist()
+
+            # Check if the email address is being used by a verified user.
+            try:
+                user_with_email = get_user_model().objects.get(email=email_change_code.email)
+                if user_with_email.is_verified:
+                    # Delete email change code since won't be used
+                    email_change_code.delete()
+
+                    content = {'detail': _('Email address already taken.')}
+                    return Response(content, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    # If the account with this email address is not verified,
+                    # delete the account (and signup code) because the email
+                    # address will be used for the user who just verified.
+                    user_with_email.delete()
+            except get_user_model().DoesNotExist:
+                pass
+                
+            # If all is well, change the email address.
+            email_change_code.user.email = email_change_code.email
+            email_change_code.user.save()
+
+            # Delete email change code just used
+            email_change_code.delete()
+
+            content = {'success': _('Email address changed.')}
+            return Response(content, status=status.HTTP_200_OK)
+        except EmailChangeCode.DoesNotExist:
+            content = {'detail': _('Unable to verify user.')}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PasswordChange(APIView):

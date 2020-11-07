@@ -36,19 +36,19 @@ class LoginForm(AddErrorMixin, forms.Form):
     password = forms.CharField(max_length=128)
 
 
-class EmailChangeForm(AddErrorMixin, forms.Form):
-    email = forms.EmailField(max_length=255)
-
-
-class EmailChangeVerifiedForm(forms.Form):
-    pass
-
-
 class PasswordResetForm(AddErrorMixin, forms.Form):
     email = forms.EmailField(max_length=255)
 
 
 class PasswordResetVerifiedForm(AddErrorMixin, forms.Form):
+    pass
+
+
+class EmailChangeForm(AddErrorMixin, forms.Form):
+    email = forms.EmailField(max_length=255)
+
+
+class EmailChangeVerifiedForm(forms.Form):
     pass
 
 
