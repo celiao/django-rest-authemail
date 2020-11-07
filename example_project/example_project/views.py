@@ -37,7 +37,7 @@ class SignupFrontEnd(FormView):
             form.add_error(None, response['detail'])
             return self.form_invalid(form)
 
-        return super(SignupView, self).form_valid(form)
+        return super(SignupFrontEnd, self).form_valid(form)
 
 
 class SignupEmailSentFrontEnd(TemplateView):
@@ -86,14 +86,14 @@ class LoginFrontEnd(FormView):
                 form.add_error(None, response['detail'])
             return self.form_invalid(form)
 
-        return super(LoginView, self).form_valid(form)
+        return super(LoginFrontEnd, self).form_valid(form)
 
 
 class HomeFrontEnd(TemplateView):
     template_name = 'home.html'
 
     def get_context_data(self, **kwargs):
-        context = super(HomeView, self).get_context_data(**kwargs)
+        context = super(HomeFrontEnd, self).get_context_data(**kwargs)
 
         token = self.request.session['auth_token']
 
@@ -136,7 +136,7 @@ class EmailChangeFrontEnd(FormView):
             form.add_error(None, response['detail'])
             return self.form_invalid(form)
 
-        return super(EmailChangeView, self).form_valid(form)
+        return super(EmailChangeFrontEnd, self).form_valid(form)
 
 
 class EmailChangeEmailsSentFrontEnd(TemplateView):
@@ -179,7 +179,7 @@ class EmailChangeVerifiedFrontEnd(FormView):
             form.add_error(None, response['detail'])
             return self.form_invalid(form)
 
-        return super(EmailChangeVerifiedView, self).form_valid(form)
+        return super(EmailChangeVerifiedFrontEnd, self).form_valid(form)
 
 
 class EmailChangeNotVerifiedFrontEnd(TemplateView):
@@ -202,7 +202,7 @@ class PasswordResetFrontEnd(FormView):
             form.add_error(None, response['detail'])
             return self.form_invalid(form)
 
-        return super(PasswordResetView, self).form_valid(form)
+        return super(PasswordResetFrontEnd, self).form_valid(form)
 
 
 class PasswordResetEmailSentFrontEnd(TemplateView):
@@ -243,7 +243,7 @@ class PasswordResetVerifiedFrontEnd(FormView):
             form.add_error(None, response['detail'])
             return self.form_invalid(form)
 
-        return super(PasswordResetVerifiedView, self).form_valid(form)
+        return super(PasswordResetVerifiedFrontEnd, self).form_valid(form)
 
 
 class PasswordResetNotVerifiedFrontEnd(TemplateView):
@@ -271,7 +271,7 @@ class PasswordChangeFrontEnd(FormView):
             form.add_error(None, response['detail'])
             return self.form_invalid(form)
 
-        return super(PasswordChangeView, self).form_valid(form)
+        return super(PasswordChangeFrontEnd, self).form_valid(form)
 
 
 class PasswordChangeSuccessFrontEnd(TemplateView):
@@ -284,7 +284,7 @@ class UsersMeChangeFrontEnd(FormView):
     success_url = reverse_lazy('users_me_change_success_page')
 
     def get_context_data(self, **kwargs):
-        context = super(UsersMeChangeView, self).get_context_data(**kwargs)
+        context = super(UsersMeChangeFrontEnd, self).get_context_data(**kwargs)
 
         token = self.request.session['auth_token']
 
@@ -314,7 +314,7 @@ class UsersMeChangeFrontEnd(FormView):
             form.add_error(None, response['detail'])
             return self.form_invalid(form)
 
-        return super(UsersMeChangeView, self).form_valid(form)
+        return super(UsersMeChangeFrontEnd, self).form_valid(form)
 
 
 class UsersMeChangeSuccessFrontEnd(TemplateView):
