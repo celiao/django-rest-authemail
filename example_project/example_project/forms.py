@@ -48,10 +48,6 @@ class EmailChangeForm(AddErrorMixin, forms.Form):
     email = forms.EmailField(max_length=255)
 
 
-class EmailChangeVerifiedForm(forms.Form):
-    pass
-
-
 class PasswordChangeForm(PasswordConfirmForm):
     pass
 

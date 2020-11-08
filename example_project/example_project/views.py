@@ -8,7 +8,7 @@ from authemail import wrapper
 
 from .forms import SignupForm, LoginForm
 from .forms import PasswordResetForm, PasswordResetVerifiedForm
-from .forms import EmailChangeForm, EmailChangeVerifiedForm
+from .forms import EmailChangeForm
 from .forms import PasswordChangeForm, UsersMeChangeForm
 
 from . import wrapperplus
@@ -228,26 +228,8 @@ class EmailChangeVerifyFrontEnd(View):
         return HttpResponseRedirect(reverse('email_change_verified_page'))
 
 
-class EmailChangeVerifiedFrontEnd(FormView):
+class EmailChangeVerifiedFrontEnd(TemplateView):
     template_name = 'email_change_verified.html'
-    form_class = EmailChangeVerifiedForm
-    success_url = reverse_lazy('email_change_success_page')
-
-    def form_valid(self, form):
-        token = self.request.session['auth_token']
-        code = self.request.session['email_change_code']
-        email = form.cleaned_data['email']
-
-        account = wrapper.Authemail()
-        response = account.email_change_verified(token=token, code=code,
-                                                 email=email)
-
-        # Handle other error responses from API
-        if 'detail' in response:
-            form.add_error(None, response['detail'])
-            return self.form_invalid(form)
-
-        return super(EmailChangeVerifiedFrontEnd, self).form_valid(form)
 
 
 class EmailChangeNotVerifiedFrontEnd(TemplateView):
