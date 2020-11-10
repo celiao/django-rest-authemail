@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
