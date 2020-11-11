@@ -566,6 +566,62 @@ Content-Type: application/json
 }
 ```
 
+**POST /api/accounts/email/change**
+
+Call this endpoint to send a notification email to the previous email address
+and a confirmation email to the new email address.  Similar to signup and
+password reset verification, the email change email templates are found in
+`authemail/templates/authemail`.  Override the default templates by placing
+your similarly-named templates in `your_app/templates/authemail`.
+
+- HTTP Header
+
+```python
+Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
+```
+
+- Payload
+
+    - email (required)
+
+- Possible responses
+
+```python
+201 (Created)
+Content-Type: application/json
+{
+	"email": "amelia.earhart@boeing.com"
+}
+
+400 (Bad Request)
+Content-Type: application/json
+{
+	"email": [
+		"This field is required."
+	] 
+}
+
+{
+	"email": [
+		"Enter a valid email address."
+	] 
+}
+
+{
+	"detail": "Email address already taken."
+}
+
+401 (Unauthorized)
+Content-Type: application/json
+{
+	"detail": "Authentication credentials were not provided."
+}
+
+{
+	"detail": "Invalid token"
+}
+```
+
 **POST /api/accounts/password/change**
 
 Call this endpoint to change a user's password.
