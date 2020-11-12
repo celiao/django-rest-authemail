@@ -503,7 +503,8 @@ Content-Type: application/json
 
 **GET /api/accounts/password/reset/verify/?code=\<code\>**
 
-When the user clicks the link in the password reset email, call this endpoint to verify the password reset code.
+When the user clicks the link in the password reset email, call this endpoint
+to verify the password reset code.
 
 - Parameters
 
@@ -526,8 +527,6 @@ Content-Type: application/json
 	] 
 }
 
-400 (Bad Request)
-Content-Type: application/json
 {
 	"detail": "Unable to verify user."
 }
@@ -535,7 +534,9 @@ Content-Type: application/json
 
 **POST /api/accounts/password/reset/verified**
 
-Call this endpoint with the password reset code and the new password, to reset the user's password.  The front end should prompt the user for a confirmation password and give feedback if the passwords don't match.
+Call this endpoint with the password reset code and the new password, to reset
+the user's password.  The front end should prompt the user for a confirmation
+password and give feedback if the passwords don't match.
 
 - Payload
 
@@ -559,8 +560,6 @@ Content-Type: application/json
 	] 
 }
 
-400 (Bad Request)
-Content-Type: application/json
 {
 	"detail": "Unable to verify user."
 }
@@ -619,6 +618,35 @@ Content-Type: application/json
 
 {
 	"detail": "Invalid token"
+}
+```
+
+**GET /api/accounts/email/change/verify/?code=\<code\>**
+
+When the user clicks the link in the email change email, call this endpoint to
+verify the email change code and, if appropriate, change the email address.
+
+- Parameters
+
+    - code (required)
+
+- Possible responses
+
+```python
+200 (OK)
+Content-Type: application/json
+{
+	"success": "Email address changed."
+}
+
+400 (Bad Request)
+Content-Type: application/json
+{
+	"detail": "Email address already taken."
+}
+
+{
+	"detail": "Unable to verify user."
 }
 ```
 
