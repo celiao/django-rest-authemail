@@ -114,6 +114,6 @@ Go back to your `Home` page and click on the `Logout` button.  You will be retur
 
 Click on the `Login` link and check out the `Forgot Password` functionality.
 
-Login and check out the `Change Password` functionality.  Logout and log in again to confirm that your password has been changed.
+Login and check out the `Change Email`, `Change Password`, and `Change Me`  functionality.  Logout and log in again to confirm that your password has been changed.
 
 Enter incorrect email addresses and passwords to exercise the error messages.

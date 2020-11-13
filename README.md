@@ -347,10 +347,10 @@ Content-Type: application/json
 Content-Type: application/json
 {
 	"email": [
-		"This field is required."
+		"This field may not be blank."
 	], 
 	"password": [
-		"This field is required."
+		"This field may not be blank."
 	] 
 }
 
@@ -412,10 +412,10 @@ Content-Type: application/json
 Content-Type: application/json
 {
 	"password": [
-		"This field is required."
+		"This field may not be blank."
 	], 
 	"email": [
-		"This field is required."
+		"This field may not be blank."
 	]
 }
 
@@ -486,7 +486,7 @@ Content-Type: application/json
 Content-Type: application/json
 {
 	"email": [
-		"This field is required."
+		"This field may not be blank."
 	]
 }
 
@@ -523,7 +523,7 @@ Content-Type: application/json
 Content-Type: application/json
 {
 	"password": [
-		"This field is required."
+		"This field may not be blank."
 	] 
 }
 
@@ -556,7 +556,7 @@ Content-Type: application/json
 Content-Type: application/json
 {
 	"password": [
-		"This field is required."
+		"This field may not be blank."
 	] 
 }
 
@@ -596,7 +596,7 @@ Content-Type: application/json
 Content-Type: application/json
 {
 	"email": [
-		"This field is required."
+		"This field may not be blank."
 	] 
 }
 
@@ -677,7 +677,7 @@ Content-Type: application/json
 Content-Type: application/json
 {
 	"password": [
-		"This field is required."
+		"This field may not be blank."
 	] 
 }
 

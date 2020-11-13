@@ -333,13 +333,12 @@ class LoginTests(APITestCase):
         self.user.save()
 
 
-class PasswordTests(APITestCase):
+class PasswordResetTests(APITestCase):
     def setUp(self):
         # A verified user on the site
         self.em_user = 'user@mail.com'
         self.pw_user = 'user'
         self.pw_user_reset = 'user reset'
-        self.pw_user_change = 'user change'
         user = get_user_model().objects.create_user(self.em_user, self.pw_user)
         user.is_verified = True
         user.save()
@@ -526,6 +525,59 @@ class PasswordTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('token', response.data)
+
+
+class EmailChangeTests(APITestCase):
+    def setUp(self):
+        # A verified user on the site
+        self.em_user = 'user@mail.com'
+        self.pw_user = 'user'
+        self.pw_user_change = 'user change'
+        user = get_user_model().objects.create_user(self.em_user, self.pw_user)
+        user.is_verified = True
+        user.save()
+
+        # Create auth token for user (so user logged in)
+        token = Token.objects.create(user=user)
+        self.token = token.key
+
+    def test_email_change_serializer_errors(self):
+        error_dicts = [
+            # Email required
+            {'payload': {'email': ''},
+             'status_code': status.HTTP_400_BAD_REQUEST,
+             'error': ('email', 'This field may not be blank.')
+             },
+            # Email must be valid
+            {'payload': {'email': 'abc'},
+             'status_code': status.HTTP_400_BAD_REQUEST,
+             'error': ('email', 'Enter a valid email address.')
+             },
+        ]
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        url = reverse('authemail-email-change')
+        for error_dict in error_dicts:
+            response = self.client.post(url, error_dict['payload'])
+
+            self.assertEqual(response.status_code, error_dict['status_code'])
+            self.assertEqual(response.data[error_dict['error'][0]][0],
+                             error_dict['error'][1])
+
+
+class PasswordChangeTests(APITestCase):
+    def setUp(self):
+        # A verified user on the site
+        self.em_user = 'user@mail.com'
+        self.pw_user = 'user'
+        self.pw_user_change = 'user change'
+        user = get_user_model().objects.create_user(self.em_user, self.pw_user)
+        user.is_verified = True
+        user.save()
+
+        # Create auth token for user (so user logged in)
+        token = Token.objects.create(user=user)
+        self.token = token.key
 
     def test_password_change_serializer_errors(self):
         error_dicts = [
