@@ -10,6 +10,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
 from authemail.models import SignupCode, PasswordResetCode
+from authemail.models import EmailChangeCode
 
 
 def _get_code_from_email(mail):
@@ -532,8 +533,8 @@ class EmailChangeTests(APITestCase):
     def setUp(self):
         # A verified user on the site
         self.em_user = 'user@mail.com'
+        self.em_user_change = 'user_change@mail.com'
         self.pw_user = 'user'
-        self.pw_user_change = 'user change'
         user = get_user_model().objects.create_user(self.em_user, self.pw_user)
         user.is_verified = True
         user.save()
@@ -576,6 +577,29 @@ class EmailChangeTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['detail'], 'Unable to verify user.')
+
+    def test_email_change_and_verify(self):
+        # Send Email Change request
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+
+        url = reverse('authemail-email-change')
+        payload = {
+            'email': self.em_user_change,
+        }
+        response = self.client.post(url, payload)
+
+        # Confirm that email change code created
+        email_change_code = EmailChangeCode.objects.latest('code')
+        self.assertEqual(email_change_code.user.email, self.em_user)
+
+        # Confirm that email address in response
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['email'], payload['email'])
+
+        # Confirm that two emails sent and that Subject correct
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(mail.outbox[0].subject, 'Notify Previous Email Address')
+        self.assertEqual(mail.outbox[1].subject, 'Confirm New Email Address')
 
 
 class PasswordChangeTests(APITestCase):

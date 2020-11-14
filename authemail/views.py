@@ -246,10 +246,10 @@ class EmailChange(APIView):
             # Delete all unused email change codes
             EmailChangeCode.objects.filter(user=user).delete()
 
-            email = serializer.data['email']
+            email_new = serializer.data['email']
             
             try:
-                user_with_email = get_user_model().objects.get(email=email)
+                user_with_email = get_user_model().objects.get(email=email_new)
                 if user_with_email.is_verified:
                     content = {'detail': _('Email address already taken.')}
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
@@ -259,11 +259,11 @@ class EmailChange(APIView):
                     raise get_user_model().DoesNotExist
 
             except get_user_model().DoesNotExist:
-                email_change_code = EmailChangeCode.objects.create_email_change_code(user, email)
+                email_change_code = EmailChangeCode.objects.create_email_change_code(user, email_new)
 
                 email_change_code.send_email_change_emails()
 
-                content = {'email': email}
+                content = {'email': email_new}
                 return Response(content, status=status.HTTP_201_CREATED)
 
         else:
