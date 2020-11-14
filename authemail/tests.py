@@ -373,11 +373,10 @@ class PasswordResetTests(APITestCase):
         code = 'XXX'
 
         url = reverse('authemail-password-reset-verify')
-        url = '{url}?code={code}'.format(url=url, code=code)
-        payload = {
-            'password': self.pw_user,
+        params = {
+            'code': code,
         }
-        response = self.client.get(url, payload)
+        response = self.client.get(url, params)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['detail'], 'Unable to verify user.')
@@ -385,7 +384,9 @@ class PasswordResetTests(APITestCase):
     def test_password_reset_invalid_credentials(self):
         # Invalid email address
         url = reverse('authemail-password-reset')
-        payload = {'email': 'XXX@mail.com'}
+        payload = {
+            'email': 'XXX@mail.com'
+        }
         response = self.client.post(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -563,6 +564,18 @@ class EmailChangeTests(APITestCase):
             self.assertEqual(response.status_code, error_dict['status_code'])
             self.assertEqual(response.data[error_dict['error'][0]][0],
                              error_dict['error'][1])
+
+    def test_email_change_invalid_code(self):
+        code = 'XXX'
+
+        url = reverse('authemail-email-change-verify')
+        params = {
+            'code': code,
+        }
+        response = self.client.get(url, params)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Unable to verify user.')
 
 
 class PasswordChangeTests(APITestCase):
