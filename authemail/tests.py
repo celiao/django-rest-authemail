@@ -543,6 +543,13 @@ class EmailChangeTests(APITestCase):
         token = Token.objects.create(user=user)
         self.token = token.key
 
+        # Another verified user on the site
+        self.em_user_other = 'user_other@mail.com'
+        self.pw_user_other = 'user_other'
+        user_other = get_user_model().objects.create_user(self.em_user_other, self.pw_user_other)
+        user_other.is_verified = True
+        user_other.save()
+
     def test_email_change_serializer_errors(self):
         error_dicts = [
             # Email required
@@ -578,7 +585,20 @@ class EmailChangeTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['detail'], 'Unable to verify user.')
 
-    def test_email_change_and_verify(self):
+    def test_email_change_and_email_taken(self):
+        # Send Email Change request
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+
+        url = reverse('authemail-email-change')
+        payload = {
+            'email': self.em_user_other,
+        }
+        response = self.client.post(url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Email address already taken.')
+
+    def test_email_change_and_emails_sent(self):
         # Send Email Change request
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
 
@@ -600,7 +620,7 @@ class EmailChangeTests(APITestCase):
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].subject, 'Notify Previous Email Address')
         self.assertEqual(mail.outbox[1].subject, 'Confirm New Email Address')
-
+        
 
 class PasswordChangeTests(APITestCase):
     def setUp(self):
