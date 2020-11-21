@@ -64,7 +64,6 @@ class Authemail(API):
         'password_reset_verified': '/password/reset/verified/',
         'email_change': '/email/change/',
         'email_change_verify': '/email/change/verify/',
-        'email_change_verified': '/email/change/verified/',
         'password_change': '/password/change/',
         'users_me': '/users/me/',
     }
