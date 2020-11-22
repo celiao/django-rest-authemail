@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date
 
 from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
@@ -16,7 +16,6 @@ from authemail.serializers import SignupSerializer, LoginSerializer
 from authemail.serializers import PasswordResetSerializer
 from authemail.serializers import PasswordResetVerifiedSerializer
 from authemail.serializers import EmailChangeSerializer
-from authemail.serializers import EmailChangeVerifySerializer
 from authemail.serializers import PasswordChangeSerializer
 from authemail.serializers import UserSerializer
 
@@ -195,7 +194,7 @@ class PasswordResetVerify(APIView):
             if delta.days > PasswordResetCode.objects.get_expiry_period():
                 password_reset_code.delete()
                 raise PasswordResetCode.DoesNotExist()
-                
+
             content = {'success': _('Email address verified.')}
             return Response(content, status=status.HTTP_200_OK)
         except PasswordResetCode.DoesNotExist:
@@ -247,7 +246,7 @@ class EmailChange(APIView):
             EmailChangeCode.objects.filter(user=user).delete()
 
             email_new = serializer.data['email']
-            
+
             try:
                 user_with_email = get_user_model().objects.get(email=email_new)
                 if user_with_email.is_verified:
@@ -304,7 +303,7 @@ class EmailChangeVerify(APIView):
                     user_with_email.delete()
             except get_user_model().DoesNotExist:
                 pass
-                
+
             # If all is well, change the email address.
             email_change_code.user.email = email_change_code.email
             email_change_code.user.save()

@@ -533,26 +533,26 @@ class EmailChangeTests(APITestCase):
     def setUp(self):
         # User who wants to change their email address
         self.user_to_change_email = 'user_to_change@mail.com'
-        user_to_change = get_user_model().objects.create_user(self.user_to_change_email, 'pw')
-        user_to_change.is_verified = True
-        user_to_change.save()
+        self.user_to_change = get_user_model().objects.create_user(self.user_to_change_email, 'pw')
+        self.user_to_change.is_verified = True
+        self.user_to_change.save()
 
         # Create auth token for user (so user logged in)
-        token = Token.objects.create(user=user_to_change)
+        token = Token.objects.create(user=self.user_to_change)
         self.token = token.key
 
         # User who is verified on the site
         self.user_verified_email = 'user_verified@mail.com'
         self.user_verified_pw = 'user_verified'
-        user_verified = get_user_model().objects.create_user(self.user_verified_email, 'pw')
-        user_verified.is_verified = True
-        user_verified.save()
+        self.user_verified = get_user_model().objects.create_user(self.user_verified_email, 'pw')
+        self.user_verified.is_verified = True
+        self.user_verified.save()
 
-        # User who is not verified on the site
+        # User who is not verified yet on the site
         self.user_not_verified_email = 'user_not_verified@mail.com'
         self.user_not_verified_pw = 'user_not_verified'
-        user_not_verified = get_user_model().objects.create_user(self.user_not_verified_email, 'pw')
-        user_not_verified.save()
+        self.user_not_verified = get_user_model().objects.create_user(self.user_not_verified_email, 'pw')
+        self.user_not_verified.save()
 
         # Email address available
         self.available_email = 'available@mail.com'
@@ -602,7 +602,6 @@ class EmailChangeTests(APITestCase):
     def test_email_change_user_verified_so_email_taken(self):
         # Send Email Change request
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
-
         url = reverse('authemail-email-change')
         payload = {
             'email': self.user_verified_email,
@@ -615,7 +614,6 @@ class EmailChangeTests(APITestCase):
     def test_email_change_user_not_verified_code_created_and_emails_sent(self):
         # Send Email Change request
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
-
         url = reverse('authemail-email-change')
         payload = {
             'email': self.user_not_verified_email,
@@ -635,19 +633,34 @@ class EmailChangeTests(APITestCase):
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].subject, 'Notify Previous Email Address')
         self.assertEqual(mail.outbox[1].subject, 'Confirm New Email Address')
-        
+
     def test_email_change_no_other_user_code_created_and_emails_sent(self):
+        # Create two past change codes that aren't used
+        email_change_code_old1 = EmailChangeCode.objects.create_email_change_code(
+            self.user_to_change, self.user_not_verified_email)
+        email_change_code_old2 = EmailChangeCode.objects.create_email_change_code(
+            self.user_to_change, self.user_not_verified_email)
+        count = EmailChangeCode.objects.filter(user=self.user_to_change).count()
+        self.assertEqual(count, 2)
+
         # Send Email Change request
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
-
         url = reverse('authemail-email-change')
         payload = {
             'email': self.available_email,
         }
         response = self.client.post(url, payload)
 
-        # Confirm that email change code created
+        # Get email change code
         email_change_code = EmailChangeCode.objects.latest('code')
+
+        # Confirm that old email change codes deleted
+        count = EmailChangeCode.objects.filter(user=self.user_to_change).count()
+        self.assertEqual(count, 1)
+        self.assertNotEqual(email_change_code.code, email_change_code_old1.code)
+        self.assertNotEqual(email_change_code.code, email_change_code_old2.code)
+
+        # Confirm that new email change code created properly
         self.assertEqual(email_change_code.user.email, self.user_to_change_email)
         self.assertEqual(email_change_code.email, self.available_email)
 
@@ -659,7 +672,7 @@ class EmailChangeTests(APITestCase):
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].subject, 'Notify Previous Email Address')
         self.assertEqual(mail.outbox[1].subject, 'Confirm New Email Address')
-        
+
     def test_email_change_invalid_code(self):
         code = 'XXX'
 

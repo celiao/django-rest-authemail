@@ -13,6 +13,7 @@ from django.core.mail import send_mail
 # Make part of the model eventually, so it can be edited
 EXPIRY_PERIOD = 3    # days
 
+
 def _generate_code():
     return binascii.hexlify(os.urandom(20)).decode('utf-8')
 

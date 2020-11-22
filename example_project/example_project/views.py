@@ -13,6 +13,7 @@ from .forms import PasswordChangeForm, UsersMeChangeForm
 
 from . import wrapperplus
 
+
 class LandingFrontEnd(TemplateView):
     template_name = 'landing.html'
 
@@ -276,7 +277,7 @@ class UsersMeChangeFrontEnd(FormView):
         context['first_name'] = account.first_name
         context['last_name'] = account.last_name
         context['date_of_birth'] = account.date_of_birth
-        
+
         return context
 
     def form_valid(self, form):
