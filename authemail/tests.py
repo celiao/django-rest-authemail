@@ -371,11 +371,9 @@ class PasswordResetTests(APITestCase):
                              error_dict['error'][1])
 
     def test_password_reset_invalid_code(self):
-        code = 'XXX'
-
         url = reverse('authemail-password-reset-verify')
         params = {
-            'code': code,
+            'code': 'XXX',
         }
         response = self.client.get(url, params)
 
@@ -673,12 +671,35 @@ class EmailChangeTests(APITestCase):
         self.assertEqual(mail.outbox[0].subject, 'Notify Previous Email Address')
         self.assertEqual(mail.outbox[1].subject, 'Confirm New Email Address')
 
-    def test_email_change_invalid_code(self):
-        code = 'XXX'
-
+    def test_email_change_verify_invalid_code(self):
         url = reverse('authemail-email-change-verify')
         params = {
-            'code': code,
+            'code': 'XXX',
+        }
+        response = self.client.get(url, params)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Unable to verify user.')
+
+    def test_email_change_verify_expired_code(self):
+        # Send Email Change request
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        url = reverse('authemail-email-change')
+        payload = {
+            'email': self.available_email,
+        }
+        response = self.client.post(url, payload)
+
+        # Get email change code and make it expire
+        email_change_code = EmailChangeCode.objects.latest('code')
+        email_change_code.created_at += timedelta(days=-(EmailChangeCode.objects.get_expiry_period()+1))
+        email_change_code.save()
+        code_lapsed = email_change_code.code
+
+        # Confirm email change code_lapsed can't be used
+        url = reverse('authemail-email-change-verify')
+        params = {
+            'code': code_lapsed,
         }
         response = self.client.get(url, params)
 
