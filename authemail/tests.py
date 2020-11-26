@@ -706,6 +706,30 @@ class EmailChangeTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['detail'], 'Unable to verify user.')
 
+    def test_email_change_verify_user_verified_so_email_taken(self):
+        # Send Email Change request
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        url = reverse('authemail-email-change')
+        payload = {
+            'email': self.user_not_verified_email,
+        }
+        response = self.client.post(url, payload)
+
+        # Get email change code and suppose email later is of a verified user
+        email_change_code = EmailChangeCode.objects.latest('code')
+        email_change_code.email = self.user_verified_email
+        email_change_code.save()
+
+        # Confirm email address taken
+        url = reverse('authemail-email-change-verify')
+        params = {
+            'code': email_change_code,
+        }
+        response = self.client.get(url, params)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Email address already taken.')
+
 
 class PasswordChangeTests(APITestCase):
     def setUp(self):
