@@ -753,7 +753,39 @@ class EmailChangeTests(APITestCase):
         num_users_minus_1 = get_user_model().objects.count()
         self.assertEqual(num_users, num_users_minus_1 + 1)
 
-        user = get_user_model().objects.get(email=email_change_code.email)
+        try:
+            user_exists = get_user_model().objects.get(email=email_change_code.email)
+        except get_user_model().DoesNotExist:
+            self.fail('User did not get email address changed.')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['success'], 'Email address changed.')
+
+        num_codes = EmailChangeCode.objects.filter(code=email_change_code.code).count()
+        self.assertEqual(num_codes, 0)
+
+    def test_email_change_verify_no_other_user_change_email(self):
+        # Send Email Change request
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        url = reverse('authemail-email-change')
+        payload = {
+            'email': self.available_email,
+        }
+        response = self.client.post(url, payload)
+
+        # Get email change code
+        email_change_code = EmailChangeCode.objects.latest('code')
+
+        # Confirm email changed email change code deleted
+        url = reverse('authemail-email-change-verify')
+        params = {
+            'code': email_change_code,
+        }
+        response = self.client.get(url, params)
+
+        try:
+            user_exists = get_user_model().objects.get(email=email_change_code.email)
+        except get_user_model().DoesNotExist:
+            self.fail('User did not get email address changed.')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['success'], 'Email address changed.')
 

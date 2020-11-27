@@ -281,7 +281,6 @@ class EmailChangeVerify(APIView):
             email_change_code = EmailChangeCode.objects.get(code=code)
 
             # Check if the code has expired.
-            # Delete email change code if older than expiry period.
             delta = date.today() - email_change_code.created_at.date()
             if delta.days > EmailChangeCode.objects.get_expiry_period():
                 email_change_code.delete()
