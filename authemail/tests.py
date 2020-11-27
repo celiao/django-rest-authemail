@@ -715,7 +715,7 @@ class EmailChangeTests(APITestCase):
         }
         response = self.client.post(url, payload)
 
-        # Get email change code and suppose email later is of a verified user
+        # Get email change code and make email that of a verified user
         email_change_code = EmailChangeCode.objects.latest('code')
         email_change_code.email = self.user_verified_email
         email_change_code.save()
@@ -729,6 +729,36 @@ class EmailChangeTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['detail'], 'Email address already taken.')
+
+    def test_email_change_verify_user_not_verified_change_email(self):
+        # Send Email Change request
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        url = reverse('authemail-email-change')
+        payload = {
+            'email': self.user_not_verified_email,
+        }
+        response = self.client.post(url, payload)
+
+        # Get email change code and number of users
+        email_change_code = EmailChangeCode.objects.latest('code')
+        num_users = get_user_model().objects.count()
+
+        # Confirm user_not_verified deleted, email changed, email change code deleted
+        url = reverse('authemail-email-change-verify')
+        params = {
+            'code': email_change_code,
+        }
+        response = self.client.get(url, params)
+
+        num_users_minus_1 = get_user_model().objects.count()
+        self.assertEqual(num_users, num_users_minus_1 + 1)
+
+        user = get_user_model().objects.get(email=email_change_code.email)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['success'], 'Email address changed.')
+
+        num_codes = EmailChangeCode.objects.filter(code=email_change_code.code).count()
+        self.assertEqual(num_codes, 0)
 
 
 class PasswordChangeTests(APITestCase):
