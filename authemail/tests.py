@@ -796,16 +796,18 @@ class EmailChangeTests(APITestCase):
 class PasswordChangeTests(APITestCase):
     def setUp(self):
         # A verified user on the site
-        self.em_user = 'user@mail.com'
-        self.pw_user = 'user'
-        self.pw_user_change = 'user change'
-        user = get_user_model().objects.create_user(self.em_user, self.pw_user)
-        user.is_verified = True
-        user.save()
+        self.user_to_change_email = 'user_to_change@mail.com'
+        self.user_to_change_pw = 'pw'
+        self.user_to_change = get_user_model().objects.create_user(self.user_to_change_email, self.user_to_change_pw)
+        self.user_to_change.is_verified = True
+        self.user_to_change.save()
 
         # Create auth token for user (so user logged in)
-        token = Token.objects.create(user=user)
+        token = Token.objects.create(user=self.user_to_change)
         self.token = token.key
+
+        # New password
+        self.user_to_change_pw_new = 'pw new'
 
     def test_password_change_serializer_errors(self):
         error_dicts = [
@@ -828,7 +830,7 @@ class PasswordChangeTests(APITestCase):
     def test_password_change_no_auth_token(self):
         url = reverse('authemail-password-change')
         payload = {
-            'password': self.pw_user,
+            'password': self.user_to_change_pw_new,
         }
         response = self.client.post(url, payload)
 
@@ -849,7 +851,7 @@ class PasswordChangeTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         url = reverse('authemail-password-change')
         payload = {
-            'password': self.pw_user_change,
+            'password': self.user_to_change_pw_new,
         }
         response = self.client.post(url, payload)
 
@@ -859,8 +861,8 @@ class PasswordChangeTests(APITestCase):
         # Confirm unable to log in with old password
         url = reverse('authemail-login')
         payload = {
-            'email': self.em_user,
-            'password': self.pw_user,
+            'email': self.user_to_change_email,
+            'password': self.user_to_change_pw,
         }
         response = self.client.post(url, payload)
 
@@ -871,8 +873,8 @@ class PasswordChangeTests(APITestCase):
         # Confirm able to log in with new password
         url = reverse('authemail-login')
         payload = {
-            'email': self.em_user,
-            'password': self.pw_user_change,
+            'email': self.user_to_change_email,
+            'password': self.user_to_change_pw_new,
         }
         response = self.client.post(url, payload)
 
@@ -883,17 +885,16 @@ class PasswordChangeTests(APITestCase):
 class UserDetailTests(APITestCase):
     def setUp(self):
         # A verified user on the site
-        self.em_user = 'user@mail.com'
-        self.pw_user = 'user'
-        user = get_user_model().objects.create_user(self.em_user, self.pw_user)
-        user.is_verified = True
-        user.save()
+        self.user_me_email = 'user_me@mail.com'
+        self.user_me = get_user_model().objects.create_user(self.user_me_email, 'pw')
+        self.user_me.is_verified = True
+        self.user_me.save()
 
         # Create auth token for user (so user logged in)
-        token = Token.objects.create(user=user)
+        token = Token.objects.create(user=self.user_me)
         self.token = token.key
 
-    def test_me_no_auth_token(self):
+    def test_user_me_no_auth_token(self):
         url = reverse('authemail-me')
         response = self.client.post(url)
 
@@ -901,7 +902,7 @@ class UserDetailTests(APITestCase):
         self.assertEqual(response.data['detail'],
                          'Authentication credentials were not provided.')
 
-    def test_me_invalid_auth_token(self):
+    def test_user_me_invalid_auth_token(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + 'XXX')
         url = reverse('authemail-me')
         response = self.client.post(url)
@@ -909,10 +910,10 @@ class UserDetailTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data['detail'], 'Invalid token.')
 
-    def test_me(self):
+    def test_user_me(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         url = reverse('authemail-me')
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['email'], self.em_user)
+        self.assertEqual(response.data['email'], self.user_me_email)
