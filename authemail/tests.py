@@ -25,17 +25,13 @@ def _get_code_from_email(mail):
 class SignupTests(APITestCase):
     def setUp(self):
         # A visitor to the site
-        self.em_visitor = 'visitor@mail.com'
-        self.pw_visitor = 'visitor'
-
-        # A visitor to the site (for testing the wrapper)
-        self.em_wrapper = 'wrapper@mail.com'
-        self.pw_wrapper = 'wrapper'
+        self.user_visitor_email = 'visitor@mail.com'
+        self.user_visitor_pw = 'visitor'
 
         # A verified user on the site
-        self.em_user = 'user@mail.com'
-        self.pw_user = 'user'
-        user = get_user_model().objects.create_user(self.em_user, self.pw_user)
+        self.user_verified_email = 'user_verified@mail.com'
+        self.user_verified_pw = 'user_verified'
+        user = get_user_model().objects.create_user(self.user_verified_email, self.user_verified_pw)
         user.is_verified = True
         user.save()
 
@@ -43,19 +39,19 @@ class SignupTests(APITestCase):
         error_dicts = [
             # Email required
             {'payload': {'email': '',
-                         'password': self.pw_visitor},
+                         'password': self.user_visitor_pw},
              'status_code': status.HTTP_400_BAD_REQUEST,
              'error': ('email', 'This field may not be blank.')
              },
             # Password required
-            {'payload': {'email': self.em_visitor,
+            {'payload': {'email': self.user_visitor_email,
                          'password': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
              'error': ('password', 'This field may not be blank.')
              },
             # Invalid email
             {'payload': {'email': 'XXX',
-                         'password': self.pw_visitor},
+                         'password': self.user_visitor_pw},
              'status_code': status.HTTP_400_BAD_REQUEST,
              'error': ('email', 'Enter a valid email address.')
              },
@@ -72,8 +68,8 @@ class SignupTests(APITestCase):
     def test_signup_email_already_exists(self):
         url = reverse('authemail-signup')
         payload = {
-            'email': self.em_user,
-            'password': self.pw_user,
+            'email': self.user_verified_email,
+            'password': self.user_verified_pw,
         }
         response = self.client.post(url, payload)
 
@@ -95,19 +91,19 @@ class SignupTests(APITestCase):
         # Send Signup request
         url = reverse('authemail-signup')
         payload = {
-            'email': self.em_visitor,
-            'password': self.pw_visitor,
+            'email': self.user_visitor_email,
+            'password': self.user_visitor_pw,
         }
         response = self.client.post(url, payload)
 
         # Confirm that new user created, but not verified
         user = get_user_model().objects.latest('id')
-        self.assertEqual(user.email, self.em_visitor)
+        self.assertEqual(user.email, self.user_visitor_email)
         self.assertEqual(user.is_verified, False)
 
         # Confirm that signup code created
         signup_code = SignupCode.objects.latest('code')
-        self.assertEqual(signup_code.user.email, self.em_visitor)
+        self.assertEqual(signup_code.user.email, self.user_visitor_email)
 
         # Confirm that email address in response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -134,19 +130,18 @@ class SignupTests(APITestCase):
     def test_signup_without_email_verification(self):
 
         with self.settings(AUTH_EMAIL_VERIFICATION=False):
-
             # Send Signup request
             url = reverse('authemail-signup')
             payload = {
-                'email': self.em_visitor,
-                'password': self.pw_visitor,
+                'email': self.user_visitor_email,
+                'password': self.user_visitor_pw,
             }
             self.client.post(url, payload)
 
             # Confirm that new user got created, and was automatically marked as verified
             # (else changing AUTH_EMAIL_VERIFICATION setting later would have horrible consequences)
             user = get_user_model().objects.latest('id')
-            self.assertEqual(user.email, self.em_visitor)
+            self.assertEqual(user.email, self.user_visitor_email)
             self.assertEqual(user.is_verified, True)
 
             # no verification email sent
@@ -161,8 +156,8 @@ class SignupTests(APITestCase):
         for i in range(0, num_signups):
             url = reverse('authemail-signup')
             payload = {
-                'email': self.em_visitor,
-                'password': self.pw_visitor,
+                'email': self.user_visitor_email,
+                'password': self.user_visitor_pw,
             }
             response = self.client.post(url, payload)
 
@@ -196,10 +191,10 @@ class SignupTests(APITestCase):
 class LoginTests(APITestCase):
     def setUp(self):
         # A verified user on the site
-        self.em_user = 'user@mail.com'
-        self.pw_user = 'user'
+        self.user_verified_email = 'user_verified@mail.com'
+        self.user_verified_pw = 'user_verified'
         self.user = get_user_model().objects.create_user(
-            self.em_user, self.pw_user)
+            self.user_verified_email, self.user_verified_pw)
         self.user.is_verified = True
         self.user.save()
 
@@ -207,19 +202,19 @@ class LoginTests(APITestCase):
         error_dicts = [
             # Email required
             {'payload': {'email': '',
-                         'password': self.pw_user},
+                         'password': self.user_verified_pw},
              'status_code': status.HTTP_400_BAD_REQUEST,
              'error': ('email', 'This field may not be blank.')
              },
             # Password required
-            {'payload': {'email': self.em_user,
+            {'payload': {'email': self.user_verified_email,
                          'password': ''},
              'status_code': status.HTTP_400_BAD_REQUEST,
              'error': ('password', 'This field may not be blank.')
              },
             # Invalid email
             {'payload': {'email': 'XXX',
-                         'password': self.pw_user},
+                         'password': self.user_verified_pw},
              'status_code': status.HTTP_400_BAD_REQUEST,
              'error': ('email', 'Enter a valid email address.')
              },
@@ -238,7 +233,7 @@ class LoginTests(APITestCase):
         url = reverse('authemail-login')
         payload = {
             'email': 'XXX@mail.com',
-            'password': self.pw_user,
+            'password': self.user_verified_pw,
         }
         response = self.client.post(url, payload)
 
@@ -249,7 +244,7 @@ class LoginTests(APITestCase):
         # Invalid password for user
         url = reverse('authemail-login')
         payload = {
-            'email': self.em_user,
+            'email': self.user_verified_email,
             'password': 'XXX',
         }
         response = self.client.post(url, payload)
@@ -278,8 +273,8 @@ class LoginTests(APITestCase):
         # Log in as the user
         url = reverse('authemail-login')
         payload = {
-            'email': self.em_user,
-            'password': self.pw_user,
+            'email': self.user_verified_email,
+            'password': self.user_verified_pw,
         }
         response = self.client.post(url, payload)
 
@@ -303,8 +298,8 @@ class LoginTests(APITestCase):
 
         url = reverse('authemail-login')
         payload = {
-            'email': self.em_user,
-            'password': self.pw_user,
+            'email': self.user_verified_email,
+            'password': self.user_verified_pw,
         }
         response = self.client.post(url, payload)
 
@@ -321,8 +316,8 @@ class LoginTests(APITestCase):
 
         url = reverse('authemail-login')
         payload = {
-            'email': self.em_user,
-            'password': self.pw_user,
+            'email': self.user_verified_email,
+            'password': self.user_verified_pw,
         }
         response = self.client.post(url, payload)
 
@@ -337,10 +332,10 @@ class LoginTests(APITestCase):
 class PasswordResetTests(APITestCase):
     def setUp(self):
         # A verified user on the site
-        self.em_user = 'user@mail.com'
-        self.pw_user = 'user'
+        self.user_verified_email = 'user_verified@mail.com'
+        self.user_verified_pw = 'user_verified'
         self.pw_user_reset = 'user reset'
-        user = get_user_model().objects.create_user(self.em_user, self.pw_user)
+        user = get_user_model().objects.create_user(self.user_verified_email, self.user_verified_pw)
         user.is_verified = True
         user.save()
 
@@ -412,13 +407,13 @@ class PasswordResetTests(APITestCase):
         # Send Password Reset request
         url = reverse('authemail-password-reset')
         payload = {
-            'email': self.em_user,
+            'email': self.user_verified_email,
         }
         response = self.client.post(url, payload)
 
         # Confirm that password reset code created
         password_reset_code = PasswordResetCode.objects.latest('code')
-        self.assertEqual(password_reset_code.user.email, self.em_user)
+        self.assertEqual(password_reset_code.user.email, self.user_verified_email)
 
         # Confirm that email address in response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -433,7 +428,7 @@ class PasswordResetTests(APITestCase):
         # Get a second code to use
         url = reverse('authemail-password-reset')
         payload = {
-            'email': self.em_user,
+            'email': self.user_verified_email,
         }
         self.client.post(url, payload)
         password_reset_code = PasswordResetCode.objects.latest('code')
@@ -485,7 +480,7 @@ class PasswordResetTests(APITestCase):
         # Get a third code to lapse
         url = reverse('authemail-password-reset')
         payload = {
-            'email': self.em_user,
+            'email': self.user_verified_email,
         }
         self.client.post(url, payload)
         password_reset_code = PasswordResetCode.objects.latest('code')
@@ -506,8 +501,8 @@ class PasswordResetTests(APITestCase):
         # Confirm unable to log in with old password
         url = reverse('authemail-login')
         payload = {
-            'email': self.em_user,
-            'password': self.pw_user,
+            'email': self.user_verified_email,
+            'password': self.user_verified_pw,
         }
         response = self.client.post(url, payload)
 
@@ -518,7 +513,7 @@ class PasswordResetTests(APITestCase):
         # Confirm able to log in with new password
         url = reverse('authemail-login')
         payload = {
-            'email': self.em_user,
+            'email': self.user_verified_email,
             'password': self.pw_user_reset,
         }
         response = self.client.post(url, payload)
