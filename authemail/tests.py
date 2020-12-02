@@ -190,13 +190,26 @@ class SignupTests(APITestCase):
 
 class LoginTests(APITestCase):
     def setUp(self):
-        # A verified user on the site
+        # User who is verified on the site
         self.user_verified_email = 'user_verified@mail.com'
         self.user_verified_pw = 'user_verified'
-        self.user = get_user_model().objects.create_user(
-            self.user_verified_email, self.user_verified_pw)
-        self.user.is_verified = True
-        self.user.save()
+        self.user_verified = get_user_model().objects.create_user(self.user_verified_email, self.user_verified_pw)
+        self.user_verified.is_verified = True
+        self.user_verified.save()
+
+        # User who is not verified yet on the site
+        self.user_not_verified_email = 'user_not_verified@mail.com'
+        self.user_not_verified_pw = 'user_not_verified'
+        self.user_not_verified = get_user_model().objects.create_user(self.user_not_verified_email, 'pw')
+        self.user_not_verified.save()
+
+        # User who is not active on the site
+        self.user_not_active_email = 'user_not_active@mail.com'
+        self.user_not_active_pw = 'user_not_active'
+        self.user_not_active = get_user_model().objects.create_user(self.user_not_active_email, self.user_not_active_pw)
+        self.user_not_active.is_verified = True
+        self.user_not_active.is_active = False
+        self.user_not_active.save()
 
     def test_login_serializer_errors(self):
         error_dicts = [
@@ -291,15 +304,12 @@ class LoginTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['success'], 'User logged out.')
 
-    def test_login_inactive_notverified_no_login(self):
-        # Inactive user can't login
-        self.user.is_active = False
-        self.user.save()
-
+    def test_login_not_verified_not_active_no_login(self):
+        # Not verified user can't login
         url = reverse('authemail-login')
         payload = {
-            'email': self.user_verified_email,
-            'password': self.user_verified_pw,
+            'email': self.user_not_verified_email,
+            'password': self.user_not_verified_pw,
         }
         response = self.client.post(url, payload)
 
@@ -307,26 +317,17 @@ class LoginTests(APITestCase):
         self.assertEqual(response.data['detail'],
                          'Unable to login with provided credentials.')
 
-        self.user.is_active = True
-        self.user.save()
-
-        # Unverified user can't login
-        self.user.is_verified = False
-        self.user.save()
-
+        # Not active user can't login
         url = reverse('authemail-login')
         payload = {
-            'email': self.user_verified_email,
-            'password': self.user_verified_pw,
+            'email': self.user_not_active_email,
+            'password': self.user_not_active_pw,
         }
         response = self.client.post(url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data['detail'],
-                         'User account not verified.')
-
-        self.user.is_verified = True
-        self.user.save()
+                         'Unable to login with provided credentials.')
 
 
 class PasswordResetTests(APITestCase):
