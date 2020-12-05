@@ -332,17 +332,31 @@ class LoginTests(APITestCase):
 
 class PasswordResetTests(APITestCase):
     def setUp(self):
-        # A verified user on the site
+        # User who is verified on the site
         self.user_verified_email = 'user_verified@mail.com'
         self.user_verified_pw = 'user_verified'
-        self.pw_user_reset = 'user reset'
-        user = get_user_model().objects.create_user(self.user_verified_email, self.user_verified_pw)
-        user.is_verified = True
-        user.save()
+        self.user_verified_pw_reset = 'user_verified reset'
+        user_verified = get_user_model().objects.create_user(self.user_verified_email, self.user_verified_pw)
+        user_verified.is_verified = True
+        user_verified.save()
 
         # Create auth token for user (so user logged in)
-        token = Token.objects.create(user=user)
+        token = Token.objects.create(user=user_verified)
         self.token = token.key
+
+        # User who is not verified yet on the site
+        self.user_not_verified_email = 'user_not_verified@mail.com'
+        self.user_not_verified_pw = 'user_not_verified'
+        self.user_not_verified = get_user_model().objects.create_user(self.user_not_verified_email, 'pw')
+        self.user_not_verified.save()
+
+        # User who is verified but not active on the site
+        self.user_not_active_email = 'user_not_active@mail.com'
+        self.user_not_active_pw = 'user_not_active'
+        user_not_active = get_user_model().objects.create_user(self.user_not_active_email, self.user_not_active_pw)
+        user_not_active.is_verified = True
+        user_not_active.is_active = False
+        user_not_active.save()
 
     def test_password_reset_serializer_errors(self):
         error_dicts = [
@@ -366,6 +380,37 @@ class PasswordResetTests(APITestCase):
             self.assertEqual(response.data[error_dict['error'][0]][0],
                              error_dict['error'][1])
 
+    def test_password_reset_no_user_with_email(self):
+        # No user with email address
+        url = reverse('authemail-password-reset')
+        payload = {
+            'email': 'XXX@mail.com'
+        }
+        response = self.client.post(url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Password reset not allowed.')
+
+    def test_password_reset_user_not_verified_not_allowed(self):
+        url = reverse('authemail-password-reset')
+        payload = {
+            'email': self.user_not_verified_email
+        }
+        response = self.client.post(url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Password reset not allowed.')
+
+    def test_password_reset_user_not_active_not_allowed(self):
+        url = reverse('authemail-password-reset')
+        payload = {
+            'email': self.user_not_active_email
+        }
+        response = self.client.post(url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Password reset not allowed.')
+
     def test_password_reset_invalid_code(self):
         url = reverse('authemail-password-reset-verify')
         params = {
@@ -375,17 +420,6 @@ class PasswordResetTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['detail'], 'Unable to verify user.')
-
-    def test_password_reset_invalid_credentials(self):
-        # Invalid email address
-        url = reverse('authemail-password-reset')
-        payload = {
-            'email': 'XXX@mail.com'
-        }
-        response = self.client.post(url, payload)
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['detail'], 'Password reset not allowed.')
 
     def test_password_reset_verified_serializer_errors(self):
         error_dicts = [
@@ -450,7 +484,7 @@ class PasswordResetTests(APITestCase):
         url = reverse('authemail-password-reset-verified')
         payload = {
             'code': code_used,
-            'password': self.pw_user_reset,
+            'password': self.user_verified_pw_reset,
         }
         response = self.client.post(url, payload)
 
@@ -515,7 +549,7 @@ class PasswordResetTests(APITestCase):
         url = reverse('authemail-login')
         payload = {
             'email': self.user_verified_email,
-            'password': self.pw_user_reset,
+            'password': self.user_verified_pw_reset,
         }
         response = self.client.post(url, payload)
 
