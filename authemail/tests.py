@@ -411,10 +411,34 @@ class PasswordResetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['detail'], 'Password reset not allowed.')
 
-    def test_password_reset_invalid_code(self):
+    def test_password_reset_verify_invalid_code(self):
         url = reverse('authemail-password-reset-verify')
         params = {
             'code': 'XXX',
+        }
+        response = self.client.get(url, params)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Unable to verify user.')
+
+    def test_password_reset_verify_expired_code(self):
+        # Send Password Reset request
+        url = reverse('authemail-password-reset')
+        payload = {
+            'email': self.user_verified_email,
+        }
+        self.client.post(url, payload)
+
+        # Get password reset code and make it expire
+        password_reset_code = PasswordResetCode.objects.latest('code')
+        password_reset_code.created_at += timedelta(days=-(PasswordResetCode.objects.get_expiry_period()+1))
+        password_reset_code.save()
+        code_lapsed = password_reset_code.code
+
+        # Confirm password reset code_lapsed can't be used
+        url = reverse('authemail-password-reset-verify')
+        params = {
+            'code': code_lapsed,
         }
         response = self.client.get(url, params)
 
@@ -506,27 +530,6 @@ class PasswordResetTests(APITestCase):
         url = reverse('authemail-password-reset-verify')
         params = {
             'code': code_used,
-        }
-        response = self.client.get(url, params)
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['detail'], 'Unable to verify user.')
-
-        # Get a third code to lapse
-        url = reverse('authemail-password-reset')
-        payload = {
-            'email': self.user_verified_email,
-        }
-        self.client.post(url, payload)
-        password_reset_code = PasswordResetCode.objects.latest('code')
-        password_reset_code.created_at += timedelta(days=-(PasswordResetCode.objects.get_expiry_period()+1))
-        password_reset_code.save()
-        code_lapsed = password_reset_code.code
-
-        # Confirm password reset code_lapsed can't be used
-        url = reverse('authemail-password-reset-verify')
-        params = {
-            'code': code_lapsed,
         }
         response = self.client.get(url, params)
 
