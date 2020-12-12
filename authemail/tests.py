@@ -336,12 +336,12 @@ class PasswordResetTests(APITestCase):
         self.user_verified_email = 'user_verified@mail.com'
         self.user_verified_pw = 'user_verified'
         self.user_verified_pw_reset = 'user_verified reset'
-        user_verified = get_user_model().objects.create_user(self.user_verified_email, self.user_verified_pw)
-        user_verified.is_verified = True
-        user_verified.save()
+        self.user_verified = get_user_model().objects.create_user(self.user_verified_email, self.user_verified_pw)
+        self.user_verified.is_verified = True
+        self.user_verified.save()
 
         # Create auth token for user (so user logged in)
-        token = Token.objects.create(user=user_verified)
+        token = Token.objects.create(user=self.user_verified)
         self.token = token.key
 
         # User who is not verified yet on the site
@@ -353,10 +353,10 @@ class PasswordResetTests(APITestCase):
         # User who is verified but not active on the site
         self.user_not_active_email = 'user_not_active@mail.com'
         self.user_not_active_pw = 'user_not_active'
-        user_not_active = get_user_model().objects.create_user(self.user_not_active_email, self.user_not_active_pw)
-        user_not_active.is_verified = True
-        user_not_active.is_active = False
-        user_not_active.save()
+        self.user_not_active = get_user_model().objects.create_user(self.user_not_active_email, self.user_not_active_pw)
+        self.user_not_active.is_verified = True
+        self.user_not_active.is_active = False
+        self.user_not_active.save()
 
     def test_password_reset_serializer_errors(self):
         error_dicts = [
@@ -410,6 +410,43 @@ class PasswordResetTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['detail'], 'Password reset not allowed.')
+
+    def test_password_reset_user_verified_code_created_email_sent(self):
+        # Create two past reset codes that aren't used
+        password_reset_code_old1 = PasswordResetCode.objects.create_password_reset_code(
+            self.user_verified)
+        password_reset_code_old2 = PasswordResetCode.objects.create_password_reset_code(
+            self.user_verified)
+        count = PasswordResetCode.objects.filter(user=self.user_verified).count()
+        self.assertEqual(count, 2)
+
+        # Send Password Reset request
+        url = reverse('authemail-password-reset')
+        payload = {
+            'email': self.user_verified_email,
+        }
+        response = self.client.post(url, payload)
+
+        # Get password reset code
+        password_reset_code = PasswordResetCode.objects.latest('code')
+
+        # Confirm that old password reset codes deleted
+        count = PasswordResetCode.objects.filter(user=self.user_verified).count()
+        self.assertEqual(count, 1)
+        self.assertNotEqual(password_reset_code.code, password_reset_code_old1.code)
+        self.assertNotEqual(password_reset_code.code, password_reset_code_old2.code)
+
+        # Confirm that password reset code created
+        password_reset_code = PasswordResetCode.objects.latest('code')
+        self.assertEqual(password_reset_code.user.email, self.user_verified_email)
+
+        # Confirm that email address in response
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['email'], payload['email'])
+
+        # Confirm that one email sent and that Subject correct
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'Reset Your Password')
 
     def test_password_reset_verify_invalid_code(self):
         url = reverse('authemail-password-reset-verify')
@@ -469,18 +506,6 @@ class PasswordResetTests(APITestCase):
             'email': self.user_verified_email,
         }
         response = self.client.post(url, payload)
-
-        # Confirm that password reset code created
-        password_reset_code = PasswordResetCode.objects.latest('code')
-        self.assertEqual(password_reset_code.user.email, self.user_verified_email)
-
-        # Confirm that email address in response
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['email'], payload['email'])
-
-        # Confirm that one email sent and that Subject correct
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, 'Reset Your Password')
 
         code_not_used = _get_code_from_email(mail)
 
