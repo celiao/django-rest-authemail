@@ -482,6 +482,27 @@ class PasswordResetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['detail'], 'Unable to verify user.')
 
+    def test_password_reset_verify_user_verified(self):
+        # Send Password Reset request
+        url = reverse('authemail-password-reset')
+        payload = {
+            'email': self.user_verified_email,
+        }
+        self.client.post(url, payload)
+        password_reset_code = PasswordResetCode.objects.latest('code')
+        code = password_reset_code.code
+
+        # Send Password Reset Verify request
+        url = reverse('authemail-password-reset-verify')
+        params = {
+            'code': code,
+        }
+        response = self.client.get(url, params)
+
+        # Confirm password reset successfully
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['success'], 'Email address verified.')
+
     def test_password_reset_verified_serializer_errors(self):
         error_dicts = [
             # Password required
@@ -499,7 +520,35 @@ class PasswordResetTests(APITestCase):
             self.assertEqual(response.data[error_dict['error'][0]][0],
                              error_dict['error'][1])
 
-    def test_password_reset_and_verify_and_verified(self):
+    def test_password_reset_verified_invalid_code(self):
+        # Send Password Reset request
+        url = reverse('authemail-password-reset')
+        payload = {
+            'email': self.user_verified_email,
+        }
+        self.client.post(url, payload)
+        password_reset_code = PasswordResetCode.objects.latest('code')
+        code = password_reset_code.code
+
+        # Send Password Reset Verify request
+        url = reverse('authemail-password-reset-verify')
+        params = {
+            'code': code,
+        }
+        response = self.client.get(url, params)
+
+        # Send Password Reset Verified request
+        url = reverse('authemail-password-reset-verified')
+        params = {
+            'code': 'XXX',
+            'password': self.user_verified_pw_reset,
+        }
+        response = self.client.post(url, params)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Unable to verify user.')
+
+    def test_password_reset_verified(self):
         # Send Password Reset request
         url = reverse('authemail-password-reset')
         payload = {
