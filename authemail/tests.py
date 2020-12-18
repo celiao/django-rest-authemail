@@ -578,6 +578,10 @@ class PasswordResetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['success'], 'Email address verified.')
 
+        # Confirm old codes deleted and one remains
+        num_codes = PasswordResetCode.objects.count()
+        self.assertEqual(num_codes, 1)
+
         # Send Password Reset Verified request
         url = reverse('authemail-password-reset-verified')
         payload = {
@@ -589,6 +593,10 @@ class PasswordResetTests(APITestCase):
         # Confirm password reset successfully
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['success'], 'Password reset.')
+
+        # Confirm used code deleted and none remain
+        num_codes = PasswordResetCode.objects.count()
+        self.assertEqual(num_codes, 0)
 
         # Confirm password reset code_not_used can't be used again
         url = reverse('authemail-password-reset-verify')
