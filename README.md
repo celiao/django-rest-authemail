@@ -13,7 +13,7 @@ django-rest-authemail
 Features
 --------
 
-- API endpoints for signup, signup email verification, login, logout, password reset, password reset verification, password change, and user detail.
+- API endpoints for signup, signup email verification, login, logout, password reset, password reset verification, password change, email change, and user detail.
 - Extensible abstract user model.
 - Perform password confirmation and other client-side validation on the front end for a better user experience.
 - Token authentication.
