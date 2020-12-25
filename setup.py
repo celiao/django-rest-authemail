@@ -10,7 +10,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='django-rest-authemail',
-    version='2.0.0',
+    version='2.0.1',
     author='Celia Oakley',
     author_email='celia.oakley@alumni.stanford.edu',
     description='A RESTful API for user signup and authentication using email addresses',
@@ -22,14 +22,14 @@ setup(
         'django-email-as-username'
     ],
     url='http://github.com/celiao/django-rest-authemail',
-    download_url='https://github.com/celiao/django-rest-authemail/tarball/2.0.0',
+    download_url='https://github.com/celiao/django-rest-authemail/tarball/2.0.1',
     packages=['authemail'],
     include_package_data=True,
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
-        'Django>=1.11.17,<=2.1.1',
-        'djangorestframework>=3.7.1,<=3.11.0',
+        'Django==2.2.8',
+        'djangorestframework==3.11.0',
         'requests>=2.3.0',
     ],
     classifiers=[
