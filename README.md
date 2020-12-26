@@ -19,13 +19,13 @@ Features
 - Token authentication.
 - User models in the admin interface include inlines for signup and password reset codes.
 - An example project is included and contains example UI templates.
-- Version > `2.0.0` (in progress)
+- Version > `2.0.1` (in progress)
 	- Supports and tested with Python 3.6, 3.7, and 3.8.
-	- Supports and tested with Django 2.2.8, 3.0, and 3.1.
+	- Supports and tested with Django 2.2.8, 2.2.13, 3.0, and 3.1.
 	- Supports and tested with Django REST Framework 3.11.0.
-- Version `2.0.0`
+- Version `2.0.1`
 	- Supports and tested with Python 3.6 and 3.7.
-	- Supports and tested with Django 2.2.8.
+	- Supports and tested with Django 2.2.8, 2.2.13.
 	- Supports and tested with Django REST Framework 3.11.0.
 - Version `1.10.2`
 	- Supports and tested with Python 3.6 and 3.7.
