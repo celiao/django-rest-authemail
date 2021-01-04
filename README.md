@@ -731,6 +731,12 @@ Content-Type: application/json
 ```
 
 
+Django Packages
+---------------------
+- `django-rest-authemail` can be found on Django Packages at https://djangopackages.org/packages/p/django-rest-authemail/.
+- `django-rest-authemail` can be found in the Django REST Framework Comparison Grid at https://djangopackages.org/grids/g/django-rest-framework/.
+
+
 Inspiration and Ideas
 ---------------------
 Inspiration and ideas for `django-rest-authemail` were derived from:
