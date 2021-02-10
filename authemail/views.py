@@ -1,7 +1,10 @@
 from datetime import date
 
+from authemail.forms import EmailUserCreationForm
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model
+from django.shortcuts import render, redirect
 from django.utils.translation import gettext as _
 
 from rest_framework import status
@@ -119,11 +122,11 @@ class Login(APIView):
                                         status=status.HTTP_401_UNAUTHORIZED)
                 else:
                     content = {'detail':
-                               _('User account not verified.')}
+                                   _('User account not verified.')}
                     return Response(content, status=status.HTTP_401_UNAUTHORIZED)
             else:
                 content = {'detail':
-                           _('Unable to login with provided credentials.')}
+                               _('Unable to login with provided credentials.')}
                 return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
         else:
@@ -180,26 +183,68 @@ class PasswordReset(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
+def password_reset_verify_internal(code):
+    try:
+        password_reset_code = PasswordResetCode.objects.get(code=code)
+
+        # Delete password reset code if older than expiry period
+        delta = date.today() - password_reset_code.created_at.date()
+        if delta.days > PasswordResetCode.objects.get_expiry_period():
+            password_reset_code.delete()
+            raise PasswordResetCode.DoesNotExist()
+        return True
+    except PasswordResetCode.DoesNotExist:
+        return False
+
+
 class PasswordResetVerify(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request, format=None):
         code = request.GET.get('code', '')
-
-        try:
-            password_reset_code = PasswordResetCode.objects.get(code=code)
-
-            # Delete password reset code if older than expiry period
-            delta = date.today() - password_reset_code.created_at.date()
-            if delta.days > PasswordResetCode.objects.get_expiry_period():
-                password_reset_code.delete()
-                raise PasswordResetCode.DoesNotExist()
-
+        if password_reset_verify_internal(code):
             content = {'success': _('Email address verified.')}
             return Response(content, status=status.HTTP_200_OK)
-        except PasswordResetCode.DoesNotExist:
+        else:
             content = {'detail': _('Unable to verify user.')}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+
+def reset_password(code, password):
+    try:
+        password_reset_code = PasswordResetCode.objects.get(code=code)
+        password_reset_code.user.set_password(password)
+        password_reset_code.user.save()
+
+        # Delete password reset code just used
+        password_reset_code.delete()
+        return True
+    except PasswordResetCode.DoesNotExist:
+        return False
+
+
+def password_reset_verify(request):
+    if request.method == "POST":
+        form = EmailUserCreationForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data["code"]
+            if not password_reset_verify_internal(code):
+                messages.error(request, "Invalid verification code")
+                return render(request, "authemail/passwordreset_form.html")
+            password1 = form.cleaned_data["password1"]
+            if reset_password(code, password1):
+                messages.success(request, "Password reset successfully")
+                return redirect("/")
+        else:
+            return render(request, "authemail/passwordreset_form.html", {"form": form})
+    else:
+        code = request.GET.get('code', '')
+        if password_reset_verify_internal(code):
+            form = EmailUserCreationForm(initial={"code": code})
+            return render(request, "authemail/passwordreset_form.html", {"form": form})
+        else:
+            messages.error(request, "Invalid verification code")
+            return redirect("/")
 
 
 class PasswordResetVerified(APIView):

@@ -14,6 +14,7 @@ urlpatterns = [
 
     path('password/reset/', views.PasswordReset.as_view(),
          name='authemail-password-reset'),
+    path('password/reset/form/', views.password_reset_verify, name = "authemail-password-reset-form"),
     path('password/reset/verify/', views.PasswordResetVerify.as_view(),
          name='authemail-password-reset-verify'),
     path('password/reset/verified/', views.PasswordResetVerified.as_view(),
