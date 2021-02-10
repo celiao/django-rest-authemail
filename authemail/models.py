@@ -29,7 +29,7 @@ class EmailUserManager(BaseUserManager):
             raise ValueError('Users must have an email address')
         email = self.normalize_email(email)
         user = self.model(email=email,
-                          is_staff=is_staff, is_active=True,
+                          is_staff=is_staff, is_active=False,
                           is_superuser=is_superuser, is_verified=is_verified,
                           last_login=now, date_joined=now, **extra_fields)
         user.set_password(password)
@@ -60,7 +60,7 @@ class EmailAbstractUser(AbstractBaseUser, PermissionsMixin):
         help_text=_('Designates whether the user can log into this '
                     'admin site.'))
     is_active = models.BooleanField(
-        _('active'), default=True,
+        _('active'), default=False,
         help_text=_('Designates whether this user should be treated as '
                     'active.  Unselect this instead of deleting accounts.'))
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
@@ -110,6 +110,7 @@ class SignupCodeManager(models.Manager):
         try:
             signup_code = SignupCode.objects.get(code=code)
             signup_code.user.is_verified = True
+            signup_code.user.is_active = True
             signup_code.user.save()
             return True
         except SignupCode.DoesNotExist:
