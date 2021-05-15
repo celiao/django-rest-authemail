@@ -268,7 +268,7 @@ class AuthAuditLog(models.Model):
     event_type = models.CharField(
         choices=AuthAuditEventType.choices, max_length=20, null=False, blank=False
     )
-    user_agent = models.ForeignKey(UserAgent)
+    user_agent = models.ForeignKey(UserAgent, on_delete=models.SET_NULL)
     ipaddr = models.GenericIPAddressField(_("ip address"))
 
     class Meta:
