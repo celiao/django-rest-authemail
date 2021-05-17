@@ -295,8 +295,6 @@ class AuthAuditLog(models.Model):
 
         if ua_agent:
             ua_hash = mmh3.hash_bytes(ua_agent)
-
-            agent_obj = UserAgent.objects.get()
             agent_obj, _ = UserAgent.objects.get_or_create(
                 identifier=ua_hash, defaults={"ua_string": ua_agent[:256]}
             )
