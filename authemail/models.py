@@ -1,6 +1,7 @@
 import binascii
 import os
 import uuid
+from datetime import date
 from typing import Optional
 
 import mmh3
@@ -18,8 +19,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-# Make part of the model eventually, so it can be edited
-EXPIRY_PERIOD = 3  # days
+EXPIRY_PERIOD = getattr(settings, "AUTH_EMAIL_VERIFICATION_EXPIRATION", 3)  # days
 
 
 def _generate_code():
@@ -130,16 +130,37 @@ class SignupCodeManager(models.Manager):
 
         return signup_code
 
-    def set_user_is_verified(self, code):
+    def set_user_is_verified(self, code, request):
         try:
+            # TODO: Check origin of request is same as when the code was
+            #       issued.
             signup_code = SignupCode.objects.get(code=code)
+
+            delta = date.today() - signup_code.created_at.date()
+            if delta.days > SignupCode.objects.get_expiry_period():
+                signup_code.delete()
+                return False, "Verification code has expired"
+
+            # Fetch the log entry for when the user signed up
+            log = AuthAuditLog.objects.filter(
+                user=signup_code.user, event_type=AuthAuditEventType.ACCOUNT_SIGNUP
+            ).latest("created_at")
+            ua_hash = mmh3.hash_bytes(request.META.get("HTTP_USER_AGENT"))
+
+            # If different browser than during issue time, reject
+            # TODO: IP check?
+            if log.user_agent.identifier != ua_hash:
+                return False, "Unable to verify user"
+
             signup_code.user.is_verified = True
             signup_code.user.save()
-            return True
+            return True, "Account verified"
         except SignupCode.DoesNotExist:
             pass
+        except AuthAuditLog.DoesNotExist:
+            pass
 
-        return False
+        return False, "Unable to verify user"
 
 
 class PasswordResetCodeManager(models.Manager):
@@ -212,6 +233,11 @@ class SignupCode(AbstractBaseCode):
         prefix = "signup_email"
         self.send_email(prefix)
 
+    # We are going to put an expiry on signup codes as well since they
+    # effectively give authenticated access when provided to the application
+    def get_expiry_period(self):
+        return EXPIRY_PERIOD
+
 
 class PasswordResetCode(AbstractBaseCode):
     objects = PasswordResetCodeManager()
@@ -237,6 +263,7 @@ class EmailChangeCode(AbstractBaseCode):
 
 
 class AuthAuditEventType(models.TextChoices):
+    ACCOUNT_SIGNUP = "SIGNUP", "New account signup"
     LOGIN = "LOGIN", "Login"
     RESET_PASSWORD_REQ = "RESET_PASSWORD_REQ", "Password reset request"
     PASSWORD_UPDATED = "PASSWORD_UPDATED", "Password has been changed"

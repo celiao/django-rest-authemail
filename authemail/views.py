@@ -2,6 +2,8 @@ from datetime import date
 
 from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import login as django_login
+from django.contrib.auth import logout as django_logout
 from django.utils.translation import gettext as _
 from ipware import get_client_ip
 from rest_framework import status
@@ -50,18 +52,17 @@ class Signup(APIView):
                     content = {"detail": _("Email address already taken.")}
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
-                try:
-                    # Delete old signup codes
-                    signup_code = SignupCode.objects.get(user=user)
-                    signup_code.delete()
-                except SignupCode.DoesNotExist:
-                    pass
+                # Delete old signup codes
+                signup_code = SignupCode.objects.filter(user=user)
+                signup_code.delete()
 
             except get_user_model().DoesNotExist:
                 user = get_user_model().objects.create_user(email=email)
 
             # Set user fields provided
-            user.set_password(password)
+            if password:
+                user.set_password(password)
+
             user.first_name = first_name
             user.last_name = last_name
             if not must_validate_email:
@@ -76,12 +77,24 @@ class Signup(APIView):
             user.save()
 
             if must_validate_email:
+                client_ip, routable = get_client_ip(request)
+                AuthAuditLog.track(
+                    user,
+                    AuthAuditEventType.ACCOUNT_SIGNUP,
+                    ip_address=client_ip,
+                    ua_agent=request.META.get("HTTP_USER_AGENT"),
+                )
+
                 # Create and associate signup code
-                ipaddr = self.request.META.get("REMOTE_ADDR", "0.0.0.0")
-                signup_code = SignupCode.objects.create_signup_code(user, ipaddr)
+                signup_code = SignupCode.objects.create_signup_code(user, client_ip)
                 signup_code.send_signup_email()
 
-            content = {"email": email, "first_name": first_name, "last_name": last_name}
+            content = {
+                "id": user.id,
+                "email": email,
+                "first_name": first_name,
+                "last_name": last_name,
+            }
             return Response(content, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -92,18 +105,20 @@ class SignupVerify(APIView):
 
     def get(self, request, format=None):
         code = request.GET.get("code", "")
-        verified = SignupCode.objects.set_user_is_verified(code)
+        verified, message = SignupCode.objects.set_user_is_verified(code, request)
 
         if verified:
-            try:
-                signup_code = SignupCode.objects.get(code=code)
-                signup_code.delete()
-            except SignupCode.DoesNotExist:
-                pass
-            content = {"success": _("Email address verified.")}
+            # Issue an auth token so that user can set password + other details
+            token, created = Token.objects.get_or_create(user=SignupCode.user)
+            django_login(request)
+
+            signup_code = SignupCode.objects.filter(code=code)
+            signup_code.delete()
+
+            content = {"success": _(message), "token": token}
             return Response(content, status=status.HTTP_200_OK)
         else:
-            content = {"detail": _("Unable to verify user.")}
+            content = {"detail": _(message)}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -131,6 +146,7 @@ class Login(APIView):
                             ip_address=client_ip,
                             ua_agent=request.META.get("HTTP_USER_AGENT"),
                         )
+                        django_login(request)
                         return Response({"token": token.key}, status=status.HTTP_200_OK)
                     else:
                         content = {"detail": _("User account not active.")}
@@ -159,6 +175,7 @@ class Logout(APIView):
         for token in tokens:
             token.delete()
         content = {"success": _("User logged out.")}
+        django_logout(request)
         return Response(content, status=status.HTTP_200_OK)
 
 
