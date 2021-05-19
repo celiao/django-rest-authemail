@@ -19,7 +19,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-EXPIRY_PERIOD = getattr(settings, "AUTH_EMAIL_VERIFICATION_EXPIRATION", 3)  # days
+EXPIRY_PERIOD = getattr(
+    settings, "AUTH_EMAIL_VERIFICATION_EXPIRATION", 3)  # days
 
 
 def _generate_code():
@@ -73,7 +74,8 @@ class EmailAbstractUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,
-        help_text=_("Designates whether the user can log into this " "admin site."),
+        help_text=_(
+            "Designates whether the user can log into this " "admin site."),
     )
     is_active = models.BooleanField(
         _("active"),
@@ -204,7 +206,8 @@ def send_multi_format_email(template_prefix, template_ctxt, target_email):
 
 
 class AbstractBaseCode(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
     code = models.CharField(_("code"), max_length=40, primary_key=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -213,10 +216,12 @@ class AbstractBaseCode(models.Model):
 
     def send_email(self, prefix):
         ctxt = {
+            "base_url": settings.BASE_URL,
             "email": self.user.email,
             "first_name": self.user.first_name,
             "last_name": self.user.last_name,
             "code": self.code,
+            "user": {"id": str(self.user.id)}
         }
         send_multi_format_email(prefix, ctxt, target_email=self.user.email)
 
@@ -257,7 +262,10 @@ class EmailChangeCode(AbstractBaseCode):
         self.send_email(prefix)
 
         prefix = "email_change_confirm_new_email"
-        ctxt = {"email": self.email, "code": self.code}
+        ctxt = {"base_url": settings.BASE_URL,
+                "email": self.email,
+                "code": self.code,
+                "user": {"id": str(self.user.id)}}
 
         send_multi_format_email(prefix, ctxt, target_email=self.email)
 
@@ -286,19 +294,22 @@ class UserAgent(models.Model):
     identifier = models.BinaryField(
         _("identifier"), unique=True, blank=False, null=False, max_length=128
     )
-    ua_string = models.TextField(_("user agent string"), blank=False, null=False)
+    ua_string = models.TextField(
+        _("user agent string"), blank=False, null=False)
 
 
 class AuthAuditLog(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
     event_type = models.CharField(
         choices=AuthAuditEventType.choices, max_length=20, null=False, blank=False
     )
     user_agent = models.ForeignKey(
         UserAgent, on_delete=models.SET_NULL, null=True, blank=True
     )
-    ipaddr = models.GenericIPAddressField(_("ip address"), null=True, blank=True)
+    ipaddr = models.GenericIPAddressField(
+        _("ip address"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("AuditLog")
