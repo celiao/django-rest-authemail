@@ -110,7 +110,7 @@ class SignupVerify(APIView):
         if verified:
             # Issue an auth token so that user can set password + other details
             token, created = Token.objects.get_or_create(user=SignupCode.user)
-            django_login(request)
+            django_login(request, SignupCode.user)
 
             signup_code = SignupCode.objects.filter(code=code)
             signup_code.delete()
@@ -146,7 +146,7 @@ class Login(APIView):
                             ip_address=client_ip,
                             ua_agent=request.META.get("HTTP_USER_AGENT"),
                         )
-                        django_login(request)
+                        django_login(request, user)
                         return Response({"token": token.key}, status=status.HTTP_200_OK)
                     else:
                         content = {"detail": _("User account not active.")}
