@@ -27,6 +27,7 @@ from authemail.serializers import (
     PasswordResetSerializer,
     PasswordResetVerifiedSerializer,
     SignupSerializer,
+    SignupVerificationSerializer,
     UserSerializer,
 )
 
@@ -103,23 +104,27 @@ class Signup(APIView):
 class SignupVerify(APIView):
     permission_classes = (AllowAny,)
 
-    def get(self, request, format=None):
-        code = request.GET.get("code", "")
+    def post(self, request, format=None):
+        serializer = SignupVerificationSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        code = serializer.data["code"]
         verified, message = SignupCode.objects.set_user_is_verified(code, request)
 
-        if verified:
-            # Issue an auth token so that user can set password + other details
-            token, created = Token.objects.get_or_create(user=SignupCode.user)
-            django_login(request, SignupCode.user)
-
-            signup_code = SignupCode.objects.filter(code=code)
-            signup_code.delete()
-
-            content = {"success": _(message), "token": token}
-            return Response(content, status=status.HTTP_200_OK)
-        else:
+        if not verified:
             content = {"detail": _(message)}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+        # Issue an auth token so that user can set password + other details
+        token, created = Token.objects.get_or_create(user=SignupCode.user)
+        django_login(request, SignupCode.user)
+
+        signup_code = SignupCode.objects.filter(code=code)
+        signup_code.delete()
+
+        content = {"success": _(message), "token": token}
+        return Response(content, status=status.HTTP_200_OK)
 
 
 class Login(APIView):

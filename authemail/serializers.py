@@ -17,10 +17,8 @@ class SignupSerializer(serializers.Serializer):
     last_name = serializers.CharField(max_length=30, default="", required=False)
 
 
-class SignupSecondarySerializer(serializers.Serializer):
-    password = serializers.CharField(max_length=128)
-    first_name = serializers.CharField(max_length=30)
-    last_name = serializers.CharField(max_length=30)
+class SignupVerificationSerializer(serializers.Serializer):
+    code = serializers.CharField(max_length=40)
 
 
 class LoginSerializer(serializers.Serializer):
