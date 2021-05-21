@@ -39,6 +39,7 @@ setup(
     download_url="https://github.com/celiao/django-rest-authemail/tarball/2.0.6",
     packages=["authemail"],
     include_package_data=True,
+    package_data={"": ["burner_emails.txt"]},
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
