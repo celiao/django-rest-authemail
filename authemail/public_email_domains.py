@@ -3786,5 +3786,8 @@ public_email_domains = {
 
 p = Path(__file__).with_name("burner_emails.txt")
 
+# List comes from here: https://github.com/wesbos/burner-email-providers
+# Need to update this from time to time since these burner email services
+# create new domains on a daily basis.
 with open(p) as f:
     burner_email_domains = {x.strip() for x in f}
