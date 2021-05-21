@@ -6,6 +6,7 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from django.utils.translation import gettext as _
 from ipware import get_client_ip
+from ratelimit.decorators import ratelimit
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -131,6 +132,10 @@ class Login(APIView):
     permission_classes = (AllowAny,)
     serializer_class = LoginSerializer
 
+    # Keep a pretty high tolerance for ip, since we have lots of corporate
+    # users they might be behind a NAT and share a common IP.
+    @ratelimit(key="ip", rate="10/m")
+    @ratelimit(key="post:email")
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
 

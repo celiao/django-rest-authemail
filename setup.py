@@ -50,6 +50,7 @@ setup(
         "ua-parser>=0.10",
         "django-ipware>=3.0.2",
         "django-q",
+        "django-ratelimit",
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
