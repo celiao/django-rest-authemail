@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from authemail.public_email_domains import public_email_domains
+from authemail.public_email_domains import burner_email_domains, public_email_domains
 
 
 class SignupSerializer(serializers.Serializer):
@@ -24,9 +24,12 @@ class SignupSerializer(serializers.Serializer):
 
         If the domain exists in our dataset of public emails, its rejected.
         """
-        domain_portion = value.split("@")[-1]
+        domain_portion = value.split("@")[-1].strip()
 
-        if domain_portion in public_email_domains:
+        if (
+            domain_portion in public_email_domains
+            or domain_portion in burner_email_domains
+        ):
             raise serializers.ValidationError("Only work emails are allowed to sign up")
 
         return value

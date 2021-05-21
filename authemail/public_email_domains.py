@@ -1,3 +1,5 @@
+from pathlib import Path
+
 public_email_domains = {
     "1033edge.com",
     "11mail.com",
@@ -3781,3 +3783,8 @@ public_email_domains = {
     "zzn.com",
     "zzom.co.uk",
 }
+
+p = Path(__file__).with_name("burner_emails.txt")
+
+with open(p) as f:
+    burner_email_domains = {x.strip() for x in f}
