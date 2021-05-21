@@ -20,6 +20,7 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 EXPIRY_PERIOD = getattr(settings, "AUTH_EMAIL_VERIFICATION_EXPIRATION", 3)  # days
+STRICT_USER_AGENT_VERIFICATION = getattr(settings, "AUTH_EMAIL_STRICT_UA_CHECK", False)
 
 
 def _generate_code():
@@ -145,12 +146,14 @@ class SignupCodeManager(models.Manager):
             log = AuthAuditLog.objects.filter(
                 user=signup_code.user, event_type=AuthAuditEventType.ACCOUNT_SIGNUP
             ).latest("created_at")
-            ua_hash = mmh3.hash_bytes(request.META.get("HTTP_USER_AGENT"))
 
             # If different browser than during issue time, reject
             # TODO: IP check?
-            if log.user_agent.identifier != ua_hash:
-                return False, "Unable to verify user"
+            if STRICT_USER_AGENT_VERIFICATION:
+                ua_hash = mmh3.hash_bytes(request.META.get("HTTP_USER_AGENT"))
+
+                if log.user_agent.identifier != ua_hash:
+                    return False, "Unable to verify user"
 
             signup_code.user.is_verified = True
             signup_code.user.save()
