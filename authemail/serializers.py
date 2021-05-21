@@ -1,7 +1,10 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from authemail.public_email_domains import burner_email_domains, public_email_domains
+
+MIN_PASSWORD_LENGTH = getattr(settings, "AUTH_EMAIL_MIN_PASSWORD_LENGTH", 8)
 
 
 class SignupSerializer(serializers.Serializer):
@@ -14,7 +17,9 @@ class SignupSerializer(serializers.Serializer):
 
     # Support the flow where the user supply email -> verify email and then
     # add password
-    password = serializers.CharField(max_length=128, default=None, required=False)
+    password = serializers.CharField(
+        max_length=128, min_length=MIN_PASSWORD_LENGTH, default=None, required=False
+    )
     first_name = serializers.CharField(max_length=30, default="", required=False)
     last_name = serializers.CharField(max_length=30, default="", required=False)
 
@@ -50,11 +55,11 @@ class PasswordResetSerializer(serializers.Serializer):
 
 class PasswordResetVerifiedSerializer(serializers.Serializer):
     code = serializers.CharField(max_length=40)
-    password = serializers.CharField(max_length=128)
+    password = serializers.CharField(max_length=128, min_length=MIN_PASSWORD_LENGTH)
 
 
 class PasswordChangeSerializer(serializers.Serializer):
-    password = serializers.CharField(max_length=128)
+    password = serializers.CharField(max_length=128, min_length=MIN_PASSWORD_LENGTH)
 
 
 class EmailChangeSerializer(serializers.Serializer):

@@ -5,6 +5,7 @@ from datetime import date
 from typing import Optional
 
 import mmh3
+from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -14,13 +15,19 @@ from django.contrib.auth.models import (
 from django.core.mail import send_mail
 from django.core.mail.message import EmailMultiAlternatives
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from ua_parser import user_agent_parser
 
 EXPIRY_PERIOD = getattr(settings, "AUTH_EMAIL_VERIFICATION_EXPIRATION", 3)  # days
 STRICT_USER_AGENT_VERIFICATION = getattr(settings, "AUTH_EMAIL_STRICT_UA_CHECK", False)
+ASYNC_ENABLED = apps.is_installed("django_q") and getattr(
+    settings, "AUTH_EMAIL_ASYNC", True
+)
 
 
 def _generate_code():
@@ -302,6 +309,55 @@ class UserAgent(models.Model):
     ua_string = models.TextField(_("user agent string"), blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # Parsed out UA details
+    browser_name = models.CharField(max_length=100, null=True, blank=True)
+    browser_version = models.CharField(max_length=20, null=True, blank=True)
+    os_family = models.CharField(max_length=100, null=True, blank=True)
+    os_version = models.CharField(max_length=20, null=True, blank=True)
+    device_brand = models.CharField(max_length=100, null=True, blank=True)
+    device_family = models.CharField(max_length=50, null=True, blank=True)
+    device_model = models.CharField(max_length=50, null=True, blank=True)
+
+
+@receiver(post_save, sender=UserAgent)
+def enrich_ua(sender, instance, created, **kwargs):
+    if created:
+        ua_string = instance.ua_string
+        parsed = user_agent_parser.Parse(ua_string)
+
+        if "device" in parsed and parsed["device"]:
+            device_info = parsed["device"]
+
+            instance.device_brand = device_info.get("brand")
+            instance.device_family = device_info.get("family")
+            instance.device_model = device_info.get("model")
+
+        if "os" in parsed and parsed["os"]:
+            os_info = parsed["os"]
+
+            instance.os_family = os_info.get("family")
+
+            if os_info.get("major"):
+                major = os_info["major"]
+                minor = os_info.get("minor", 0)
+                patch = os_info.get("patch", 0)
+                os_version = f"{major}.{minor}.{patch}"
+                instance.os_version = os_version
+
+        if "user_agent" in parsed and parsed["user_agent"]:
+            ua_info = parsed["user_agent"]
+
+            if ua_info.get("major"):
+                major = os_info["major"]
+                minor = os_info.get("minor", 0)
+                patch = os_info.get("patch", 0)
+                browser_version = f"{major}.{minor}.{patch}"
+                instance.browser_version = browser_version
+
+            instance.browser_name = ua_info.get("family")
+
+        instance.save()
+
 
 class AuthAuditLog(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -333,7 +389,6 @@ class AuthAuditLog(models.Model):
         ip_address: Optional[str] = None,
         ua_agent: Optional[str] = None,
     ) -> None:
-
         log = AuthAuditLog(user=user, event_type=event_type)
 
         if ua_agent:

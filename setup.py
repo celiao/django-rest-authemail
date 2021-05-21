@@ -49,6 +49,7 @@ setup(
         "mmh3>=3.0",
         "ua-parser>=0.10",
         "django-ipware>=3.0.2",
+        "django-q",
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
