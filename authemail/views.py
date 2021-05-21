@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from ipware import get_client_ip
 from ratelimit.decorators import ratelimit
@@ -134,8 +135,8 @@ class Login(APIView):
 
     # Keep a pretty high tolerance for ip, since we have lots of corporate
     # users they might be behind a NAT and share a common IP.
-    @ratelimit(key="ip", rate="10/m")
-    @ratelimit(key="post:email")
+    @method_decorator(ratelimit(key="ip", rate="10/m"))
+    @method_decorator(ratelimit(key="post:email"))
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
 
