@@ -162,6 +162,9 @@ class SignupCodeManager(models.Manager):
 
         return False, "Unable to verify user"
 
+    def get_expiry_period(self):
+        return EXPIRY_PERIOD
+
 
 class PasswordResetCodeManager(models.Manager):
     def create_password_reset_code(self, user):

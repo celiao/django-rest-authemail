@@ -12,16 +12,24 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from authemail.models import (AuthAuditEventType, AuthAuditLog,
-                              EmailChangeCode, PasswordResetCode, SignupCode,
-                              send_multi_format_email)
-from authemail.serializers import (EmailChangeSerializer, LoginSerializer,
-                                   PasswordChangeSerializer,
-                                   PasswordResetSerializer,
-                                   PasswordResetVerifiedSerializer,
-                                   SignupSerializer,
-                                   SignupVerificationSerializer,
-                                   UserSerializer)
+from authemail.models import (
+    AuthAuditEventType,
+    AuthAuditLog,
+    EmailChangeCode,
+    PasswordResetCode,
+    SignupCode,
+    send_multi_format_email,
+)
+from authemail.serializers import (
+    EmailChangeSerializer,
+    LoginSerializer,
+    PasswordChangeSerializer,
+    PasswordResetSerializer,
+    PasswordResetVerifiedSerializer,
+    SignupSerializer,
+    SignupVerificationSerializer,
+    UserSerializer,
+)
 
 
 class Signup(APIView):
