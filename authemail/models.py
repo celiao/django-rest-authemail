@@ -297,6 +297,7 @@ class UserAgent(models.Model):
         _("identifier"), unique=True, blank=False, null=False, max_length=128
     )
     ua_string = models.TextField(_("user agent string"), blank=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class AuthAuditLog(models.Model):
@@ -309,6 +310,8 @@ class AuthAuditLog(models.Model):
         UserAgent, on_delete=models.SET_NULL, null=True, blank=True
     )
     ipaddr = models.GenericIPAddressField(_("ip address"), null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = _("AuditLog")
