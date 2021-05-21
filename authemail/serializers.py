@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from authemail.public_email_domains import public_email_domains
+
 
 class SignupSerializer(serializers.Serializer):
     """
@@ -15,6 +17,19 @@ class SignupSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128, default=None, required=False)
     first_name = serializers.CharField(max_length=30, default="", required=False)
     last_name = serializers.CharField(max_length=30, default="", required=False)
+
+    def validate_email(self, value):
+        """
+        Pull out the email domain and check if its possibly a work email.
+
+        If the domain exists in our dataset of public emails, its rejected.
+        """
+        domain_portion = value.split("@")[-1]
+
+        if domain_portion in public_email_domains:
+            raise serializers.ValidationError("Only work emails are allowed to sign up")
+
+        return value
 
 
 class SignupVerificationSerializer(serializers.Serializer):
