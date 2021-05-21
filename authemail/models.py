@@ -7,11 +7,8 @@ from typing import Optional
 import mmh3
 from django.apps import apps
 from django.conf import settings
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    BaseUserManager,
-    PermissionsMixin,
-)
+from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
+                                        PermissionsMixin)
 from django.core.mail import send_mail
 from django.core.mail.message import EmailMultiAlternatives
 from django.db import models
@@ -337,20 +334,34 @@ def enrich_ua(sender, instance, created, **kwargs):
 
             instance.os_family = os_info.get("family")
 
-            if os_info.get("major"):
+            if os_info.get("major") and os_info["major"]:
                 major = os_info["major"]
+
                 minor = os_info.get("minor", 0)
+                if minor is None:
+                    minor = 0
+
                 patch = os_info.get("patch", 0)
+                if patch is None:
+                    patch = 0
+
                 os_version = f"{major}.{minor}.{patch}"
                 instance.os_version = os_version
 
         if "user_agent" in parsed and parsed["user_agent"]:
             ua_info = parsed["user_agent"]
 
-            if ua_info.get("major"):
+            if ua_info.get("major") and ua_info["major"]:
                 major = os_info["major"]
+
                 minor = os_info.get("minor", 0)
+                if minor is None:
+                    minor = 0
+
                 patch = os_info.get("patch", 0)
+                if patch is None:
+                    patch = 0
+
                 browser_version = f"{major}.{minor}.{patch}"
                 instance.browser_version = browser_version
 
