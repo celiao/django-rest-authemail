@@ -112,17 +112,22 @@ class SignupVerify(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         code = serializer.data["code"]
-        verified, message = SignupCode.objects.set_user_is_verified(code, request)
+        signup_code = SignupCode.objects.filter(code=code).first()
+        if not signup_code:
+            return Response({"detail": "Unable to verify account"})
+
+        verified, message = SignupCode.objects.set_user_is_verified(
+            signup_code, request
+        )
 
         if not verified:
             content = {"detail": _(message)}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         # Issue an auth token so that user can set password + other details
-        token, created = Token.objects.get_or_create(user=SignupCode.user)
-        django_login(request, SignupCode.user)
+        token, created = Token.objects.get_or_create(user=signup_code.user)
+        django_login(request, signup_code.user)
 
-        signup_code = SignupCode.objects.filter(code=code)
         signup_code.delete()
 
         content = {"success": _(message), "token": token}

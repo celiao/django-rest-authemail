@@ -138,25 +138,23 @@ class SignupCodeManager(models.Manager):
 
         return signup_code
 
-    def set_user_is_verified(self, code, request):
+    def set_user_is_verified(self, signup_code, request):
         try:
             # TODO: Check origin of request is same as when the code was
             #       issued.
-            signup_code = SignupCode.objects.get(code=code)
-
             delta = date.today() - signup_code.created_at.date()
             if delta.days > SignupCode.objects.get_expiry_period():
                 signup_code.delete()
                 return False, "Verification code has expired"
 
-            # Fetch the log entry for when the user signed up
-            log = AuthAuditLog.objects.filter(
-                user=signup_code.user, event_type=AuthAuditEventType.ACCOUNT_SIGNUP
-            ).latest("created_at")
-
             # If different browser than during issue time, reject
             # TODO: IP check?
             if STRICT_USER_AGENT_VERIFICATION:
+                # Fetch the log entry for when the user signed up
+                log = AuthAuditLog.objects.filter(
+                    user=signup_code.user, event_type=AuthAuditEventType.ACCOUNT_SIGNUP
+                ).latest("created_at")
+
                 ua_hash = mmh3.hash_bytes(request.META.get("HTTP_USER_AGENT"))
 
                 if log.user_agent.identifier != ua_hash:
@@ -165,8 +163,6 @@ class SignupCodeManager(models.Manager):
             signup_code.user.is_verified = True
             signup_code.user.save()
             return True, "Account verified"
-        except SignupCode.DoesNotExist:
-            pass
         except AuthAuditLog.DoesNotExist:
             pass
 
