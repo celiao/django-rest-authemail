@@ -130,7 +130,7 @@ class SignupVerify(APIView):
 
         signup_code.delete()
 
-        content = {"success": _(message), "token": token}
+        content = {"success": _(message), "token": token.key}
         return Response(content, status=status.HTTP_200_OK)
 
 
