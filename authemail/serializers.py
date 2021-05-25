@@ -55,7 +55,7 @@ class SignupSerializer(serializers.Serializer):
 
         try:
             validators.validate_password(password=password, user=user)
-        except exceptions.ValidationErrors as e:
+        except Exception as e:
             errors["password"] = list(e.messages)
 
         if errors:
@@ -87,7 +87,7 @@ class PasswordResetVerifiedSerializer(serializers.Serializer):
 
         try:
             validators.validate_password(password=password, user=None)
-        except exceptions.ValidationErrors as e:
+        except Exception as e:
             errors["password"] = list(e.messages)
 
         if errors:
@@ -105,7 +105,7 @@ class PasswordChangeSerializer(serializers.Serializer):
 
         try:
             validators.validate_password(password=password, user=None)
-        except exceptions.ValidationErrors as e:
+        except Exception as e:
             errors["password"] = list(e.messages)
 
         if errors:
