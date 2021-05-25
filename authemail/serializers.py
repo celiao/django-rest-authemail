@@ -1,9 +1,5 @@
-from typing import Dict
-
-import django.contrib.auth.password_validation as validators
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core import exceptions
 from rest_framework import serializers
 
 from authemail.public_email_domains import burner_email_domains, public_email_domains
@@ -43,26 +39,6 @@ class SignupSerializer(serializers.Serializer):
 
         return value
 
-    def validate(self, data):
-
-        user = get_user_model()(**data)
-        password = data.get("password")
-
-        if not password:
-            return super(SignupSerializer, self).validate(data)
-
-        errors = dict()  # type: Dict[str, str]
-
-        try:
-            validators.validate_password(password=password, user=user)
-        except Exception as e:
-            errors["password"] = list(e.messages)
-
-        if errors:
-            raise serializers.ValidationError(errors)
-
-        return super(SignupSerializer, self).validate(data)
-
 
 class SignupVerificationSerializer(serializers.Serializer):
     code = serializers.CharField(max_length=40)
@@ -81,37 +57,9 @@ class PasswordResetVerifiedSerializer(serializers.Serializer):
     code = serializers.CharField(max_length=40)
     password = serializers.CharField(max_length=128, min_length=MIN_PASSWORD_LENGTH)
 
-    def validate(self, data):
-        password = data.get("password")
-        errors = dict()  # type: Dict[str, str]
-
-        try:
-            validators.validate_password(password=password, user=None)
-        except Exception as e:
-            errors["password"] = list(e.messages)
-
-        if errors:
-            raise serializers.ValidationError(errors)
-
-        return super(SignupSerializer, self).validate(data)
-
 
 class PasswordChangeSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128, min_length=MIN_PASSWORD_LENGTH)
-
-    def validate(self, data):
-        password = data.get("password")
-        errors = dict()  # type: Dict[str, str]
-
-        try:
-            validators.validate_password(password=password, user=None)
-        except Exception as e:
-            errors["password"] = list(e.messages)
-
-        if errors:
-            raise serializers.ValidationError(errors)
-
-        return super(SignupSerializer, self).validate(data)
 
 
 class EmailChangeSerializer(serializers.Serializer):
