@@ -83,7 +83,6 @@ class PasswordResetVerifiedSerializer(serializers.Serializer):
 
     def validate(self, data):
         password = data.get("password")
-
         errors = dict()  # type: Dict[str, str]
 
         try:
@@ -101,14 +100,11 @@ class PasswordChangeSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128, min_length=MIN_PASSWORD_LENGTH)
 
     def validate(self, data):
-        request = request = self.context["request"]
-        user = request.user
         password = data.get("password")
-
         errors = dict()  # type: Dict[str, str]
 
         try:
-            validators.validate_password(password=password, user=user)
+            validators.validate_password(password=password, user=None)
         except exceptions.ValidationErrors as e:
             errors["password"] = list(e.messages)
 
