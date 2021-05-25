@@ -29,7 +29,7 @@ class SignupSerializer(serializers.Serializer):
 
         If the domain exists in our dataset of public emails, its rejected.
         """
-        domain_portion = value.split("@")[-1].strip()
+        domain_portion = value.split("@")[-1].strip().lower()
 
         if (
             domain_portion in public_email_domains
