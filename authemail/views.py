@@ -114,7 +114,10 @@ class SignupVerify(APIView):
         code = serializer.data["code"]
         signup_code = SignupCode.objects.filter(code=code).first()
         if not signup_code:
-            return Response({"detail": "Unable to verify account"})
+            return Response(
+                {"detail": "Unable to verify account"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         verified, message = SignupCode.objects.set_user_is_verified(
             signup_code, request
