@@ -112,10 +112,30 @@ class SignupVerify(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         code = serializer.data["code"]
+        email = serializer.data["email"]
+        user = get_user_model().objects.filter(email=email).first()
+        if not user:
+            return Response(
+                {"detail": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if user.is_verified:
+            SignupCode.objects.filter(user=user).delete()
+            return Response(
+                {"detail": "User is already verified"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         signup_code = SignupCode.objects.filter(code=code).first()
         if not signup_code:
             return Response(
                 {"detail": "Unable to verify account"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if signup_code.user.email != email:
+            return Response(
+                {"detail": "Email does not match verification code"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -128,7 +148,7 @@ class SignupVerify(APIView):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
         # Issue an auth token so that user can set password + other details
-        token, created = Token.objects.get_or_create(user=signup_code.user)
+        token, _created = Token.objects.get_or_create(user=signup_code.user)
         django_login(request, signup_code.user)
 
         signup_code.delete()
@@ -314,6 +334,20 @@ class EmailChange(APIView):
             EmailChangeCode.objects.filter(user=user).delete()
 
             email_new = serializer.data["email"]
+
+            # TODO: This is a hack. The auth lib should not know about internal
+            #       models in Alignment. But its the easiest way to achieve this
+            #       check.
+            valid_domains = set(
+                d.lower()
+                for d in user.company.domains.all().values_list("name", flat=True)
+            )
+            domain_portion = email_new.split("@")[-1].lower()
+            if domain_portion not in valid_domains:
+                return Response(
+                    {"detail": "Not a valid email domain for you company"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             try:
                 user_with_email = get_user_model().objects.get(email=email_new)
