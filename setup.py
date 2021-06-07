@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="django-rest-authemail",
+    name="cultivate-django-rest-authemail",
     version="2.0.6",
     author="Celia Oakley",
     author_email="celia.oakley@alumni.stanford.edu",
@@ -35,8 +35,8 @@ setup(
         "django-registration",
         "django-email-as-username",
     ],
-    url="http://github.com/celiao/django-rest-authemail",
-    download_url="https://github.com/celiao/django-rest-authemail/tarball/2.0.6",
+    url="https://github.com/cultivateai/django-rest-authemail",
+    download_url="https://github.com/cultivateai/django-rest-authemail/tarball/2.0.6",
     packages=["authemail"],
     include_package_data=True,
     package_data={"": ["burner_emails.txt"]},
