@@ -10,7 +10,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="cultivate-django-rest-authemail",
-    version="2.0.6",
+    version="1.0.0",
     author="Celia Oakley",
     author_email="celia.oakley@alumni.stanford.edu",
     description="A RESTful API for user signup and authentication using email addresses",
@@ -36,7 +36,7 @@ setup(
         "django-email-as-username",
     ],
     url="https://github.com/cultivateai/django-rest-authemail",
-    download_url="https://github.com/cultivateai/django-rest-authemail/tarball/2.0.6",
+    download_url="https://github.com/cultivateai/django-rest-authemail/tarball/1.0.0",
     packages=["authemail"],
     include_package_data=True,
     package_data={"": ["burner_emails.txt"]},
