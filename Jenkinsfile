@@ -24,7 +24,7 @@ pipeline {
             environment {
                 GIT_AUTH = credentials('github-username-and-token')
                 PYPI_AUTH = credentials('pypicloud-dev')
-                PYPI_URL = env.INTERNAL_PYPI
+                PYPI_URL = "${env.INTERNAL_PYPI}"
             }
             steps {
                 script {
