@@ -456,13 +456,14 @@ class PasswordChange(APIView):
         if serializer.is_valid():
             user = request.user
 
-            current_password = serializer.data["current_password"]
-            user = authenticate(email=user.email, password=current_password)
-            if user is None:
-                return Response(
-                    {"details": "Invalid password login"},
-                    status=status.HTTP_401_UNAUTHORIZED,
-                )
+            if user.has_usable_password():
+                current_password = serializer.data["current_password"]
+                user = authenticate(email=user.email, password=current_password)
+                if user is None:
+                    return Response(
+                        {"details": "Invalid password login"},
+                        status=status.HTTP_401_UNAUTHORIZED,
+                    )
 
             password = serializer.data["password"]
             user.set_password(password)

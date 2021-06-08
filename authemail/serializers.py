@@ -61,7 +61,7 @@ class PasswordResetVerifiedSerializer(serializers.Serializer):
 
 class PasswordChangeSerializer(serializers.Serializer):
     current_password = serializers.CharField(
-        max_length=128, min_length=MIN_PASSWORD_LENGTH
+        max_length=128, min_length=MIN_PASSWORD_LENGTH, required=False
     )
     password = serializers.CharField(max_length=128, min_length=MIN_PASSWORD_LENGTH)
 
