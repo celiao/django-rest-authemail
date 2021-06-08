@@ -176,9 +176,9 @@ class Login(APIView):
             if user:
                 if user.is_verified:
                     if user.is_active:
-                        token, created = Token.objects.get_or_create(user=user)
+                        token, _created = Token.objects.get_or_create(user=user)
 
-                        client_ip, routable = get_client_ip(request)
+                        client_ip, _routable = get_client_ip(request)
                         AuthAuditLog.track(
                             user,
                             AuthAuditEventType.LOGIN,
@@ -194,8 +194,8 @@ class Login(APIView):
                     content = {"detail": _("User account not verified.")}
                     return Response(content, status=status.HTTP_401_UNAUTHORIZED)
             else:
-                # TODO: Log failed attempts and log out account after certain
-                #       amount of failed ones.
+                # TODO: Log failed attempts and lock account/ask for 2fa
+                #       after certain amount of failed ones.
                 content = {"detail": _("Unable to login with provided credentials.")}
                 return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -330,6 +330,14 @@ class EmailChange(APIView):
         if serializer.is_valid():
             user = request.user
 
+            current_password = serializer.data["current_password"]
+            user = authenticate(email=user.email, password=current_password)
+            if user is None:
+                return Response(
+                    {"details": "Invalid password login"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
+
             # Delete all unused email change codes
             EmailChangeCode.objects.filter(user=user).delete()
 
@@ -368,7 +376,7 @@ class EmailChange(APIView):
 
                 content = {"email": email_new}
 
-                client_ip, routable = get_client_ip(request)
+                client_ip, _routable = get_client_ip(request)
                 AuthAuditLog.track(
                     user,
                     AuthAuditEventType.CHANGE_EMAIL_REQ,
@@ -447,6 +455,14 @@ class PasswordChange(APIView):
 
         if serializer.is_valid():
             user = request.user
+
+            current_password = serializer.data["current_password"]
+            user = authenticate(email=user.email, password=current_password)
+            if user is None:
+                return Response(
+                    {"details": "Invalid password login"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
 
             password = serializer.data["password"]
             user.set_password(password)
