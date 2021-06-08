@@ -80,7 +80,7 @@ class Signup(APIView):
             user.save()
 
             if must_validate_email:
-                client_ip, routable = get_client_ip(request)
+                client_ip, _routable = get_client_ip(request)
                 AuthAuditLog.track(
                     user,
                     AuthAuditEventType.ACCOUNT_SIGNUP,
@@ -241,7 +241,7 @@ class PasswordReset(APIView):
                     password_reset_code.send_password_reset_email()
                     content = {"email": email}
 
-                    client_ip, routable = get_client_ip(request)
+                    client_ip, _routable = get_client_ip(request)
                     AuthAuditLog.track(
                         user,
                         AuthAuditEventType.RESET_PASSWORD_REQ,
@@ -304,7 +304,7 @@ class PasswordResetVerified(APIView):
 
                 content = {"success": _("Password reset.")}
 
-                client_ip, routable = get_client_ip(request)
+                client_ip, _routable = get_client_ip(request)
                 AuthAuditLog.track(
                     password_reset_code.user,
                     AuthAuditEventType.PASSWORD_UPDATED,
@@ -433,7 +433,7 @@ class EmailChangeVerify(APIView):
 
             content = {"success": _("Email address changed.")}
 
-            client_ip, routable = get_client_ip(request)
+            client_ip, _routable = get_client_ip(request)
             AuthAuditLog.track(
                 email_change_code.user,
                 AuthAuditEventType.EMAIL_UPDATED,
@@ -470,7 +470,7 @@ class PasswordChange(APIView):
 
             content = {"success": _("Password changed.")}
 
-            client_ip, routable = get_client_ip(request)
+            client_ip, _routable = get_client_ip(request)
             AuthAuditLog.track(
                 user,
                 AuthAuditEventType.PASSWORD_UPDATED,
