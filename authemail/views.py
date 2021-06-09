@@ -14,24 +14,16 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from authemail.models import (
-    AuthAuditEventType,
-    AuthAuditLog,
-    EmailChangeCode,
-    PasswordResetCode,
-    SignupCode,
-    send_multi_format_email,
-)
-from authemail.serializers import (
-    EmailChangeSerializer,
-    LoginSerializer,
-    PasswordChangeSerializer,
-    PasswordResetSerializer,
-    PasswordResetVerifiedSerializer,
-    SignupSerializer,
-    SignupVerificationSerializer,
-    UserSerializer,
-)
+from authemail.models import (AuthAuditEventType, AuthAuditLog,
+                              EmailChangeCode, PasswordResetCode, SignupCode,
+                              send_multi_format_email)
+from authemail.serializers import (EmailChangeSerializer, LoginSerializer,
+                                   PasswordChangeSerializer,
+                                   PasswordResetSerializer,
+                                   PasswordResetVerifiedSerializer,
+                                   SignupSerializer,
+                                   SignupVerificationSerializer,
+                                   UserSerializer)
 
 
 class Signup(APIView):
@@ -457,7 +449,15 @@ class PasswordChange(APIView):
             user = request.user
 
             if user.has_usable_password():
-                current_password = serializer.data["current_password"]
+                current_password = serializer.data.get("current_password")
+                if not current_password:
+                    return Response(
+                        {
+                            "details": "Current password needs to be supplied for this user"
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
                 user = authenticate(email=user.email, password=current_password)
                 if user is None:
                     return Response(
