@@ -378,11 +378,6 @@ def enrich_ua(sender, instance, created, **kwargs):
 
 
 class IpLocation(models.Model):
-    # Fun fact longest contry name is 56 chars
-    # [The United Kingdom of Great Britain and Northern Ireland]
-    country = models.CharField(max_length=64)
-    country_code = models.CharField(max_length=10)
-
     region = models.CharField(max_length=256)
     # Fun fact 2: Longest city name is 163 characters long and is in Thailand:
     # Krung Thep Maha Nakhon Amon Rattanakosin Mahinthara Yuthaya Mahadilok Phop Noppharat
@@ -443,28 +438,3 @@ class AuthAuditLog(models.Model):
             log.ipaddr = ip_address
 
         log.save()
-
-
-def enrich_ip_data(log_id: str):
-    # Do nothing
-    if getattr(settings, "DEBUG", False):
-        return
-
-    log = AuthAuditLog.objects.get(id=log_id)
-    # BEWARE: This will perform expensive download on first run
-    ip_data = search_ip_ranges(log.ipaddr)
-
-    ip_loc, _created = IpLocation.objects.get_or_create(
-        country=ip_data.country,
-        country_code=ip_data.country_code,
-        region=ip_data.region,
-        city=ip_data.city,
-    )
-    log.location = ip_loc
-    log.save()
-
-
-@receiver(post_save, sender=AuthAuditLog)
-def add_ip_location_data_post_save_receiver(sender, instance, created, **kwargs):
-    if created:
-        async_task(enrich_ip_data, str(instance.id))
