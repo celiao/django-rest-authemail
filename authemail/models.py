@@ -162,7 +162,7 @@ class SignupCodeManager(models.Manager):
 
                 ua_hash = mmh3.hash_bytes(request.META.get("HTTP_USER_AGENT"))
 
-                if log.user_agent.identifier != ua_hash:
+                if bytes(log.user_agent.identifier) != ua_hash:
                     return False, "Unable to verify user"
 
             signup_code.user.is_verified = True
