@@ -51,6 +51,8 @@ setup(
         "django-ipware>=3.0.2",
         "django-q",
         "django-ratelimit",
+        "netaddr",
+        "emoji-country-flag",
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
