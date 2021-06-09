@@ -447,7 +447,7 @@ class AuthAuditLog(models.Model):
 
 def enrich_ip_data(log_id: str):
     # Do nothing
-    if settings.DEBUG is True:
+    if getattr(settings, "DEBUG", False):
         return
 
     log = AuthAuditLog.objects.get(id=log_id)

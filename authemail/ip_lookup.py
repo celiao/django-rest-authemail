@@ -58,15 +58,18 @@ def _build_data() -> None:
         csv_reader = csv.reader(data)
 
         for row in csv_reader:
-            entry = IpRange(
-                start=int(row[0]),
-                end=int(row[1]),
-                country_code=row[2],
-                country=row[3],
-                region=row[4],
-                city=row[5],
-            )
-            IP_TO_LOC.append(entry)
+            try:
+                entry = IpRange(
+                    start=int(row[0]),
+                    end=int(row[1]),
+                    country_code=row[2],
+                    country=row[3],
+                    region=row[4],
+                    city=row[5],
+                )
+                IP_TO_LOC.append(entry)
+            except IndexError:
+                pass
 
 
 def ip_str_to_int(ip_addr: str) -> int:
