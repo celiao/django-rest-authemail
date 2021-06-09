@@ -4,6 +4,7 @@ import uuid
 from datetime import date
 from typing import Optional
 
+import flag
 import mmh3
 from django.apps import apps
 from django.conf import settings
@@ -21,8 +22,11 @@ from django.template.loader import get_template, render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from django_q.tasks import async_task
 from premailer import transform
 from ua_parser import user_agent_parser
+
+from authemail.ip_lookup import search_ip_ranges
 
 EXPIRY_PERIOD = getattr(settings, "AUTH_EMAIL_VERIFICATION_EXPIRATION", 3)  # days
 STRICT_USER_AGENT_VERIFICATION = getattr(settings, "AUTH_EMAIL_STRICT_UA_CHECK", False)
@@ -373,6 +377,26 @@ def enrich_ua(sender, instance, created, **kwargs):
         instance.save()
 
 
+class IpLocation(models.Model):
+    # Fun fact longest contry name is 56 chars
+    # [The United Kingdom of Great Britain and Northern Ireland]
+    country = models.CharField(max_length=64)
+    country_code = models.CharField(max_length=10)
+
+    region = models.CharField(max_length=256)
+    # Fun fact 2: Longest city name is 163 characters long and is in Thailand:
+    # Krung Thep Maha Nakhon Amon Rattanakosin Mahinthara Yuthaya Mahadilok Phop Noppharat
+    # Ratchathani Burirom Udomratchaniwet Mahasathan Amon Piman Awatan Sathit Sakkathattiya
+    # Witsanukam Prasit
+    #
+    # Yes, that is the name of a single city not multiple ones.
+    city = models.CharField(max_length=256)
+
+    @property
+    def country_symbol(self):
+        return flag.flag(self.country_code)
+
+
 class AuthAuditLog(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -383,6 +407,9 @@ class AuthAuditLog(models.Model):
         UserAgent, on_delete=models.SET_NULL, null=True, blank=True
     )
     ipaddr = models.GenericIPAddressField(_("ip address"), null=True, blank=True)
+    location = models.ForeignKey(
+        IpLocation, null=True, blank=True, on_delete=models.CASCADE
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -416,3 +443,28 @@ class AuthAuditLog(models.Model):
             log.ipaddr = ip_address
 
         log.save()
+
+
+def enrich_ip_data(log_id: str):
+    # Do nothing
+    if settings.DEBUG is True:
+        return
+
+    log = AuthAuditLog.objects.get(id=log_id)
+    # BEWARE: This will perform expensive download on first run
+    ip_data = search_ip_ranges(log.ipaddr)
+
+    ip_loc, _created = IpLocation.objects.get_or_create(
+        country=ip_data.country,
+        country_code=ip_data.country_code,
+        region=ip_data.region,
+        city=ip_data.city,
+    )
+    log.location = ip_loc
+    log.save()
+
+
+@receiver(post_save, sender=AuthAuditLog)
+def add_ip_location_data_post_save_receiver(sender, instance, created, **kwargs):
+    if created:
+        async_task(enrich_ip_data, str(instance.id))
