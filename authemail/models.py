@@ -217,6 +217,7 @@ def send_multi_format_email(template_prefix, template_ctxt, target_email):
         subject, text_content, from_email, [to], bcc=[bcc_email]
     )
     msg.attach_alternative(html_content, "text/html")
+    msg.tags = [template_prefix]
     msg.send()
 
 
