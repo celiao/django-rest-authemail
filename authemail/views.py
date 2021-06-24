@@ -162,6 +162,7 @@ class Login(APIView):
 
         if serializer.is_valid():
             email = serializer.data["email"]
+            email = email.lower()
             password = serializer.data["password"]
             user = authenticate(email=email, password=password)
 
