@@ -28,8 +28,10 @@ from ua_parser import user_agent_parser
 
 from authemail.ip_lookup import search_ip_ranges
 
-EXPIRY_PERIOD = getattr(settings, "AUTH_EMAIL_VERIFICATION_EXPIRATION", 3)  # days
-STRICT_USER_AGENT_VERIFICATION = getattr(settings, "AUTH_EMAIL_STRICT_UA_CHECK", False)
+EXPIRY_PERIOD = getattr(
+    settings, "AUTH_EMAIL_VERIFICATION_EXPIRATION", 3)  # days
+STRICT_USER_AGENT_VERIFICATION = getattr(
+    settings, "AUTH_EMAIL_STRICT_UA_CHECK", False)
 ASYNC_ENABLED = apps.is_installed("django_q") and getattr(
     settings, "AUTH_EMAIL_ASYNC", True
 )
@@ -86,7 +88,8 @@ class EmailAbstractUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,
-        help_text=_("Designates whether the user can log into this " "admin site."),
+        help_text=_(
+            "Designates whether the user can log into this " "admin site."),
     )
     is_active = models.BooleanField(
         _("active"),
@@ -166,7 +169,19 @@ class SignupCodeManager(models.Manager):
                     return False, "Unable to verify user"
 
             signup_code.user.is_verified = True
-            signup_code.user.save()
+            signup_code.user.save(update_fields=["is_verified"])
+
+            # # todo jie:
+            # # send welcome email
+            # prefix = "welcome_email"
+            # ctxt = {
+            #     "base_url": settings.BASE_URL,
+            #     "email": signup_code.user.email,
+            #     "user": {"id": str(signup_code.user.id)},
+            # }
+            # send_multi_format_email(
+            #     prefix, ctxt, target_email=signup_code.user.email)
+
             return True, "Account verified"
         except AuthAuditLog.DoesNotExist:
             pass
@@ -222,7 +237,8 @@ def send_multi_format_email(template_prefix, template_ctxt, target_email):
 
 
 class AbstractBaseCode(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
     code = models.CharField(_("code"), max_length=40, primary_key=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -311,7 +327,8 @@ class UserAgent(models.Model):
     identifier = models.BinaryField(
         _("identifier"), unique=True, blank=False, null=False, max_length=128
     )
-    ua_string = models.TextField(_("user agent string"), blank=False, null=False)
+    ua_string = models.TextField(
+        _("user agent string"), blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     # Parsed out UA details
@@ -395,14 +412,16 @@ class IpLocation(models.Model):
 
 class AuthAuditLog(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
     event_type = models.CharField(
         choices=AuthAuditEventType.choices, max_length=20, null=False, blank=False
     )
     user_agent = models.ForeignKey(
         UserAgent, on_delete=models.SET_NULL, null=True, blank=True
     )
-    ipaddr = models.GenericIPAddressField(_("ip address"), null=True, blank=True)
+    ipaddr = models.GenericIPAddressField(
+        _("ip address"), null=True, blank=True)
     location = models.ForeignKey(
         IpLocation, null=True, blank=True, on_delete=models.CASCADE
     )
