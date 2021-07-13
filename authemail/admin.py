@@ -12,7 +12,7 @@ class SignupCodeAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     readonly_fields = ('user', 'code', 'ipaddr')
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
 
@@ -25,7 +25,7 @@ class SignupCodeInline(admin.TabularInline):
     )
     readonly_fields = ('code', 'ipaddr', 'created_at')
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
 
@@ -34,7 +34,7 @@ class PasswordResetCodeAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     readonly_fields = ('user', 'code')
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
 
@@ -47,7 +47,7 @@ class PasswordResetCodeInline(admin.TabularInline):
     )
     readonly_fields = ('code', 'created_at')
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
 
@@ -56,7 +56,7 @@ class EmailChangeCodeAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     readonly_fields = ('user', 'code', 'email')
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
 
@@ -69,7 +69,7 @@ class EmailChangeCodeInline(admin.TabularInline):
     )
     readonly_fields = ('code', 'email', 'created_at')
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
 
