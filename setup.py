@@ -28,7 +28,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
-        'Django>=2.2.8,<=3.1',
+        'Django>=2.2.8',
         'djangorestframework>=3.11.0',
         'requests>=2.3.0',
     ],
@@ -38,6 +38,7 @@ setup(
         'Framework :: Django :: 2.2',
         'Framework :: Django :: 3.0',
         'Framework :: Django :: 3.1',
+        'Framework :: Django :: 3.2',
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'Operating System :: OS Independent',
