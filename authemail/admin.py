@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from authemail.forms import EmailUserCreationForm, EmailUserChangeForm
 from authemail.models import SignupCode, PasswordResetCode, EmailChangeCode
@@ -12,7 +12,7 @@ class SignupCodeAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     readonly_fields = ('user', 'code', 'ipaddr')
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
 
@@ -25,7 +25,7 @@ class SignupCodeInline(admin.TabularInline):
     )
     readonly_fields = ('code', 'ipaddr', 'created_at')
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
 
@@ -34,7 +34,7 @@ class PasswordResetCodeAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     readonly_fields = ('user', 'code')
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
 
@@ -47,7 +47,7 @@ class PasswordResetCodeInline(admin.TabularInline):
     )
     readonly_fields = ('code', 'created_at')
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
 
@@ -56,7 +56,7 @@ class EmailChangeCodeAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     readonly_fields = ('user', 'code', 'email')
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
 
@@ -69,15 +69,15 @@ class EmailChangeCodeInline(admin.TabularInline):
     )
     readonly_fields = ('code', 'email', 'created_at')
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj=None):
         return False
 
 
 class EmailUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        (_('Personal Info'), {'fields': ('first_name', 'last_name')}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
+        (_('Personal Info'), {'fields': ('first_name', 'last_name', 'expire', 'service_level')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_verified',
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )

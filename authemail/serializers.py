@@ -42,6 +42,9 @@ class EmailChangeVerifySerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    service_level = serializers.SerializerMethodField()
     class Meta:
         model = get_user_model()
-        fields = ('email', 'first_name', 'last_name')
+        fields = ('email', 'first_name', 'last_name', 'service_level', 'expire')
+    def get_service_level(self, obj):
+        return obj.get_service_level_display()
