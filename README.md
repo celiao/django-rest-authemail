@@ -21,8 +21,8 @@ Features
 - An example project is included and contains example UI templates.
 - Version `2.0.6` and beyond
 	- Supports and tested with Python 3.6, 3.7, and 3.8.
-	- Supports and tested with Django 2.2.8, 2.2.13, 3.0, and 3.1.
-	- Supports and tested with Django REST Framework 3.11.0.
+	- Supports and tested with Django 2.2.8, 2.2.13, 3.0, 3.1, and 3.2.
+	- Supports and tested with Django REST Framework 3.11.2 and 3.12.4.
 - Version `1.10.2`
 	- Supports and tested with Python 3.6 and 3.7.
 	- Supports and tested with Django 1.11.17, 2.0, and 2.1.1.
