@@ -141,6 +141,8 @@ class EmailChangeCodeManager(models.Manager):
 
 
 def send_multi_format_email(template_prefix, template_ctxt, target_email):
+    url = settings.FRONT_END_URL
+    template_ctxt['url'] = url
     subject_file = 'authemail/%s_subject.txt' % template_prefix
     txt_file = 'authemail/%s.txt' % template_prefix
     html_file = 'authemail/%s.html' % template_prefix
