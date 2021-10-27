@@ -20,3 +20,4 @@ coverage.xml
 ## Vim files
 .*.swp
 .idea
+env/
