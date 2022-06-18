@@ -1031,4 +1031,5 @@ class UserDetailTests(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['id'], 1)
         self.assertEqual(response.data['email'], self.user_me_email)
