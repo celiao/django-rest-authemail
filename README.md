@@ -244,7 +244,7 @@ You will find the same token for the user in the `Token` table in the `Django` `
 >>> token = 'a84d062c1b60a36e6740eb60c6f9da8d1f709322'
 >>> response = account.users_me(token=token)
 >>> response
-{'first_name': 'Your first name', 'last_name': 'Your last name', 'email': 'your_email@gmail.com'}
+{'id': 1, 'first_name': 'Your first name', 'last_name': 'Your last name', 'email': 'your_email@gmail.com'}
 ```
 
 Use the authentication token to logout:
