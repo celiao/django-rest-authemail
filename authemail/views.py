@@ -25,7 +25,7 @@ class Signup(APIView):
     serializer_class = SignupSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
 
         if serializer.is_valid():
             email = serializer.data['email']
@@ -100,7 +100,7 @@ class Login(APIView):
     serializer_class = LoginSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
 
         if serializer.is_valid():
             email = serializer.data['email']
@@ -150,7 +150,7 @@ class PasswordReset(APIView):
     serializer_class = PasswordResetSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
 
         if serializer.is_valid():
             email = serializer.data['email']
@@ -207,7 +207,7 @@ class PasswordResetVerified(APIView):
     serializer_class = PasswordResetVerifiedSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
 
         if serializer.is_valid():
             code = serializer.data['code']
@@ -237,7 +237,7 @@ class EmailChange(APIView):
     serializer_class = EmailChangeSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
 
         if serializer.is_valid():
             user = request.user
@@ -322,7 +322,7 @@ class PasswordChange(APIView):
     serializer_class = PasswordChangeSerializer
 
     def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
 
         if serializer.is_valid():
             user = request.user
@@ -344,4 +344,4 @@ class UserMe(APIView):
     serializer_class = UserSerializer
 
     def get(self, request, format=None):
-        return Response(self.serializer_class(request.user).data)
+        return Response(self.serializer_class(request.user, context={'request': request}).data)
