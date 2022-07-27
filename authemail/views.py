@@ -144,7 +144,7 @@ class PasswordReset(APIView):
         if not serializer.is_valid():
             raise exceptions.ValidationError(serializer.errors)
         email = serializer.data['email']
-
+        content = {'email': email}
         try:
             user = get_user_model().objects.get(email=email)
 
@@ -155,15 +155,12 @@ class PasswordReset(APIView):
                 password_reset_code = \
                     PasswordResetCode.objects.create_password_reset_code(user)
                 password_reset_code.send_password_reset_email()
-                content = {'email': email}
-                return Response(content, status=status.HTTP_201_CREATED)
 
         except get_user_model().DoesNotExist:
             pass
 
-        # Since this is AllowAny, don't give away error.
-        raise exceptions.ValidationError(_('Password reset not allowed.'))
-
+        # return a 201 status for any email - we don't want to give away if an email exists or not
+        return Response(content, status=status.HTTP_201_CREATED)
 
 
 class PasswordResetVerify(APIView):
