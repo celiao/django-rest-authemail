@@ -78,7 +78,10 @@ class SignupVerify(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request, format=None):
-        code = request.GET.get('code', '')
+        code = request.GET.get('code', None)
+        if not code:
+            raise exceptions.ValidationError({'code': _('Code not provided.')})
+        
         verified = SignupCode.objects.set_user_is_verified(code)
 
         if verified:
@@ -145,21 +148,26 @@ class PasswordReset(APIView):
             raise exceptions.ValidationError(serializer.errors)
         email = serializer.data['email']
         content = {'email': email}
+
         try:
             user = get_user_model().objects.get(email=email)
 
             # Delete all unused password reset codes
             PasswordResetCode.objects.filter(user=user).delete()
 
-            if user.is_verified and user.is_active:
-                password_reset_code = \
-                    PasswordResetCode.objects.create_password_reset_code(user)
-                password_reset_code.send_password_reset_email()
+            if user.is_active:
+                if user.is_verified:
+                    password_reset_code = \
+                        PasswordResetCode.objects.create_password_reset_code(user)
+                    password_reset_code.send_password_reset_email()
+                elif not useris_verified and getattr(settings, "AUTH_EMAIL_VERIFICATION", True):
+                    # not verified - send the user a verification email instead
+                    ipaddr = self.request.META.get('REMOTE_ADDR', '0.0.0.0')
+                    signup_code = SignupCode.objects.create_signup_code(user, ipaddr)
+                    signup_code.send_signup_email()
 
         except get_user_model().DoesNotExist:
             pass
-
-        # return a 201 status for any email - we don't want to give away if an email exists or not
         return Response(content, status=status.HTTP_201_CREATED)
 
 
@@ -167,7 +175,9 @@ class PasswordResetVerify(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request, format=None):
-        code = request.GET.get('code', '')
+        code = request.GET.get('code', None)
+        if not code:
+            raise exceptions.ValidationError({'code' : _('Code not provided.')})
 
         try:
             password_reset_code = PasswordResetCode.objects.get(code=code)
@@ -183,7 +193,7 @@ class PasswordResetVerify(APIView):
         except PasswordResetCode.DoesNotExist:
             pass
 
-        raise exceptions.ValidationError(_('Unale to verify user.'))
+        raise exceptions.ValidationError(_('Unable to verify user.'))
 
 
 class PasswordResetVerified(APIView):
@@ -256,6 +266,8 @@ class EmailChangeVerify(APIView):
 
     def get(self, request, format=None):
         code = request.GET.get('code', '')
+        if not code:
+            raise exceptions.ValidationError({'code' : _('Code not provided.')})
 
         try:
             # Check if the code exists.
