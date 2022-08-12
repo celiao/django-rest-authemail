@@ -58,7 +58,7 @@ class Signup(APIView):
         user.last_name = last_name
         if not must_validate_email:
             user.is_verified = True
-            send_multi_format_email(request, 'welcome_email',
+            send_multi_format_email('welcome_email',
                                     {'email': user.email, },
                                     target_email=user.email)
         user.save()
@@ -67,7 +67,7 @@ class Signup(APIView):
             # Create and associate signup code
             ipaddr = self.request.META.get('REMOTE_ADDR', '0.0.0.0')
             signup_code = SignupCode.objects.create_signup_code(user, ipaddr)
-            signup_code.send_signup_email(request)
+            signup_code.send_signup_email()
 
         content = {'email': email, 'first_name': first_name,
                     'last_name': last_name}
@@ -159,16 +159,17 @@ class PasswordReset(APIView):
                 if user.is_verified:
                     password_reset_code = \
                         PasswordResetCode.objects.create_password_reset_code(user)
-                    password_reset_code.send_password_reset_email(request)
+                    password_reset_code.send_password_reset_email()
                 elif not useris_verified and getattr(settings, "AUTH_EMAIL_VERIFICATION", True):
                     # not verified - send the user a verification email instead
                     ipaddr = self.request.META.get('REMOTE_ADDR', '0.0.0.0')
                     signup_code = SignupCode.objects.create_signup_code(user, ipaddr)
-                    signup_code.send_signup_email(request)
+                    signup_code.send_signup_email()
 
         except get_user_model().DoesNotExist:
             pass
         return Response(content, status=status.HTTP_201_CREATED)
+
 
 class PasswordResetVerify(APIView):
     permission_classes = (AllowAny,)
@@ -254,7 +255,7 @@ class EmailChange(APIView):
             pass
 
         email_change_code = EmailChangeCode.objects.create_email_change_code(user, email_new)
-        email_change_code.send_email_change_emails(request)
+        email_change_code.send_email_change_emails()
 
         content = {'email': email_new}
         return Response(content, status=status.HTTP_201_CREATED)
