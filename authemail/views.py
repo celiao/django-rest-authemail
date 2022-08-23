@@ -160,7 +160,7 @@ class PasswordReset(APIView):
                     password_reset_code = \
                         PasswordResetCode.objects.create_password_reset_code(user)
                     password_reset_code.send_password_reset_email()
-                elif not useris_verified and getattr(settings, "AUTH_EMAIL_VERIFICATION", True):
+                elif not user.is_verified and getattr(settings, "AUTH_EMAIL_VERIFICATION", True):
                     # not verified - send the user a verification email instead
                     ipaddr = self.request.META.get('REMOTE_ADDR', '0.0.0.0')
                     signup_code = SignupCode.objects.create_signup_code(user, ipaddr)
