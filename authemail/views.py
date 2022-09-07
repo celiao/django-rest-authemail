@@ -19,6 +19,13 @@ from .serializers import EmailChangeSerializer
 from .serializers import PasswordChangeSerializer
 from .serializers import UserSerializer
 
+def get_remote_addr(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip or "0.0.0.0"
 
 class Signup(APIView):
     permission_classes = (AllowAny,)
@@ -65,7 +72,7 @@ class Signup(APIView):
 
         if must_validate_email:
             # Create and associate signup code
-            ipaddr = self.request.META.get('REMOTE_ADDR', '0.0.0.0')
+            ipaddr = get_remote_addr(self.request)
             signup_code = SignupCode.objects.create_signup_code(user, ipaddr)
             signup_code.send_signup_email()
 
@@ -162,7 +169,7 @@ class PasswordReset(APIView):
                     password_reset_code.send_password_reset_email()
                 elif not user.is_verified and getattr(settings, "AUTH_EMAIL_VERIFICATION", True):
                     # not verified - send the user a verification email instead
-                    ipaddr = self.request.META.get('REMOTE_ADDR', '0.0.0.0')
+                    ipaddr = get_remote_addr(self.request)
                     signup_code = SignupCode.objects.create_signup_code(user, ipaddr)
                     signup_code.send_signup_email()
 
