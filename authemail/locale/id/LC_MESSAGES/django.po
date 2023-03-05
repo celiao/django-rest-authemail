@@ -1,0 +1,159 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the authemail package.
+# Kira <kiraware@github.com>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-03-05 20:53+0800\n"
+"PO-Revision-Date: 2023-03-05 22:53+0800\n"
+"Last-Translator: Kira <kiraware@github.com>\n"
+"Language-Team: \n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\admin.py:79
+msgid "Personal Info"
+msgstr "Info Pribadi"
+
+#: .\admin.py:80
+msgid "Permissions"
+msgstr "Izin"
+
+#: .\admin.py:82
+msgid "Important dates"
+msgstr "Tanggal penting"
+
+#: .\forms.py:12
+msgid "Password"
+msgstr "Kata sandi"
+
+#: .\forms.py:14
+msgid "Password confirmation"
+msgstr "Konfirmasi kata sandi"
+
+#: .\forms.py:16
+msgid "Enter the same password as above, for verification."
+msgstr "Masukkan kata sandi yang sama seperti di atas, untuk verifikasi."
+
+#: .\forms.py:29
+msgid "A user with that email already exists."
+msgstr "Pengguna dengan email tersebut sudah ada."
+
+#: .\forms.py:36
+msgid "The two password fields did not match."
+msgstr "Kedua bidang kata sandi tidak cocok."
+
+#: .\models.py:55
+msgid "first name"
+msgstr "nama depan"
+
+#: .\models.py:56
+msgid "last name"
+msgstr "nama belakang"
+
+#: .\models.py:57 .\models.py:200
+msgid "email address"
+msgstr "alamat email"
+
+#: .\models.py:59
+msgid "staff status"
+msgstr "status staf"
+
+#: .\models.py:60
+msgid "Designates whether the user can log into this admin site."
+msgstr "Menentukan apakah pengguna dapat masuk ke situs admin ini."
+
+#: .\models.py:63
+msgid "active"
+msgstr "aktif"
+
+#: .\models.py:64
+msgid ""
+"Designates whether this user should be treated as active.  Unselect this "
+"instead of deleting accounts."
+msgstr ""
+"Menetapkan apakah pengguna ini harus diperlakukan sebagai aktif. Batalkan "
+"pilihan ini alih-alih menghapus akun."
+
+#: .\models.py:66
+msgid "date joined"
+msgstr "tanggal bergabung"
+
+#: .\models.py:69
+msgid "verified"
+msgstr "terverifikasi"
+
+#: .\models.py:70
+msgid ""
+"Designates whether this user has completed the email verification process to "
+"allow login."
+msgstr ""
+"Menunjuk apakah pengguna ini telah menyelesaikan proses verifikasi email "
+"untuk izinkan masuk."
+
+#: .\models.py:77
+msgid "user"
+msgstr "pengguna"
+
+#: .\models.py:78
+msgid "users"
+msgstr "para pengguna"
+
+#: .\models.py:162
+msgid "code"
+msgstr "kode"
+
+#: .\models.py:182
+msgid "ip address"
+msgstr "alamat ip"
+
+#: .\views.py:41 .\views.py:253 .\views.py:296
+msgid "Email address already taken."
+msgstr "Alamat email sudah diambil."
+
+#: .\views.py:91 .\views.py:198
+msgid "Email address verified."
+msgstr "Alamat email terverifikasi."
+
+#: .\views.py:94 .\views.py:201 .\views.py:227 .\views.py:316
+msgid "Unable to verify user."
+msgstr "Tidak dapat memverifikasi pengguna."
+
+#: .\views.py:117
+msgid "User account not active."
+msgstr "Akun pengguna tidak aktif."
+
+#: .\views.py:122
+msgid "User account not verified."
+msgstr "Akun pengguna tidak terverifikasi."
+
+#: .\views.py:126
+msgid "Unable to login with provided credentials."
+msgstr "Tidak dapat masuk dengan kredensial yang diberikan."
+
+#: .\views.py:144
+msgid "User logged out."
+msgstr "Pengguna keluar."
+
+#: .\views.py:175
+msgid "Password reset not allowed."
+msgstr "Pengaturan ulang kata sandi tidak diizinkan."
+
+#: .\views.py:224
+msgid "Password reset."
+msgstr "Pengaturan ulang kata sandi."
+
+#: .\views.py:313
+msgid "Email address changed."
+msgstr "Alamat email diubah."
+
+#: .\views.py:334
+msgid "Password changed."
+msgstr "Kata sandi diubah."
