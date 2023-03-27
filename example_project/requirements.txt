@@ -1,5 +1,5 @@
 Django>=2.2.8
-django-rest-authemail==2.1.5
+django-rest-authemail==2.1.6
 djangorestframework>=3.11.0
 requests>=2.3.0
 django-ipware>=4.0.2
