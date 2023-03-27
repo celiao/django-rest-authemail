@@ -10,7 +10,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='django-rest-authemail',
-    version='2.1.6',
+    version='2.1.7',
     author='Celia Oakley',
     author_email='celia.oakley@alumni.stanford.edu',
     description='A RESTful API for user signup and authentication using email addresses',
