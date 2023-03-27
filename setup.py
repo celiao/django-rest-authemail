@@ -31,6 +31,7 @@ setup(
         'Django>=2.2.8',
         'djangorestframework>=3.11.0',
         'requests>=2.3.0',
+        'django-ipware>=4.0.2',
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
