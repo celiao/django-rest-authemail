@@ -22,7 +22,7 @@ setup(
         'django-email-as-username'
     ],
     url='http://github.com/celiao/django-rest-authemail',
-    download_url='https://github.com/celiao/django-rest-authemail/tarball/2.1.6',
+    download_url='https://github.com/celiao/django-rest-authemail/tarball/2.1.7',
     packages=['authemail'],
     include_package_data=True,
     long_description=long_description,
