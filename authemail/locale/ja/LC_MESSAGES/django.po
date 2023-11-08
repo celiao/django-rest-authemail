@@ -136,7 +136,7 @@ msgstr "与えられた認証情報ではログインできません。"
 
 #: views.py:147
 msgid "User logged out."
-msgstr "ログアウト済ユーザです。"
+msgstr "ユーザはログアウトしました。"
 
 #: views.py:178
 msgid "Password reset not allowed."
