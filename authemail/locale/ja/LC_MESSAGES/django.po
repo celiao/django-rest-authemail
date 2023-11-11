@@ -120,7 +120,7 @@ msgstr "Emailアドレスが検証されました。"
 
 #: views.py:97 views.py:204 views.py:230 views.py:319
 msgid "Unable to verify user."
-msgstr "ユーザを検証することができません。"
+msgstr "ユーザを検証できません。"
 
 #: views.py:120
 msgid "User account not active."
@@ -144,7 +144,7 @@ msgstr "パスワードリセットは許可されていません。"
 
 #: views.py:227
 msgid "Password reset."
-msgstr "パスワードリセット。"
+msgstr "パスワードがリセットされました。"
 
 #: views.py:316
 msgid "Email address changed."
