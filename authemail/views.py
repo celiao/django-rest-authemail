@@ -2,8 +2,13 @@ from datetime import date
 from ipware import get_client_ip
 
 from django.conf import settings
+from django.core import exceptions
 from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import gettext as _
+from django.contrib.auth.password_validation import (
+    validate_password,
+)
+
 
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -35,6 +40,13 @@ class Signup(APIView):
             last_name = serializer.data['last_name']
 
             must_validate_email = getattr(settings, "AUTH_EMAIL_VERIFICATION", True)
+
+            try:
+                validate_password(password)
+            except exceptions.ValidationError as err:
+                return Response(
+                    {"detail": [err.messages]}, status=status.HTTP_400_BAD_REQUEST
+                )
 
             try:
                 user = get_user_model().objects.get(email=email)
